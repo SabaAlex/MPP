@@ -2,11 +2,13 @@ package Service;
 
 import model.domain.Client;
 
+import model.exceptions.MyException;
 import model.exceptions.ValidatorException;
 import repository.IRepository;
 
 
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -24,6 +26,15 @@ public class ClientService {
         repository.save(client);
     }
 
+    public Client updateClient(Client client) throws ValidatorException,MyException
+    {
+        return repository.update(client).orElseThrow(()-> new MyException("No movie to update"));
+    }
+
+    public Client deleteClient(Long id) throws ValidatorException
+    {
+        return repository.delete(id).orElseThrow(()-> new MyException("No client to delete"));
+    }
     public Set<Client> getAllClients()
     {
         Iterable<Client> clients=repository.findAll();
