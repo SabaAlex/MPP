@@ -2,8 +2,9 @@ package repository;
 
 
 import model.domain.BaseEntity;
-import model.domain.validators.Validator;
-import model.domain.validators.ValidatorException;
+
+import model.exceptions.ValidatorException;
+import model.validators.Validator;
 
 import java.util.HashMap;
 import java.util.Map;

@@ -3,7 +3,7 @@ package repository;
 
 
 import model.domain.BaseEntity;
-import model.domain.validators.ValidatorException;
+import model.exceptions.ValidatorException;
 
 import java.util.Optional;
 

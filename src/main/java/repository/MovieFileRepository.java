@@ -1,7 +1,9 @@
 package repository;
 
 import model.domain.Movie;
-import model.domain.validators.Validator;
+
+import model.exceptions.ValidatorException;
+import model.validators.Validator;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
