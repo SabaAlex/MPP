@@ -28,12 +28,12 @@ public class ClientService {
 
     public Client updateClient(Client client) throws ValidatorException,MyException
     {
-        return repository.update(client).orElseThrow(()-> new MyException("Nothing to update"));
+        return repository.update(client).orElseThrow(()-> new MyException("No movie to update"));
     }
 
     public Client deleteClient(Long id) throws ValidatorException
     {
-        return repository.delete(id).orElseThrow(()-> new MyException("Nothing to delete"));
+        return repository.delete(id).orElseThrow(()-> new MyException("No client to delete"));
     }
     public Set<Client> getAllClients()
     {

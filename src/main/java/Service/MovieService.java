@@ -2,6 +2,7 @@ package Service;
 
 import model.domain.Client;
 import model.domain.Movie;
+import model.exceptions.MyException;
 import model.exceptions.ValidatorException;
 import repository.IRepository;
 
@@ -22,6 +23,16 @@ public class MovieService {
     public void addMovie(Movie movie) throws ValidatorException
     {
         repository.save(movie);
+    }
+
+    public Movie updateMovie(Movie movie) throws ValidatorException, MyException
+    {
+        return repository.update(movie).orElseThrow(()-> new MyException("No movie to update"));
+    }
+
+    public Movie deleteMovie(Long id) throws ValidatorException
+    {
+        return repository.delete(id).orElseThrow(()-> new MyException("No movie to delete"));
     }
 
     public Set<Movie> getAllMovies()
