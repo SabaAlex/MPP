@@ -1,12 +1,16 @@
 package model.domain;
 
-public class Movie {
+import java.util.Objects;
 
+public class Movie extends BaseEntity<Long> {
+    String movieNumber;
     String title;
     String genre;
     int yearOfRelease;
     String director;
     String mainStar;
+
+
 
     @Override
     public String toString() {
@@ -17,7 +21,21 @@ public class Movie {
                 ", Main Star: '" + mainStar + '\'';
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Movie movie = (Movie) o;
+        return getMovieNumber().equals(movie.getMovieNumber());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getMovieNumber());
+    }
+
     public Movie(){
+        movieNumber = "";
         title = "";
         yearOfRelease = 0;
         mainStar = "";
@@ -25,12 +43,21 @@ public class Movie {
         genre = "";
     }
 
-    public Movie(String title, int yearOfRelease ,String mainStar, String director, String genre) {
+    public Movie(String movieNumber, String title, int yearOfRelease ,String mainStar, String director, String genre) {
+        this.movieNumber = movieNumber;
         this.title = title;
         this.genre = genre;
         this.yearOfRelease = yearOfRelease;
         this.director = director;
         this.mainStar = mainStar;
+    }
+
+    public String getMovieNumber() {
+        return movieNumber;
+    }
+
+    public void setMovieNumber(String movieNumber) {
+        this.movieNumber = movieNumber;
     }
 
     public String getTitle() {
