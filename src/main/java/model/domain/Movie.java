@@ -10,8 +10,6 @@ public class Movie extends BaseEntity<Long> {
     String director;
     String mainStar;
 
-
-
     @Override
     public String toString() {
         return "Title: '" + title + '\'' +
