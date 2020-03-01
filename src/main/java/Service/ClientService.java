@@ -1,7 +1,8 @@
 package Service;
 
 import model.domain.Client;
-import model.domain.validators.ValidatorException;
+
+import model.exceptions.ValidatorException;
 import repository.IRepository;
 
 
