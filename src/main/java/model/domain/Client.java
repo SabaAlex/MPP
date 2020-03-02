@@ -56,7 +56,7 @@ public class Client extends BaseEntity<Long> {
         return clientNumber;
     }
 
-    public void setClientNumber(String clientId) {
+    public void setClientNumber(String clientNumber) {
         this.clientNumber = clientNumber;
     }
 
