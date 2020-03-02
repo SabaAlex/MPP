@@ -53,7 +53,37 @@ public class Console {
     }
 
     private void uiUpdateClient() {
+        Scanner scanner = new Scanner(System.in);
 
+        System.out.println("Input Old Id: ");
+        String input = scanner.nextLine();
+
+        System.out.println("Input New Client Number: ");
+        String clientNumber = scanner.nextLine();
+
+        System.out.println("Input New First Name: ");
+        String fName = scanner.nextLine();
+
+        System.out.println("Input New Last Name: ");
+        String lName = scanner.nextLine();
+
+        System.out.println("Input New Client Age: ");
+        String ageStr = scanner.nextLine();
+
+        int age;
+        long id;
+
+        try {
+            age = Integer.parseInt(ageStr);
+            id = Long.parseLong(input);
+        } catch (NumberFormatException e) {
+            throw new DataTypeException();
+        }
+
+        Client client = new Client(clientNumber, fName, lName, age);
+        client.setId(id);
+
+        clientService.updateClient(client);
     }
 
     private void initFunctionLinks() {
