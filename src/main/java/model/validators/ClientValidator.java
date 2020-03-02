@@ -3,26 +3,30 @@ package model.validators;
 import model.domain.Client;
 import model.exceptions.ValidatorException;
 
-import java.time.Year;
-import java.util.Objects;
+import java.util.Optional;
 
 public class ClientValidator implements Validator<Client> {
 
     @Override
     public void validate(Client entity) throws ValidatorException {
-        if (Objects.equals(entity.getAge(), 0))
-            throw new ValidatorException("Age is wrong");
+        Optional.ofNullable(entity.getfName())
+                .filter(e -> !e.equals(""))
+                .orElseThrow(()-> new ValidatorException("First Name is empty"));
 
-        if (Objects.equals(entity.getfName(), ""))
-            throw new ValidatorException("First Name is empty");
+        Optional.ofNullable(entity.getlName())
+                .filter(e -> !e.equals(""))
+                .orElseThrow(()-> new ValidatorException("Last Name is empty"));
 
-        if (Objects.equals(entity.getlName(), ""))
-            throw new ValidatorException("Last Name is empty");
+        Optional.ofNullable(entity.getClientNumber())
+                .filter(e -> !e.equals(""))
+                .orElseThrow(()-> new ValidatorException("Client Number is empty"));
 
-        if (Objects.equals(entity.getClientNumber(), ""))
-            throw new ValidatorException("Client Number  is empty");
+        Optional.ofNullable(entity.getId())
+                .orElseThrow(()-> new ValidatorException("Id is empty"));
 
-        if (Objects.equals(entity.getId(), null))
-            throw new ValidatorException("Id is empty");
+        Optional.of(entity.getAge())
+                .filter(e -> e > 0)
+                .orElseThrow(() -> new ValidatorException("Age is not correct"));
+
     }
 }

@@ -8,7 +8,13 @@ public class Client extends BaseEntity<Long> {
     String lName;
     int age;
 
+    static long ids;
+    long id;
+
     public Client() {
+        id = ids;
+        ids++;
+        setId(id);
         this.clientNumber = "";
         this.fName = "";
         this.lName = "";
@@ -16,6 +22,9 @@ public class Client extends BaseEntity<Long> {
     }
 
     public Client(String clientNumber, String fName, String lName , int age) {
+        id = ids;
+        ids++;
+        setId(id);
         this.clientNumber = clientNumber;
         this.fName = fName;
         this.lName = lName;
