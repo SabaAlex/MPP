@@ -6,8 +6,15 @@ import model.exceptions.ValidatorException;
 import java.time.Year;
 import java.util.Optional;
 
+
 public class MovieValidator implements Validator<Movie> {
 
+    /**
+     * Validates a Movie's attributes to be correct
+     *
+     * @param entity is created before being called by validate
+     * @throws ValidatorException some attribute of the entity does not meet a certain validation criteria
+     */
     @Override
     public void validate(Movie entity) throws ValidatorException {
         Optional.ofNullable(entity.getTitle())

@@ -1,5 +1,8 @@
 package model.exceptions;
 
+/**
+ * Generic exception created as a template for other, more specific exception
+ */
 public class MyException extends RuntimeException {
     public MyException(String message) {
         super(message);
