@@ -21,20 +21,39 @@ public class ClientService {
         this.repository=repository;
     }
 
+    /**
+     * @param client
+     * @throws ValidatorException
+     */
     public void addClient(Client client) throws ValidatorException
     {
         repository.save(client);
     }
 
+    /**
+     * @param client
+     * @return
+     * @throws ValidatorException
+     * @throws MyException
+     */
     public Client updateClient(Client client) throws ValidatorException,MyException
     {
         return repository.update(client).orElseThrow(()-> new MyException("No client to update"));
     }
 
+    /**
+     * @param id
+     * @return
+     * @throws ValidatorException
+     */
     public Client deleteClient(Long id) throws ValidatorException
     {
         return repository.delete(id).orElseThrow(()-> new MyException("No client to delete"));
     }
+
+    /**
+     * @return
+     */
     public Set<Client> getAllClients()
     {
         Iterable<Client> clients=repository.findAll();
@@ -42,6 +61,10 @@ public class ClientService {
 
     }
 
+    /**
+     * @param name
+     * @return
+     */
     public Set<Client> filterClientsByName(String name)
     {
         Iterable<Client> clients=repository.findAll();

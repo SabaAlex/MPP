@@ -7,6 +7,12 @@ import java.util.Optional;
 
 public class ClientValidator implements Validator<Client> {
 
+    /**
+     * Validates a Client's attributes to be correct
+     *
+     * @param entity is created before being called by validate
+     * @throws ValidatorException some attribute of the entity does not meet a certain validation criteria
+     */
     @Override
     public void validate(Client entity) throws ValidatorException {
         Optional.ofNullable(entity.getfName())

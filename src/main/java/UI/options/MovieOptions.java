@@ -1,5 +1,8 @@
 package UI.options;
 
+/**
+ * Enum with all the possible options that the Movie Service can have
+ */
 public enum MovieOptions {
     ADD("ADD Movie"),
     PRINT("PRINT all Movies"),
