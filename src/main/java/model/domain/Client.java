@@ -3,12 +3,12 @@ package model.domain;
 import java.util.Objects;
 
 public class Client extends BaseEntity<Long> {
-    String clientNumber;
-    String fName;
-    String lName;
-    int age;
+    private String clientNumber;
+    private String fName;
+    private String lName;
+    private int age;
 
-    static long ids = 1;
+    private static long ids = 1;
 
     public Client() {
         long id;

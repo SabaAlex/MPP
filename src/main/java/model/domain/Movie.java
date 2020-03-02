@@ -3,14 +3,14 @@ package model.domain;
 import java.util.Objects;
 
 public class Movie extends BaseEntity<Long> {
-    String movieNumber;
-    String title;
-    String genre;
-    int yearOfRelease;
-    String director;
-    String mainStar;
+    private String movieNumber;
+    private String title;
+    private  String genre;
+    private int yearOfRelease;
+    private String director;
+    private String mainStar;
 
-    static long ids;
+    private static long ids;
 
     @Override
     public String toString() {
