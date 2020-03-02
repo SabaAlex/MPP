@@ -39,6 +39,4 @@ public class ClientService {
         return filteredClients;
     }
 
-
-
 }

@@ -10,50 +10,66 @@ import model.exceptions.MyException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
+import java.util.function.Consumer;
 
 public class Console {
 
     private ClientService clientService;
     private MovieService movieService;
     private Map<Integer, String> commands;
+    private Map<String, Runnable> fctLinks;
 
     private void printMenu(){
-
         for(Map.Entry<Integer, String> com : commands.entrySet()) {
-            String line = String.format("%4s : %s", com.getKey(), com.getValue());
+            String line = String.format("%4s. %s", com.getKey(), com.getValue());
             System.out.println(line);
         }
 
     }
 
     private void initCommands(){
+        commands.put(0, "Exit");
+        commands.put(commands.size(), "Print Menu");
         for (ClientOptions clientOptions : ClientOptions.values())
-            commands.put(commands.size() + 1, clientOptions.getCmdMessage());
+            commands.put(commands.size(), clientOptions.getCmdMessage());
         for (MovieOptions movieOptions : MovieOptions.values())
-            commands.put(commands.size() + 1, movieOptions.getCmdMessage());
+            commands.put(commands.size(), movieOptions.getCmdMessage());
+    }
+
+    private void initFunctionLinks(){
+        fctLinks.put("Print Menu", this::printMenu);
+        fctLinks.put(ClientOptions.ADD.getCmdMessage(), this::uiAddClient);
+        fctLinks.put(ClientOptions.PRINT.getCmdMessage(), this::uiPrintAllClients);
     }
 
     public Console(ClientService clientService, MovieService movieService) {
         this.clientService = clientService;
         this.movieService = movieService;
         commands = new HashMap<>();
+        fctLinks = new HashMap<>();
         initCommands();
+        initFunctionLinks();
+    }
+
+
+    private void uiPrintAllClients() {
+        clientService.getAllClients().forEach(System.out::println);
     }
 
     private void uiAddClient(){
-        Scanner scan = new Scanner(System.in);
+        Scanner scanner = new Scanner(System.in);
 
         System.out.println("Input Client Number: ");
-        String clientNumber = scan.nextLine();
+        String clientNumber = scanner.nextLine();
 
         System.out.println("Input First Name: ");
-        String fName = scan.nextLine();
+        String fName = scanner.nextLine();
 
         System.out.println("Input Last Name: ");
-        String lName = scan.nextLine();
+        String lName = scanner.nextLine();
 
         System.out.println("Input Client Age: ");
-        String ageStr = scan.nextLine();
+        String ageStr = scanner.nextLine();
 
         int age;
 
@@ -73,9 +89,11 @@ public class Console {
     public void run(){
 
         Scanner scanner = new Scanner(System.in);
+        printMenu();
 
         while(true) {
-            System.out.println("Input the option: ");
+
+            System.out.println("Enter input");
             String input = scanner.nextLine();
             int key;
 
@@ -90,23 +108,14 @@ public class Console {
                 System.out.println("Invalid Option");
             }
 
-            /// key has the command
             String cmd = commands.get(key);
 
-
             try {
-                if (cmd.equals(ClientOptions.ADD.getCmdMessage()))
-                    uiAddClient();
-                if (cmd.equals(ClientOptions.PRINT.getCmdMessage()))
-                    uiPrintAllClients();
+                fctLinks.get(cmd).run();
             }
             catch (Exception e){
                 System.out.println(e.getMessage());
             }
         }
-    }
-
-    private void uiPrintAllClients() {
-        clientService.getAllClients().forEach(System.out::println);
     }
 }
