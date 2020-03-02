@@ -46,7 +46,6 @@ public class ClientTest {
     public void testGetId() throws Exception {
         assertEquals("Ids should be equal", ID, client.getId());
     }
-    @Ignore
     @Test
     public void testSetId() throws Exception {
         client.setId(NEW_ID);
@@ -84,7 +83,7 @@ public class ClientTest {
     }
 
     @Test
-    public void testSetGroup() throws Exception {
+    public void testSetAge() throws Exception {
         client.setAge(NEW_AGE);
         assertEquals("AGEs should be equal", NEW_AGE, client.getAge());
     }
