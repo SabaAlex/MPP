@@ -2,7 +2,6 @@ package repository;
 
 import model.domain.Client;
 import model.exceptions.MyException;
-import model.exceptions.ValidatorException;
 import model.validators.ClientValidator;
 import model.validators.Validator;
 import org.junit.After;
@@ -10,7 +9,6 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import java.util.Optional;
 import java.util.stream.StreamSupport;
 
 import static org.junit.Assert.assertEquals;
@@ -66,12 +64,11 @@ public class ClientInMemoryRepositoryTest {
     }
 
 
-    @Test(expected = MyException.class)
+    @Test
     public void testSaveException() throws Exception {
         Client clienter=new Client("c1","f5","l1",21);
         clienter.setId(3L);
-        Optional<Client> opt = clients.save(clienter);
-        opt.ifPresent(optional->{throw new MyException("It will break");});
+        clients.save(clienter).orElseThrow(()->new MyException("Can't save"));
     }
 
     @Ignore
@@ -87,7 +84,7 @@ public class ClientInMemoryRepositoryTest {
     }
 
     @Ignore
-    @Test(expected = MyException.class)
+   // @Test(expected = ValidatorException.class)
     public void testUpdateException() throws Exception {
         fail("Not yet tested");
     }

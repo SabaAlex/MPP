@@ -29,7 +29,7 @@ public class MovieService {
      */
     public void addMovie(Movie movie) throws ValidatorException
     {
-        repository.save(movie);
+        repository.save(movie).ifPresent(optional->{throw new MyException("Movie already exists");});
     }
 
     /**

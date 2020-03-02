@@ -27,7 +27,7 @@ public class ClientService {
      */
     public void addClient(Client client) throws ValidatorException
     {
-        repository.save(client);
+        repository.save(client).ifPresent(optional->{throw new MyException("Client already exists");});
     }
 
     /**
