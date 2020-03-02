@@ -8,10 +8,10 @@ public class Client extends BaseEntity<Long> {
     String lName;
     int age;
 
-    static long ids;
-    long id;
+    static long ids = 1;
 
     public Client() {
+        long id;
         id = ids;
         ids++;
         setId(id);
@@ -22,6 +22,7 @@ public class Client extends BaseEntity<Long> {
     }
 
     public Client(String clientNumber, String fName, String lName , int age) {
+        long id;
         id = ids;
         ids++;
         setId(id);
@@ -49,7 +50,8 @@ public class Client extends BaseEntity<Long> {
         return "Client Id: '" + clientNumber + '\'' +
                 ", First Name: '" + fName + '\'' +
                 ", Last Name: '" + lName + '\'' +
-                ", Age: " + age;
+                ", Age: " + age +
+                ", Id: '" + getId() + '\'';
     }
 
     public String getClientNumber() {

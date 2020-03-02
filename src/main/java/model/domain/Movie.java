@@ -11,7 +11,6 @@ public class Movie extends BaseEntity<Long> {
     String mainStar;
 
     static long ids;
-    long id;
 
     @Override
     public String toString() {
@@ -19,7 +18,8 @@ public class Movie extends BaseEntity<Long> {
                 ", Genre: '" + genre + '\'' +
                 ", Year Of Release: " + yearOfRelease +
                 ", Director: '" + director + '\'' +
-                ", Main Star: '" + mainStar + '\'';
+                ", Main Star: '" + mainStar + '\'' +
+                ", ID: " + getId();
     }
 
     @Override
@@ -36,6 +36,7 @@ public class Movie extends BaseEntity<Long> {
     }
 
     public Movie(){
+        long id;
         id = ids;
         ids++;
         setId(id);
@@ -48,6 +49,7 @@ public class Movie extends BaseEntity<Long> {
     }
 
     public Movie(String movieNumber, String title, int yearOfRelease ,String mainStar, String director, String genre) {
+        long id;
         id = ids;
         ids++;
         setId(id);
