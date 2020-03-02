@@ -16,6 +16,8 @@ public class Client extends BaseEntity<Long> {
     }
 
     public Client(String clientNumber, String fName, String lName , int age) {
+        long a = 1;
+        setId(a);
         this.clientNumber = clientNumber;
         this.fName = fName;
         this.lName = lName;
