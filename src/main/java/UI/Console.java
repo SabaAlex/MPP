@@ -4,50 +4,72 @@ import Service.ClientService;
 import Service.MovieService;
 import UI.options.ClientOptions;
 import UI.options.MovieOptions;
+import UI.utils.Commands;
 import model.domain.Client;
-import model.exceptions.MyException;
+import model.exceptions.DataTypeException;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
-import java.util.function.Consumer;
 
 public class Console {
 
     private ClientService clientService;
     private MovieService movieService;
-    private Map<Integer, String> commands;
     private Map<String, Runnable> fctLinks;
+    private Commands commands;
 
-    private void printMenu(){
-        for(Map.Entry<Integer, String> com : commands.entrySet()) {
+    private void printMenu() {
+        for (Map.Entry<Integer, String> com : commands.getCommands().entrySet()) {
             String line = String.format("%4s. %s", com.getKey(), com.getValue());
             System.out.println(line);
         }
 
     }
 
-    private void initCommands(){
-        commands.put(0, "Exit");
-        commands.put(commands.size(), "Print Menu");
-        for (ClientOptions clientOptions : ClientOptions.values())
-            commands.put(commands.size(), clientOptions.getCmdMessage());
-        for (MovieOptions movieOptions : MovieOptions.values())
-            commands.put(commands.size(), movieOptions.getCmdMessage());
+    private void uiFilterClientsByName() {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.println("Input Client Name: ");
+        String name = scanner.nextLine();
+
+        clientService.filterClientsByName(name).forEach(System.out::println);
     }
 
-    private void initFunctionLinks(){
+    private void uiDeleteClient() {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.println("Input Id: ");
+        String input = scanner.nextLine();
+
+        long id;
+        try {
+            id = Long.parseLong(input);
+        } catch (NumberFormatException E) {
+            throw new DataTypeException();
+        }
+
+        clientService.deleteClient(id);
+    }
+
+    private void uiUpdateClient() {
+
+    }
+
+    private void initFunctionLinks() {
         fctLinks.put("Print Menu", this::printMenu);
         fctLinks.put(ClientOptions.ADD.getCmdMessage(), this::uiAddClient);
         fctLinks.put(ClientOptions.PRINT.getCmdMessage(), this::uiPrintAllClients);
+        fctLinks.put(ClientOptions.FILTER.getCmdMessage(), this::uiFilterClientsByName);
+        fctLinks.put(ClientOptions.DELETE.getCmdMessage(), this::uiDeleteClient);
+        fctLinks.put(ClientOptions.UPDATE.getCmdMessage(), this::uiUpdateClient);
     }
 
     public Console(ClientService clientService, MovieService movieService) {
         this.clientService = clientService;
         this.movieService = movieService;
-        commands = new HashMap<>();
+        commands = new Commands();
         fctLinks = new HashMap<>();
-        initCommands();
         initFunctionLinks();
     }
 
@@ -56,7 +78,7 @@ public class Console {
         clientService.getAllClients().forEach(System.out::println);
     }
 
-    private void uiAddClient(){
+    private void uiAddClient() {
         Scanner scanner = new Scanner(System.in);
 
         System.out.println("Input Client Number: ");
@@ -75,9 +97,8 @@ public class Console {
 
         try {
             age = Integer.parseInt(ageStr);
-        }
-        catch (NumberFormatException e){
-            throw new MyException("Age is not a number");
+        } catch (NumberFormatException e) {
+            throw new DataTypeException();
         }
 
         Client client = new Client(clientNumber, fName, lName, age);
@@ -86,12 +107,12 @@ public class Console {
 
     }
 
-    public void run(){
+    public void run() {
 
         Scanner scanner = new Scanner(System.in);
         printMenu();
 
-        while(true) {
+        while (true) {
 
             System.out.println("Enter input");
             String input = scanner.nextLine();
@@ -104,18 +125,24 @@ public class Console {
                 continue;
             }
 
-            if (!commands.containsKey(key)) {
+            if (!commands.containsCommand(key)) {
                 System.out.println("Invalid Option");
             }
 
-            String cmd = commands.get(key);
+            String cmd = commands.getCommandValue(key);
+
+            if (!fctLinks.containsKey(cmd)) {
+                System.out.println("Functionality not yet implemented!");
+                continue;
+            }
 
             try {
                 fctLinks.get(cmd).run();
-            }
-            catch (Exception e){
+            } catch (Exception e) {
                 System.out.println(e.getMessage());
             }
         }
     }
 }
+
+
