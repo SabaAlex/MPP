@@ -127,9 +127,6 @@ public class Console {
         System.out.println("Input Old Movie Id: ");
         String input = scanner.nextLine();
 
-        System.out.println("Input Movie Number: ");
-        String movieNumber = scanner.nextLine();
-
         System.out.println("Input Movie Title: ");
         String title = scanner.nextLine();
 
