@@ -25,16 +25,16 @@ public class ClientInMemoryRepositoryTest {
     public void setUp() throws Exception {
         ClientValidator= new ClientValidator();
         clients=new InMemoryRepository<Long,Client>(ClientValidator);
-        Client client=new Client(1L,"c1","f1","l1",21);
+        Client client=new Client(1L,"f1","l1",21);
 
         clients.save(client);
-        Client client2=new Client(2L,"c2","f1","l2",21);
+        Client client2=new Client(2L,"f1","l2",21);
         clients.save(client2);
-        Client client3=new Client(3L,"c3","f3","l2",23);
+        Client client3=new Client(3L,"f3","l2",23);
         clients.save(client3);
-        Client client4=new Client(4L,"c4","f4","l2",21);
+        Client client4=new Client(4L,"f4","l2",21);
         clients.save(client4);
-        Client client5=new Client(5L,"c5","f1","l2",25);
+        Client client5=new Client(5L,"f1","l2",25);
         clients.save(client5);
     }
 
@@ -56,14 +56,14 @@ public class ClientInMemoryRepositoryTest {
 
     @Test
     public void testSave() throws Exception {
-        clients.save(new Client(7L,"c6","f5","l1",21)).ifPresent(optional->{throw new MyException("It will break");});
+        clients.save(new Client(7L,"f5","l1",21)).ifPresent(optional->{throw new MyException("It will break");});
         assertEquals("Length should be 6 ",length(clients.findAll()),6);
     }
 
 
     @Test(expected = MyException.class)
     public void testSaveException() throws Exception {
-        Client client=new Client(3L,"c1","f5","l1",21);
+        Client client=new Client(3L,"f5","l1",21);
         Optional<Client> opt = clients.save(client);
         opt.ifPresent(optional->{throw new MyException("It will break");});
     }
@@ -82,7 +82,7 @@ public class ClientInMemoryRepositoryTest {
 
     @Test
     public void testUpdate() throws MyException,Throwable {
-        Client client=new Client(3L,"c1","f5","l1",21);
+        Client client=new Client(3L,"f5","l1",21);
         Optional<Client> opt = clients.update(client);
         opt.orElseThrow(()->{throw new MyException("It will break");});
         Client updated=clients.findOne(3L).orElseThrow(()->{throw new MyException("It will break");});
@@ -91,7 +91,7 @@ public class ClientInMemoryRepositoryTest {
 
     @Test(expected = MyException.class)
     public void testUpdateException() throws Exception,Throwable {
-        Client client=new Client(7L,"c1","f5","l1",21);
+        Client client=new Client(7L,"f5","l1",21);
         Optional<Client> opt = clients.update(client);
         opt.orElseThrow(()->{throw new MyException("No client with that name");});
     }

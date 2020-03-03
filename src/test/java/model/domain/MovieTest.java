@@ -11,8 +11,6 @@ import static org.junit.Assert.assertEquals;
 public class MovieTest {
     private static final Long ID = 1L;
     private static final Long NEW_ID = 2L;
-    private static final String NUMBER = "M01";
-    private static final String NEW_NUMBER = "M02";
     private static final String TITLE = "James Bond";
     private static final String GENRE = "Drama";
     private static final String DIRECTOR ="Quentin Tarantino";
@@ -24,23 +22,12 @@ public class MovieTest {
 
     @Before
     public void setUp() throws Exception {
-        movie = new Movie(ID,NUMBER, TITLE,YEAR,MainStar,DIRECTOR,GENRE );
+        movie = new Movie(ID, TITLE,YEAR,MainStar,DIRECTOR,GENRE );
     }
 
     @After
     public void tearDown() throws Exception {
         movie=null;
-    }
-
-    @Test
-    public void testGetNumber() throws Exception {
-        assertEquals("Numbers should be equal", NUMBER,movie.getMovieNumber());
-    }
-
-    @Test
-    public void testSetSerialNumber() throws Exception {
-        movie.setMovieNumber(NEW_NUMBER);
-        assertEquals("Numbers should be equal", NEW_NUMBER, movie.getMovieNumber());
     }
 
     @Test
