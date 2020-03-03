@@ -86,7 +86,7 @@ public class ClientInMemoryRepositoryTest {
         Optional<Client> opt = clients.update(client);
         opt.orElseThrow(()->{throw new MyException("It will break");});
         Client updated=clients.findOne(3L).orElseThrow(()->{throw new MyException("It will break");});
-        assertEquals("Number should be equal",updated.getClientNumber(),"c1");
+        assertEquals("Number should be equal",updated.getFirstName(),"f5");
     }
 
     @Test(expected = MyException.class)
