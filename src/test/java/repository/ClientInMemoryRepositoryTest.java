@@ -25,25 +25,20 @@ public class ClientInMemoryRepositoryTest {
     public void setUp() throws Exception {
         ClientValidator= new ClientValidator();
         clients=new InMemoryRepository<Long,Client>(ClientValidator);
-        Client client=new Client("c1","f1","l1",21);
-        client.setId(1L);
+        Client client=new Client(1L,"c1","f1","l1",21);
 
         clients.save(client);
-        Client client2=new Client("c2","f1","l2",21);
-        client2.setId(2L);
+        Client client2=new Client(2L,"c2","f1","l2",21);
         clients.save(client2);
-        Client client3=new Client("c3","f3","l2",23);
-        client3.setId(3L);
+        Client client3=new Client(3L,"c3","f3","l2",23);
         clients.save(client3);
-        Client client4=new Client("c4","f4","l2",21);
-        client4.setId(4L);
+        Client client4=new Client(4L,"c4","f4","l2",21);
         clients.save(client4);
-        Client client5=new Client("c5","f1","l2",25);
-        client.setId(5L);
+        Client client5=new Client(5L,"c5","f1","l2",25);
         clients.save(client5);
     }
 
-    public long lenght(Iterable<Client> clients)
+    public long length(Iterable<Client> clients)
     {
         return StreamSupport.stream(clients.spliterator(), false).count();
     }
@@ -56,34 +51,36 @@ public class ClientInMemoryRepositoryTest {
 
     @Test
     public void testFindAll() throws Exception {
-        assertEquals("Lenght should be 5 ",lenght(clients.findAll()),5);
+        assertEquals("Length should be 5 ",length(clients.findAll()),5);
     }
 
     @Test
     public void testSave() throws Exception {
-        clients.save(new Client("c6","f5","l1",21));
-        assertEquals("Lenght should be 6 ",lenght(clients.findAll()),6);
+        clients.save(new Client(7L,"c6","f5","l1",21)).ifPresent(optional->{throw new MyException("It will break");});
+        assertEquals("Length should be 6 ",length(clients.findAll()),6);
     }
 
 
     @Test(expected = MyException.class)
     public void testSaveException() throws Exception {
-        Client clienter=new Client("c1","f5","l1",21);
-        clienter.setId(3L);
-        Optional<Client> opt = clients.save(clienter);
+        Client client=new Client(3L,"c1","f5","l1",21);
+        Optional<Client> opt = clients.save(client);
         opt.ifPresent(optional->{throw new MyException("It will break");});
     }
 
-    @Ignore
     @Test
-    public void testDelete() throws Exception {
-        fail("Not yet tested");
+    public void testDelete() throws MyException ,Throwable{
+        clients.delete(ID).orElseThrow(()->{throw new MyException("It will break");});
+        assertEquals("Lengths should be equal",length(clients.findAll()),4);
     }
 
-    @Ignore
     @Test
-    public void testUpdate() throws Exception {
-        fail("Not yet tested");
+    public void testUpdate() throws MyException,Throwable {
+        Client client=new Client(3L,"c1","f5","l1",21);
+        Optional<Client> opt = clients.update(client);
+        opt.orElseThrow(()->{throw new MyException("It will break");});
+        Client updated=clients.findOne(3L).orElseThrow(()->{throw new MyException("It will break");});
+        assertEquals("Number should be equal",updated.getClientNumber(),"c1");
     }
 
     @Ignore

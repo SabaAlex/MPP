@@ -40,8 +40,7 @@ public class MovieFileRepository extends InMemoryRepository<Long, Movie> {
                 String director=items.get(5);
                 String mainStar=items.get(6);
 
-                Movie movie = new Movie(movieNumber,title,yearOfRelease,mainStar,director,genre);
-                movie.setId(id);
+                Movie movie = new Movie(id,movieNumber,title,yearOfRelease,mainStar,director,genre);
 
                 try {
                     super.save(movie);

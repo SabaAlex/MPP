@@ -1,7 +1,6 @@
 package repository;
 
 import model.domain.Client;
-import model.domain.Movie;
 import model.exceptions.ValidatorException;
 import model.validators.Validator;
 
@@ -40,8 +39,7 @@ public class ClientFileRepository extends InMemoryRepository<Long, Client> {
                 int age=Integer.valueOf(items.get(4));
 
 
-                Client client= new Client(clientNumber,firstName,lastName,age);
-                client.setId(id);
+                Client client= new Client(id,clientNumber,firstName,lastName,age);
 
                 try {
                     super.save(client);
@@ -69,7 +67,7 @@ public class ClientFileRepository extends InMemoryRepository<Long, Client> {
 
         try (BufferedWriter bufferedWriter = Files.newBufferedWriter(path, StandardOpenOption.APPEND)) {
             bufferedWriter.write(
-                    entity.getId() + "," + entity.getClientNumber() + "," + entity.getfName() + "," + entity.getlName()+","+
+                    entity.getId() + "," + entity.getClientNumber() + "," + entity.getFirstName() + "," + entity.getLastName()+","+
                             entity.getAge());
             bufferedWriter.newLine();
         } catch (IOException e) {

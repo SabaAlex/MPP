@@ -26,9 +26,12 @@ public class MovieService {
      * @param movie created movie object to be passed over to the repository
      * @throws ValidatorException
      *             if the entity is not valid.
+     * @throws MyException
+     *              if there exist already an entity with that MovieNumber
      */
     public void addMovie(Movie movie) throws ValidatorException
     {
+
         repository.save(movie).ifPresent(optional->{throw new MyException("Movie already exists");});
     }
 
@@ -65,7 +68,7 @@ public class MovieService {
     /**
      * Gets all the Movie Instances from the repository
      *
-     * @return {@Set} containing all the Movie Instances from the repository
+     * @return {@code Set} containing all the Movie Instances from the repository
      */
     public Set<Movie> getAllMovies()
     {
@@ -77,15 +80,15 @@ public class MovieService {
     /**
      * Filters all the movies out by title
      *
-     * @param name a movie title of type {@String}
-     * @return {@HashSet} containing all the Movie Instances from the repository that contain the name parameter in the title
+     * @param title a movie title of type {@code String}
+     * @return {@code HashSet} containing all the Movie Instances from the repository that contain the title parameter in the title
      */
-    public Set<Movie> filterMoviesByTitle(String name)
+    public Set<Movie> filterMoviesByTitle(String title)
     {
         Iterable<Movie> movies=repository.findAll();
         Set<Movie> filteredMovies=new HashSet<>();
         movies.forEach(filteredMovies::add);
-        filteredMovies.removeIf(movie->!(movie.getTitle().contains(name)) );
+        filteredMovies.removeIf(movie->!(movie.getTitle().contains(title)) );
         return filteredMovies;
     }
 

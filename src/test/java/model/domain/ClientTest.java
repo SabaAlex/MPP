@@ -2,7 +2,6 @@ package model.domain;
 
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import static junit.framework.TestCase.fail;
@@ -22,8 +21,7 @@ public class ClientTest {
 
     @Before
     public void setUp() throws Exception {
-        client = new Client(NUMBER, FIRST_NAME,LAST_NAME, AGE);
-        client.setId(ID);
+        client = new Client(ID,NUMBER, FIRST_NAME,LAST_NAME, AGE);
     }
 
     @After
@@ -54,26 +52,26 @@ public class ClientTest {
 
     @Test
     public void testGetLastName() throws Exception {
-        assertEquals("Last Name should be equal", LAST_NAME, client.getlName());
+        assertEquals("Last Name should be equal", LAST_NAME, client.getLastName());
     }
 
     @Test
     public void testSetLastName() throws Exception {
-        client.setlName(FIRST_NAME);
-        assertEquals("Last Names should be equal", FIRST_NAME, client.getlName());
+        client.setLastName(FIRST_NAME);
+        assertEquals("Last Names should be equal", FIRST_NAME, client.getLastName());
     }
 
 
 
     @Test
     public void testGetFirstName() throws Exception {
-        assertEquals("First Names should be equal", FIRST_NAME, client.getfName());
+        assertEquals("First Names should be equal", FIRST_NAME, client.getFirstName());
     }
 
     @Test
     public void testSetFirstName() throws Exception {
-        client.setfName(LAST_NAME);
-        assertEquals("First Names should be equal", LAST_NAME, client.getfName());
+        client.setFirstName(LAST_NAME);
+        assertEquals("First Names should be equal", LAST_NAME, client.getFirstName());
     }
 
 
