@@ -10,8 +10,6 @@ import static org.junit.Assert.assertEquals;
 public class ClientTest {
     private static final Long ID = 1L;
     private static final Long NEW_ID = 2L;
-    private static final String NUMBER = "C01";
-    private static final String NEW_NUMBER = "C02";
     private static final String LAST_NAME = "ClientLName";
     private static final String FIRST_NAME = "ClientFName";
     private static final int AGE = 23;
@@ -21,7 +19,7 @@ public class ClientTest {
 
     @Before
     public void setUp() throws Exception {
-        client = new Client(ID,NUMBER, FIRST_NAME,LAST_NAME, AGE);
+        client = new Client(ID, FIRST_NAME,LAST_NAME, AGE);
     }
 
     @After
@@ -29,16 +27,6 @@ public class ClientTest {
         client=null;
     }
 
-    @Test
-    public void testGetSerialNumber() throws Exception {
-        assertEquals("Serial numbers should be equal", NUMBER, client.getClientNumber());
-    }
-
-    @Test
-    public void testSetSerialNumber() throws Exception {
-        client.setClientNumber(NEW_NUMBER);
-        assertEquals("Serial numbers should be equal", NEW_NUMBER, client.getClientNumber());
-    }
 
     @Test
     public void testGetId() throws Exception {
