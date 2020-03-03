@@ -315,13 +315,13 @@ public class Console {
 
             String cmd = commands.getCommandValue(key);
 
+            if (cmd.equals("Exit"))
+                return;
+
             if (!fctLinks.containsKey(cmd)) {
                 System.out.println("Functionality not yet implemented!");
                 continue;
             }
-
-            if (cmd.equals("Exit"))
-                return;
 
             try {
                 fctLinks.get(cmd).run();
