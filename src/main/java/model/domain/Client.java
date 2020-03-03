@@ -4,31 +4,23 @@ import java.util.Objects;
 
 public class Client extends BaseEntity<Long> {
     private String clientNumber;
-    private String fName;
-    private String lName;
+    private String firstName;
+    private String lastName;
     private int age;
 
-    private static long ids = 1;
-
     public Client() {
-        long id;
-        id = ids;
-        ids++;
-        setId(id);
+        setId(0L);
         this.clientNumber = "";
-        this.fName = "";
-        this.lName = "";
+        this.firstName = "";
+        this.lastName = "";
         this.age = 0;
     }
 
-    public Client(String clientNumber, String fName, String lName , int age) {
-        long id;
-        id = ids;
-        ids++;
-        setId(id);
+    public Client(Long ID,String clientNumber, String fName, String lName , int age) {
+        super.setId(ID);
         this.clientNumber = clientNumber;
-        this.fName = fName;
-        this.lName = lName;
+        this.firstName = fName;
+        this.lastName = lName;
         this.age = age;
     }
 
@@ -37,21 +29,21 @@ public class Client extends BaseEntity<Long> {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Client client = (Client) o;
-        return getClientNumber().equals(client.getClientNumber());
+        return super.getId().equals(client.getId());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getClientNumber());
+        return Objects.hash(super.getId());
     }
 
     @Override
     public String toString() {
-        return "Client Id: '" + clientNumber + '\'' +
-                ", First Name: '" + fName + '\'' +
-                ", Last Name: '" + lName + '\'' +
+        return "Client Number: '" + clientNumber + '\'' +
+                ", First Name: '" + firstName + '\'' +
+                ", Last Name: '" + lastName + '\'' +
                 ", Age: " + age +
-                ", Id: '" + getId() + '\'';
+                ", ID: '" + getId() + '\'';
     }
 
     public String getClientNumber() {
@@ -62,20 +54,20 @@ public class Client extends BaseEntity<Long> {
         this.clientNumber = clientNumber;
     }
 
-    public String getlName() {
-        return lName;
+    public String getLastName() {
+        return lastName;
     }
 
-    public void setlName(String lName) {
-        this.lName = lName;
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
     }
 
-    public String getfName() {
-        return fName;
+    public String getFirstName() {
+        return firstName;
     }
 
-    public void setfName(String fName) {
-        this.fName = fName;
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
     }
 
     public int getAge() {

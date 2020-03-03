@@ -8,6 +8,7 @@ import UI.utils.Commands;
 import model.domain.Client;
 import model.domain.Movie;
 import model.exceptions.DataTypeException;
+import model.exceptions.MyException;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -41,8 +42,13 @@ public class Console {
 
         System.out.println("Input Client Name: ");
         String name = scanner.nextLine();
-
-        clientService.filterClientsByName(name).forEach(System.out::println);
+        try {
+            clientService.filterClientsByName(name).forEach(System.out::println);
+        }
+        catch( MyException e)
+        {
+            System.out.println(e.getMessage());
+        }
     }
 
     private void uiDeleteClient() {
@@ -57,8 +63,13 @@ public class Console {
         } catch (NumberFormatException E) {
             throw new DataTypeException();
         }
-
-        clientService.deleteClient(id);
+        try {
+            clientService.deleteClient(id);
+        }
+        catch( MyException e)
+        {
+            System.out.println(e.getMessage());
+        }
     }
 
     private void uiUpdateClient() {
@@ -89,10 +100,14 @@ public class Console {
             throw new DataTypeException();
         }
 
-        Client client = new Client(clientNumber, fName, lName, age);
-        client.setId(id);
-
-        clientService.updateClient(client);
+        Client client = new Client(id,clientNumber, fName, lName, age);
+        try {
+            clientService.updateClient(client);
+        }
+        catch( MyException e)
+        {
+            System.out.println(e.getMessage());
+        }
     }
 
     private void initFunctionLinks() {
@@ -143,14 +158,21 @@ public class Console {
             throw new DataTypeException();
         }
 
-        Movie movie = new Movie(movieNumber, title, year, mainStar, director, genre);
-        movie.setId(id);
-
-        movieService.updateMovie(movie);
+        Movie movie = new Movie(id,movieNumber, title, year, mainStar, director, genre);
+        try {
+            movieService.updateMovie(movie);
+        }
+        catch( MyException e)
+        {
+            System.out.println(e.getMessage());
+        }
     }
 
     private void uiAddMovie() {
         Scanner scanner = new Scanner(System.in);
+
+        System.out.println("Input Movie ID: ");
+        String movieID = scanner.nextLine();
 
         System.out.println("Input Movie Number: ");
         String movieNumber = scanner.nextLine();
@@ -171,16 +193,21 @@ public class Console {
         String genre = scanner.nextLine();
 
         int year;
-
+        long id;
         try {
             year = Integer.parseInt(yearStr);
+            id=Long.parseLong(movieID);
         } catch (NumberFormatException e) {
             throw new DataTypeException();
         }
 
-        Movie movie = new Movie(movieNumber, title, year, mainStar, director, genre);
-
-        movieService.addMovie(movie);
+        Movie movie = new Movie(id,movieNumber, title, year, mainStar, director, genre);
+        try {
+            movieService.addMovie(movie);
+        }catch( MyException e)
+        {
+            System.out.println(e.getMessage());
+        }
     }
 
     private void uiFilterMovieByTitle() {
@@ -188,8 +215,13 @@ public class Console {
 
         System.out.println("Input Movie Title: ");
         String name = scanner.nextLine();
-
-        movieService.filterMoviesByTitle(name).forEach(System.out::println);
+        try {
+            movieService.filterMoviesByTitle(name).forEach(System.out::println);
+        }
+        catch( MyException e)
+        {
+            System.out.println(e.getMessage());
+        }
     }
 
     private void uiPrintAllMovie() {
@@ -208,8 +240,12 @@ public class Console {
         } catch (NumberFormatException E) {
             throw new DataTypeException();
         }
-
-        movieService.deleteMovie(id);
+        try {
+            movieService.deleteMovie(id);
+        }catch( MyException e)
+        {
+            System.out.println(e.getMessage());
+        }
     }
 
 
@@ -219,6 +255,9 @@ public class Console {
 
     private void uiAddClient() {
         Scanner scanner = new Scanner(System.in);
+
+        System.out.println("Input Client ID: ");
+        String clientID = scanner.nextLine();
 
         System.out.println("Input Client Number: ");
         String clientNumber = scanner.nextLine();
@@ -233,16 +272,22 @@ public class Console {
         String ageStr = scanner.nextLine();
 
         int age;
-
+        long id;
         try {
             age = Integer.parseInt(ageStr);
+            id= Long.parseLong(clientID);
         } catch (NumberFormatException e) {
             throw new DataTypeException();
         }
 
-        Client client = new Client(clientNumber, fName, lName, age);
-
-        clientService.addClient(client);
+        Client client = new Client(id,clientNumber, fName, lName, age);
+        try {
+            clientService.addClient(client);
+        }
+        catch( MyException e)
+        {
+            System.out.println(e.getMessage());
+        }
 
     }
 

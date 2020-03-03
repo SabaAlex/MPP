@@ -15,11 +15,11 @@ public class ClientValidator implements Validator<Client> {
      */
     @Override
     public void validate(Client entity) throws ValidatorException {
-        Optional.ofNullable(entity.getfName())
+        Optional.ofNullable(entity.getFirstName())
                 .filter(e -> !e.equals(""))
                 .orElseThrow(()-> new ValidatorException("First Name is empty"));
 
-        Optional.ofNullable(entity.getlName())
+        Optional.ofNullable(entity.getLastName())
                 .filter(e -> !e.equals(""))
                 .orElseThrow(()-> new ValidatorException("Last Name is empty"));
 
