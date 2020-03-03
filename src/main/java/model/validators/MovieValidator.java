@@ -21,10 +21,6 @@ public class MovieValidator implements Validator<Movie> {
                 .filter(e -> !e.equals(""))
                 .orElseThrow(()-> new ValidatorException("Title is empty"));
 
-        Optional.ofNullable(entity.getMovieNumber())
-                .filter(e -> !e.equals(""))
-                .orElseThrow(()-> new ValidatorException("Movie Number is empty"));
-
         Optional.ofNullable(entity.getDirector())
                 .filter(e -> !e.equals(""))
                 .orElseThrow(()-> new ValidatorException("Director is empty"));
