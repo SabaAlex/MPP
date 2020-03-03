@@ -33,14 +33,13 @@ public class MovieFileRepository extends InMemoryRepository<Long, Movie> {
                 List<String> items = Arrays.asList(line.split(","));
 
                 Long id = Long.valueOf(items.get(0));
-                String movieNumber=items.get(1);
-                String title=items.get(2);
-                String genre=items.get(3);
-                int yearOfRelease= Integer.valueOf(items.get(4));
-                String director=items.get(5);
-                String mainStar=items.get(6);
+                String title=items.get(1);
+                String genre=items.get(2);
+                int yearOfRelease= Integer.valueOf(items.get(3));
+                String director=items.get(4);
+                String mainStar=items.get(5);
 
-                Movie movie = new Movie(id,movieNumber,title,yearOfRelease,mainStar,director,genre);
+                Movie movie = new Movie(id,title,yearOfRelease,mainStar,director,genre);
 
                 try {
                     super.save(movie);
@@ -68,7 +67,7 @@ public class MovieFileRepository extends InMemoryRepository<Long, Movie> {
 
         try (BufferedWriter bufferedWriter = Files.newBufferedWriter(path, StandardOpenOption.APPEND)) {
             bufferedWriter.write(
-                    entity.getId() + "," + entity.getMovieNumber() + "," + entity.getTitle() + "," + entity.getYearOfRelease()+","+
+                    entity.getId() + "," + "," + entity.getTitle() + "," + entity.getYearOfRelease()+","+
                             entity.getMainStar()+","+entity.getDirector()+","+entity.getGenre());
             bufferedWriter.newLine();
         } catch (IOException e) {

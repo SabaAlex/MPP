@@ -78,8 +78,6 @@ public class Console {
         System.out.println("Input Old Client Id: ");
         String input = scanner.nextLine();
 
-        System.out.println("Input New Client Number: ");
-        String clientNumber = scanner.nextLine();
 
         System.out.println("Input New Client First Name: ");
         String fName = scanner.nextLine();
@@ -100,7 +98,7 @@ public class Console {
             throw new DataTypeException();
         }
 
-        Client client = new Client(id,clientNumber, fName, lName, age);
+        Client client = new Client(id, fName, lName, age);
         try {
             clientService.updateClient(client);
         }
@@ -158,7 +156,7 @@ public class Console {
             throw new DataTypeException();
         }
 
-        Movie movie = new Movie(id,movieNumber, title, year, mainStar, director, genre);
+        Movie movie = new Movie(id, title, year, mainStar, director, genre);
         try {
             movieService.updateMovie(movie);
         }
@@ -173,9 +171,6 @@ public class Console {
 
         System.out.println("Input Movie ID: ");
         String movieID = scanner.nextLine();
-
-        System.out.println("Input Movie Number: ");
-        String movieNumber = scanner.nextLine();
 
         System.out.println("Input Movie Title: ");
         String title = scanner.nextLine();
@@ -201,7 +196,7 @@ public class Console {
             throw new DataTypeException();
         }
 
-        Movie movie = new Movie(id,movieNumber, title, year, mainStar, director, genre);
+        Movie movie = new Movie(id, title, year, mainStar, director, genre);
         try {
             movieService.addMovie(movie);
         }catch( MyException e)
@@ -259,9 +254,6 @@ public class Console {
         System.out.println("Input Client ID: ");
         String clientID = scanner.nextLine();
 
-        System.out.println("Input Client Number: ");
-        String clientNumber = scanner.nextLine();
-
         System.out.println("Input Client First Name: ");
         String fName = scanner.nextLine();
 
@@ -280,7 +272,7 @@ public class Console {
             throw new DataTypeException();
         }
 
-        Client client = new Client(id,clientNumber, fName, lName, age);
+        Client client = new Client(id, fName, lName, age);
         try {
             clientService.addClient(client);
         }
@@ -315,13 +307,13 @@ public class Console {
 
             String cmd = commands.getCommandValue(key);
 
+            if (cmd.equals("Exit"))
+                return;
+
             if (!fctLinks.containsKey(cmd)) {
                 System.out.println("Functionality not yet implemented!");
                 continue;
             }
-
-            if (cmd.equals("Exit"))
-                return;
 
             try {
                 fctLinks.get(cmd).run();
