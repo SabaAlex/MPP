@@ -69,21 +69,30 @@ public class MoviesInMemoryRepositoryTest {
         opt.ifPresent(optional->{throw new MyException("It will break");});
     }
 
-    @Ignore
+
     @Test
-    public void testDelete() throws Exception {
-        fail("Not yet tested");
+    public void testDelete() throws Exception,Throwable {
+        movies.delete(ID).orElseThrow(()->{throw new MyException("It will break");});
+        assertEquals("Lengths should be equal",length(movies.findAll()),4);
+    }
+    @Test(expected=MyException.class)
+    public void testDeleteException() throws MyException ,Throwable{
+        movies.delete(7L).orElseThrow(()->{throw new MyException("It should break");});
+
+    }
+    @Test
+    public void testUpdate() throws MyException,Throwable {
+        Movie movie=new Movie(3L,"m1","title",2000,"ms5","d1","g22");
+        Optional<Movie> opt = movies.update(movie);
+        opt.orElseThrow(()->{throw new MyException("It will break");});
+        Movie updated=movies.findOne(3L).orElseThrow(()->{throw new MyException("It will break");});
+        assertEquals("Title should be equal",updated.getTitle(),"title");
     }
 
-    @Ignore
-    @Test
-    public void testUpdate() throws Exception {
-        fail("Not yet tested");
-    }
-
-    @Ignore
     @Test(expected = MyException.class)
-    public void testUpdateException() throws Exception {
-        fail("Not yet tested");
+    public void testUpdateException() throws Exception,Throwable {
+        Movie movie=new Movie(7L,"c1","t",2000,"f5","l1","21");
+        Optional<Movie> opt = movies.update(movie);
+        opt.orElseThrow(()->{throw new MyException("No client with that name");});
     }
 }

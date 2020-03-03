@@ -74,6 +74,12 @@ public class ClientInMemoryRepositoryTest {
         assertEquals("Lengths should be equal",length(clients.findAll()),4);
     }
 
+    @Test(expected=MyException.class)
+    public void testDeleteException() throws MyException ,Throwable{
+        clients.delete(7L).orElseThrow(()->{throw new MyException("It should break");});
+
+    }
+
     @Test
     public void testUpdate() throws MyException,Throwable {
         Client client=new Client(3L,"c1","f5","l1",21);
@@ -83,9 +89,10 @@ public class ClientInMemoryRepositoryTest {
         assertEquals("Number should be equal",updated.getClientNumber(),"c1");
     }
 
-    @Ignore
     @Test(expected = MyException.class)
-    public void testUpdateException() throws Exception {
-        fail("Not yet tested");
+    public void testUpdateException() throws Exception,Throwable {
+        Client client=new Client(7L,"c1","f5","l1",21);
+        Optional<Client> opt = clients.update(client);
+        opt.orElseThrow(()->{throw new MyException("No client with that name");});
     }
 }
