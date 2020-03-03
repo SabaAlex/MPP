@@ -49,7 +49,6 @@ public class Commands {
      */
     private void initCommands() {
         commands.put(0, "Exit");
-        commands.put(commands.size(), "Help");
         for (ClientOptions clientOptions : ClientOptions.values())
             commands.put(commands.size(), clientOptions.getCmdMessage());
         for (MovieOptions movieOptions : MovieOptions.values())

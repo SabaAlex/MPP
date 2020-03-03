@@ -109,7 +109,6 @@ public class Console {
     }
 
     private void initFunctionLinks() {
-        fctLinks.put("Help", this::printMenu);
         fctLinks.put(ClientOptions.ADD.getCmdMessage(), this::uiAddClient);
         fctLinks.put(ClientOptions.PRINT.getCmdMessage(), this::uiPrintAllClients);
         fctLinks.put(ClientOptions.FILTER.getCmdMessage(), this::uiFilterClientsByName);
@@ -289,6 +288,8 @@ public class Console {
         printMenu();
 
         while (true) {
+
+            printMenu();
 
             System.out.println("Enter input");
             String input = scanner.nextLine();

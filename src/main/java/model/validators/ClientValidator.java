@@ -23,7 +23,6 @@ public class ClientValidator implements Validator<Client> {
                 .filter(e -> !e.equals(""))
                 .orElseThrow(()-> new ValidatorException("Last Name is empty"));
 
-
         Optional.ofNullable(entity.getId())
                 .orElseThrow(()-> new ValidatorException("Id is empty"));
 
