@@ -82,6 +82,9 @@ public class RentalService {
      *
      * @return {@code Set} containing all the Clients Instances from the repository
      */
+
+
+
     public Set<Rental> getAllRentals()
     {
         Iterable<Rental> rentals=RentalRepository.findAll();
@@ -89,6 +92,14 @@ public class RentalService {
 
     }
 
+    public void DeleteClientRentals(Long id)
+    {
+        //TO DO
+    }
+    public void DeleteMovieRentals(Long id)
+    {
+        //TO DO
+    }
     /**
      * Filters all the rentals by their Years
      *

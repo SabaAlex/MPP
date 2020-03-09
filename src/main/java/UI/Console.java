@@ -112,6 +112,95 @@ public class Console {
             System.out.println(e.getMessage());
         }
     }
+
+    private void uiDeleteRental() {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.println("Input Rental Id: ");
+        String input = scanner.nextLine();
+
+        long id;
+        try {
+            id = Long.parseLong(input);
+        } catch (NumberFormatException E) {
+            throw new DataTypeException();
+        }
+        try {
+            rentalService.deleteRental(id);
+        }
+        catch( MyException e)
+        {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    private void uiFilterRentalsByYear() {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.println("Input renting year: ");
+        String yearString = scanner.nextLine();
+
+        int year;
+        try {
+            year = Integer.parseInt(yearString);
+        } catch (NumberFormatException E) {
+            throw new DataTypeException();
+        }
+        try {
+            rentalService.filterRentalsByYear(year).forEach(System.out::println);
+        }
+        catch( MyException e)
+        {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    private void uiUpdateRental()
+    {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Input Rental ID:");
+        String rentalID =scanner.nextLine();
+        System.out.println("Input new Client ID: ");
+        String clientID = scanner.nextLine();
+
+        System.out.println("Input new Movie ID: ");
+        String MovieID = scanner.nextLine();
+
+        System.out.println("Input new Rental Year: ");
+        String yearString = scanner.nextLine();
+
+        System.out.println("Input new Rental Month: ");
+        String monthString = scanner.nextLine();
+
+        System.out.println("Input new Rental Day: ");
+        String dayString = scanner.nextLine();
+
+        int day;
+        int month;
+        int year;
+        long movieId;
+        long clientId;
+        long id;
+        try {
+            day = Integer.parseInt(dayString);
+            month = Integer.parseInt(monthString);
+            year = Integer.parseInt(yearString);
+            clientId= Long.parseLong(clientID);
+            movieId= Long.parseLong(MovieID);
+            id= Long.parseLong(rentalID);
+        } catch (NumberFormatException e) {
+            throw new DataTypeException();
+        }
+
+        Rental rental = new Rental(id, clientId, movieId,year,month, day);
+        try {
+            rentalService.updateRental(rental);
+        }
+        catch( MyException e)
+        {
+            System.out.println(e.getMessage());
+        }
+    }
     private void uiAddRental()
     {
         Scanner scanner = new Scanner(System.in);
@@ -176,6 +265,9 @@ public class Console {
         fctLinks.put(MovieOptions.UPDATE.getCmdMessage(), this::uiUpdateMovie);
         fctLinks.put(RentalOptions.ADD.getCmdMessage(), this::uiAddRental);
         fctLinks.put(RentalOptions.PRINT.getCmdMessage(), this::uiPrintAllRentals);
+        fctLinks.put(MovieOptions.FILTER.getCmdMessage(), this::uiFilterRentalsByYear);
+        fctLinks.put(MovieOptions.DELETE.getCmdMessage(), this::uiDeleteRental);
+        fctLinks.put(MovieOptions.UPDATE.getCmdMessage(), this::uiUpdateRental);
     }
 
     private void uiUpdateMovie() {
