@@ -1,10 +1,14 @@
 import Service.ClientService;
 import Service.MovieService;
+import Service.RentalService;
 import UI.Console;
 import model.domain.Client;
 import model.domain.Movie;
+import model.domain.Rental;
 import model.validators.ClientValidator;
 import model.validators.MovieValidator;
+import model.validators.RentalValidator;
+import model.validators.Validator;
 import repository.IRepository;
 import repository.InMemoryRepository;
 
@@ -16,11 +20,15 @@ public class Main {
         MovieValidator movieValidator = new MovieValidator();
         IRepository<Long, Movie> inMemoryRepositoryMovie = new InMemoryRepository(movieValidator);
 
+        RentalValidator rentalValidator = new RentalValidator();
+        IRepository<Long, Rental> inMemoryRepositoryRental = new InMemoryRepository(rentalValidator);
         ClientService clientService = new ClientService(inMemoryRepositoryClient);
 
         MovieService movieService = new MovieService(inMemoryRepositoryMovie);
 
-        Console console = new Console(clientService, movieService);
+        RentalService rentalService= new RentalService(inMemoryRepositoryClient,inMemoryRepositoryMovie,inMemoryRepositoryRental);
+
+        Console console = new Console(clientService, movieService,rentalService);
 
         console.run();
     }

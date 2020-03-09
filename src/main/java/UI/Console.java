@@ -2,11 +2,14 @@ package UI;
 
 import Service.ClientService;
 import Service.MovieService;
+import Service.RentalService;
 import UI.options.ClientOptions;
 import UI.options.MovieOptions;
+import UI.options.RentalOptions;
 import UI.utils.Commands;
 import model.domain.Client;
 import model.domain.Movie;
+import model.domain.Rental;
 import model.exceptions.DataTypeException;
 import model.exceptions.MyException;
 
@@ -18,12 +21,14 @@ public class Console {
 
     private ClientService clientService;
     private MovieService movieService;
+    private RentalService rentalService;
     private Map<String, Runnable> fctLinks;
     private Commands commands;
 
-    public Console(ClientService clientService, MovieService movieService) {
+    public Console(ClientService clientService, MovieService movieService, RentalService rentalService) {
         this.clientService = clientService;
         this.movieService = movieService;
+        this.rentalService=rentalService;
         commands = new Commands();
         fctLinks = new HashMap<>();
         initFunctionLinks();
@@ -107,6 +112,56 @@ public class Console {
             System.out.println(e.getMessage());
         }
     }
+    private void uiAddRental()
+    {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Input Rental ID:");
+        String rentalID =scanner.nextLine();
+        System.out.println("Input Client ID: ");
+        String clientID = scanner.nextLine();
+
+        System.out.println("Input Movie ID: ");
+        String MovieID = scanner.nextLine();
+
+        System.out.println("Input Rental Year: ");
+        String yearString = scanner.nextLine();
+
+        System.out.println("Input Rental Month: ");
+        String monthString = scanner.nextLine();
+
+        System.out.println("Input Rental Day: ");
+        String dayString = scanner.nextLine();
+
+        int day;
+        int month;
+        int year;
+        long movieId;
+        long clientId;
+        long id;
+        try {
+            day = Integer.parseInt(dayString);
+            month = Integer.parseInt(monthString);
+            year = Integer.parseInt(yearString);
+            clientId= Long.parseLong(clientID);
+            movieId= Long.parseLong(MovieID);
+            id= Long.parseLong(rentalID);
+        } catch (NumberFormatException e) {
+            throw new DataTypeException();
+        }
+
+        Rental rental = new Rental(id, clientId, movieId,year,month, day);
+        try {
+            rentalService.addRental(rental);
+        }
+        catch( MyException e)
+        {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    private void uiPrintAllRentals() {
+        rentalService.getAllRentals().forEach(System.out::println);
+    }
 
     private void initFunctionLinks() {
         fctLinks.put(ClientOptions.ADD.getCmdMessage(), this::uiAddClient);
@@ -119,6 +174,8 @@ public class Console {
         fctLinks.put(MovieOptions.FILTER.getCmdMessage(), this::uiFilterMovieByTitle);
         fctLinks.put(MovieOptions.DELETE.getCmdMessage(), this::uiDeleteMovie);
         fctLinks.put(MovieOptions.UPDATE.getCmdMessage(), this::uiUpdateMovie);
+        fctLinks.put(RentalOptions.ADD.getCmdMessage(), this::uiAddRental);
+        fctLinks.put(RentalOptions.PRINT.getCmdMessage(), this::uiPrintAllRentals);
     }
 
     private void uiUpdateMovie() {
