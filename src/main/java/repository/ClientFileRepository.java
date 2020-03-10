@@ -18,9 +18,9 @@ import java.util.Optional;
 
 public class ClientFileRepository extends InMemoryRepository<Long, Client> {
     private String fileName;
-
+    private Validator<Client> validator;
     public ClientFileRepository(Validator<Client> validator, String fileName) {
-        super(validator);
+        this.validator=validator;
         this.fileName = fileName;
 
         loadData();
@@ -42,6 +42,7 @@ public class ClientFileRepository extends InMemoryRepository<Long, Client> {
                 Client client= new Client(id,firstName,lastName,age);
 
                 try {
+                    validator.validate(client);
                     super.save(client);
                 } catch (ValidatorException e) {
                     e.printStackTrace();

@@ -4,6 +4,7 @@ import model.domain.Client;
 import model.domain.Movie;
 import model.exceptions.MyException;
 import model.exceptions.ValidatorException;
+import model.validators.Validator;
 import repository.IRepository;
 import repository.MovieFileRepository;
 
@@ -15,9 +16,10 @@ import java.util.stream.StreamSupport;
 
 public class MovieService {
     private IRepository<Long, Movie> repository;
-
-    public MovieService(IRepository<Long,Movie> repository)
+    private Validator<Movie> validator;
+    public MovieService(IRepository<Long,Movie> repository,Validator<Movie> validator)
     {
+        this.validator=validator;
         this.repository=repository;
     }
 
@@ -32,7 +34,7 @@ public class MovieService {
      */
     public void addMovie(Movie movie) throws ValidatorException
     {
-
+        validator.validate(movie);
         repository.save(movie).ifPresent(optional->{throw new MyException("Movie already exists");});
     }
 
@@ -48,6 +50,7 @@ public class MovieService {
      */
     public Movie updateMovie(Movie movie) throws ValidatorException, MyException
     {
+        validator.validate(movie);
         return repository.update(movie).orElseThrow(()-> new MyException("No movie to update"));
     }
 

@@ -24,7 +24,7 @@ public class ClientInMemoryRepositoryTest {
     @Before
     public void setUp() throws Exception {
         ClientValidator= new ClientValidator();
-        clients=new InMemoryRepository<Long,Client>(ClientValidator);
+        clients=new InMemoryRepository<Long,Client>();
         Client client=new Client(1L,"f1","l1",21);
 
         clients.save(client);

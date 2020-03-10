@@ -20,9 +20,9 @@ import java.util.Optional;
 
 public class RentalFileRepository extends InMemoryRepository<Long, Rental> {
     private String fileName;
-
+    Validator<Rental> validator;
     public RentalFileRepository(Validator<Rental> validator, String fileName) {
-        super(validator);
+        this.validator=validator;
         this.fileName = fileName;
 
         loadData();
@@ -46,6 +46,7 @@ public class RentalFileRepository extends InMemoryRepository<Long, Rental> {
                 Rental rental = new Rental(id,ClientId,MovieID,year,month,day);
 
                 try {
+                    validator.validate(rental);
                     super.save(rental);
                 } catch (ValidatorException e) {
                     e.printStackTrace();
