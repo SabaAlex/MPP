@@ -33,8 +33,8 @@ public class MovieServiceTest {
     public void setUp() throws Exception {
 
         MovieValidator = new MovieValidator();
-        movies = new InMemoryRepository<Long, Movie>(MovieValidator);
-        movieService = new MovieService(movies);
+        movies = new InMemoryRepository<Long, Movie>();
+        movieService = new MovieService(movies,MovieValidator);
         movieArrayList = new ArrayList<>();
 
         startInterval = 1;

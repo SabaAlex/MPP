@@ -1,5 +1,6 @@
 package repository;
 
+import model.domain.Client;
 import model.domain.Movie;
 
 import model.exceptions.ValidatorException;
@@ -19,9 +20,9 @@ import java.util.Optional;
 
 public class MovieFileRepository extends InMemoryRepository<Long, Movie> {
     private String fileName;
-
+    private Validator<Movie> validator;
     public MovieFileRepository(Validator<Movie> validator, String fileName) {
-        super(validator);
+        this.validator=validator;
         this.fileName = fileName;
 
         loadData();
@@ -44,6 +45,7 @@ public class MovieFileRepository extends InMemoryRepository<Long, Movie> {
                 Movie movie = new Movie(id,title,yearOfRelease,mainStar,director,genre);
 
                 try {
+                    validator.validate(movie);
                     super.save(movie);
                 } catch (ValidatorException e) {
                     e.printStackTrace();

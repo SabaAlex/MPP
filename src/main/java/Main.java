@@ -24,11 +24,11 @@ public class Main {
         RentalValidator rentalValidator = new RentalValidator();
         IRepository<Long, Rental> inFileRepositoryRental = new RentalFileRepository(rentalValidator,Paths.get("projectResources\\Rentals.txt").toString());
 
-        ClientService clientService = new ClientService(inFileRepositoryClient);
+        ClientService clientService = new ClientService(inFileRepositoryClient,clientValidator);
 
-        MovieService movieService = new MovieService(inFileRepositoryMovie);
+        MovieService movieService = new MovieService(inFileRepositoryMovie,movieValidator);
 
-        RentalService rentalService= new RentalService(inFileRepositoryClient,inFileRepositoryMovie,inFileRepositoryRental);
+        RentalService rentalService= new RentalService(inFileRepositoryClient,inFileRepositoryMovie,inFileRepositoryRental,rentalValidator);
 
         Console console = new Console(clientService, movieService,rentalService);
 

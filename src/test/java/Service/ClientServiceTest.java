@@ -32,8 +32,8 @@ public class ClientServiceTest {
     public void setUp() throws Exception {
 
         ClientValidator= new ClientValidator();
-        clients=new InMemoryRepository<Long, Client>(ClientValidator);
-        clientService = new ClientService(clients);
+        clients=new InMemoryRepository<Long, Client>();
+        clientService = new ClientService(clients,ClientValidator);
         clientArrayList = new ArrayList<>();
 
         startInterval = 1;
