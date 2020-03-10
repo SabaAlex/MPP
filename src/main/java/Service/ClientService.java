@@ -4,6 +4,7 @@ import model.domain.Client;
 
 import model.exceptions.MyException;
 import model.exceptions.ValidatorException;
+import model.validators.Validator;
 import repository.ClientFileRepository;
 import repository.IRepository;
 import repository.MovieFileRepository;
@@ -17,9 +18,11 @@ import java.util.stream.StreamSupport;
 
 public class ClientService {
     private IRepository<Long, Client> repository;
+    private Validator<Client> validator;
 
-    public ClientService(IRepository<Long,Client> repository)
+    public ClientService(IRepository<Long,Client> repository,Validator<Client> validator)
     {
+        this.validator=validator;
         this.repository=repository;
     }
     /**
@@ -33,6 +36,7 @@ public class ClientService {
      */
     public void addClient(Client client) throws ValidatorException
     {
+        validator.validate(client);
         repository.save(client).ifPresent(optional->{throw new MyException("Client already exists");});
     }
 
@@ -48,6 +52,7 @@ public class ClientService {
      */
     public Client updateClient(Client client) throws ValidatorException,MyException
     {
+        validator.validate(client);
         return repository.update(client).orElseThrow(()-> new MyException("No client to update"));
     }
 

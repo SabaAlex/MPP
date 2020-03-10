@@ -5,6 +5,7 @@ import model.domain.Movie;
 import model.domain.Rental;
 import model.exceptions.MyException;
 import model.exceptions.ValidatorException;
+import model.validators.Validator;
 import repository.ClientFileRepository;
 import repository.IRepository;
 import repository.RentalFileRepository;
@@ -20,9 +21,11 @@ public class RentalService {
     private IRepository<Long, Client> ClientRepository;
     private IRepository<Long, Movie> MovieRepository;
     private IRepository<Long, Rental> RentalRepository;
-    public RentalService(IRepository<Long,Client> ClientRepository, IRepository<Long,Movie> MovieRepository, IRepository<Long,Rental> RentalRepository )
+    private Validator<Rental> validator;
+    public RentalService(IRepository<Long,Client> ClientRepository, IRepository<Long,Movie> MovieRepository, IRepository<Long,Rental> RentalRepository,Validator<Rental> validator )
 
     {
+        this.validator=validator;
         this.ClientRepository=ClientRepository;
         this.MovieRepository=MovieRepository;
         this.RentalRepository=RentalRepository;
@@ -44,6 +47,7 @@ public class RentalService {
     public void addRental(Rental rental) throws ValidatorException,MyException
     {
         checkIDs(rental.getClientID(),rental.getMovieID());
+        validator.validate(rental);
         RentalRepository.save(rental).ifPresent(optional->{throw new MyException("Rental already exists");});
     }
 
@@ -60,6 +64,7 @@ public class RentalService {
     public Rental updateRental(Rental rental) throws ValidatorException,MyException
     {
         checkIDs(rental.getClientID(),rental.getMovieID());
+        validator.validate(rental);
         return RentalRepository.update(rental).orElseThrow(()-> new MyException("No Rental to update"));
     }
 
