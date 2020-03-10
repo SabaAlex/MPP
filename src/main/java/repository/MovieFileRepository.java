@@ -67,8 +67,8 @@ public class MovieFileRepository extends InMemoryRepository<Long, Movie> {
 
         try (BufferedWriter bufferedWriter = Files.newBufferedWriter(path, StandardOpenOption.APPEND)) {
             bufferedWriter.write(
-                    entity.getId() + "," + "," + entity.getTitle() + "," + entity.getYearOfRelease()+","+
-                            entity.getMainStar()+","+entity.getDirector()+","+entity.getGenre());
+                    entity.getId() + ","  + entity.getTitle() + "," + entity.getGenre()+","+
+                            entity.getYearOfRelease()+","+entity.getDirector()+","+entity.getMainStar());
             bufferedWriter.newLine();
         } catch (IOException e) {
             e.printStackTrace();
