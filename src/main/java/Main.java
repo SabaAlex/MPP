@@ -12,16 +12,19 @@ import model.validators.Validator;
 import repository.ClientFileRepository;
 import repository.IRepository;
 import repository.InMemoryRepository;
+import repository.MovieFileRepository;
+
+import java.nio.file.Paths;
 
 public class Main {
     public static void main(String[] args) {
         ClientValidator clientValidator = new ClientValidator();
-        ///IRepository<Long, Client> inMemoryRepositoryClient = new ClientFileRepository(clientValidator, Paths.get("C:\\University\\MPP\\projectResources\\Clients.txt").toString());
-        IRepository<Long, Client> inMemoryRepositoryClient = new InMemoryRepository<>(clientValidator);
+        IRepository<Long, Client> inMemoryRepositoryClient = new ClientFileRepository(clientValidator, Paths.get("projectResources\\Clients.txt").toString());
+        //IRepository<Long, Client> inMemoryRepositoryClient = new InMemoryRepository<>(clientValidator);
 
         MovieValidator movieValidator = new MovieValidator();
-        ///IRepository<Long, Movie> inMemoryRepositoryMovie= new MovieFileRepository(movieValidator, Paths.get("C:\\University\\MPP\\projectResources\\Clients.txt").toString());
-        IRepository<Long, Movie> inMemoryRepositoryMovie = new InMemoryRepository<>(movieValidator);
+        IRepository<Long, Movie> inMemoryRepositoryMovie= new MovieFileRepository(movieValidator, Paths.get("projectResources\\Movies.txt").toString());
+        //IRepository<Long, Movie> inMemoryRepositoryMovie = new InMemoryRepository<>(movieValidator);
 
         RentalValidator rentalValidator = new RentalValidator();
         IRepository<Long, Rental> inMemoryRepositoryRental = new InMemoryRepository(rentalValidator);
