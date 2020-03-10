@@ -2,11 +2,14 @@ package UI;
 
 import Service.ClientService;
 import Service.MovieService;
+import Service.RentalService;
 import UI.options.ClientOptions;
 import UI.options.MovieOptions;
+import UI.options.RentalOptions;
 import UI.utils.Commands;
 import model.domain.Client;
 import model.domain.Movie;
+import model.domain.Rental;
 import model.exceptions.DataTypeException;
 import model.exceptions.MyException;
 
@@ -18,12 +21,14 @@ public class Console {
 
     private ClientService clientService;
     private MovieService movieService;
+    private RentalService rentalService;
     private Map<String, Runnable> fctLinks;
     private Commands commands;
 
-    public Console(ClientService clientService, MovieService movieService) {
+    public Console(ClientService clientService, MovieService movieService, RentalService rentalService) {
         this.clientService = clientService;
         this.movieService = movieService;
+        this.rentalService=rentalService;
         commands = new Commands();
         fctLinks = new HashMap<>();
         initFunctionLinks();
@@ -108,6 +113,145 @@ public class Console {
         }
     }
 
+    private void uiDeleteRental() {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.println("Input Rental Id: ");
+        String input = scanner.nextLine();
+
+        long id;
+        try {
+            id = Long.parseLong(input);
+        } catch (NumberFormatException E) {
+            throw new DataTypeException();
+        }
+        try {
+            rentalService.deleteRental(id);
+        }
+        catch( MyException e)
+        {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    private void uiFilterRentalsByYear() {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.println("Input renting year: ");
+        String yearString = scanner.nextLine();
+
+        int year;
+        try {
+            year = Integer.parseInt(yearString);
+        } catch (NumberFormatException E) {
+            throw new DataTypeException();
+        }
+        try {
+            rentalService.filterRentalsByYear(year).forEach(System.out::println);
+        }
+        catch( MyException e)
+        {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    private void uiUpdateRental()
+    {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Input Rental ID:");
+        String rentalID =scanner.nextLine();
+        System.out.println("Input new Client ID: ");
+        String clientID = scanner.nextLine();
+
+        System.out.println("Input new Movie ID: ");
+        String MovieID = scanner.nextLine();
+
+        System.out.println("Input new Rental Year: ");
+        String yearString = scanner.nextLine();
+
+        System.out.println("Input new Rental Month: ");
+        String monthString = scanner.nextLine();
+
+        System.out.println("Input new Rental Day: ");
+        String dayString = scanner.nextLine();
+
+        int day;
+        int month;
+        int year;
+        long movieId;
+        long clientId;
+        long id;
+        try {
+            day = Integer.parseInt(dayString);
+            month = Integer.parseInt(monthString);
+            year = Integer.parseInt(yearString);
+            clientId= Long.parseLong(clientID);
+            movieId= Long.parseLong(MovieID);
+            id= Long.parseLong(rentalID);
+        } catch (NumberFormatException e) {
+            throw new DataTypeException();
+        }
+
+        Rental rental = new Rental(id, clientId, movieId,year,month, day);
+        try {
+            rentalService.updateRental(rental);
+        }
+        catch( MyException e)
+        {
+            System.out.println(e.getMessage());
+        }
+    }
+    private void uiAddRental()
+    {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Input Rental ID:");
+        String rentalID =scanner.nextLine();
+        System.out.println("Input Client ID: ");
+        String clientID = scanner.nextLine();
+
+        System.out.println("Input Movie ID: ");
+        String MovieID = scanner.nextLine();
+
+        System.out.println("Input Rental Year: ");
+        String yearString = scanner.nextLine();
+
+        System.out.println("Input Rental Month: ");
+        String monthString = scanner.nextLine();
+
+        System.out.println("Input Rental Day: ");
+        String dayString = scanner.nextLine();
+
+        int day;
+        int month;
+        int year;
+        long movieId;
+        long clientId;
+        long id;
+        try {
+            day = Integer.parseInt(dayString);
+            month = Integer.parseInt(monthString);
+            year = Integer.parseInt(yearString);
+            clientId= Long.parseLong(clientID);
+            movieId= Long.parseLong(MovieID);
+            id= Long.parseLong(rentalID);
+        } catch (NumberFormatException e) {
+            throw new DataTypeException();
+        }
+
+        Rental rental = new Rental(id, clientId, movieId,year,month, day);
+        try {
+            rentalService.addRental(rental);
+        }
+        catch( MyException e)
+        {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    private void uiPrintAllRentals() {
+        rentalService.getAllRentals().forEach(System.out::println);
+    }
+
     private void initFunctionLinks() {
         fctLinks.put(ClientOptions.ADD.getCmdMessage(), this::uiAddClient);
         fctLinks.put(ClientOptions.PRINT.getCmdMessage(), this::uiPrintAllClients);
@@ -119,6 +263,11 @@ public class Console {
         fctLinks.put(MovieOptions.FILTER.getCmdMessage(), this::uiFilterMovieByTitle);
         fctLinks.put(MovieOptions.DELETE.getCmdMessage(), this::uiDeleteMovie);
         fctLinks.put(MovieOptions.UPDATE.getCmdMessage(), this::uiUpdateMovie);
+        fctLinks.put(RentalOptions.ADD.getCmdMessage(), this::uiAddRental);
+        fctLinks.put(RentalOptions.PRINT.getCmdMessage(), this::uiPrintAllRentals);
+        fctLinks.put(MovieOptions.FILTER.getCmdMessage(), this::uiFilterRentalsByYear);
+        fctLinks.put(MovieOptions.DELETE.getCmdMessage(), this::uiDeleteRental);
+        fctLinks.put(MovieOptions.UPDATE.getCmdMessage(), this::uiUpdateRental);
     }
 
     private void uiUpdateMovie() {

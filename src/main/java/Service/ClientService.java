@@ -23,7 +23,7 @@ public class ClientService {
     /**
      * Calls the repository save method with a given Client Object
      *
-     * @param client created movie object to be passed over to the repository
+     * @param client created client object to be passed over to the repository
      * @throws ValidatorException
      *             if the entity is not valid.
      * @throws MyException

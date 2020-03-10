@@ -2,6 +2,7 @@ package UI.utils;
 
 import UI.options.ClientOptions;
 import UI.options.MovieOptions;
+import UI.options.RentalOptions;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -45,7 +46,9 @@ public class Commands {
 
     /**
      * Adds to the command map all the existing commands the enums that contain commands for each service
-     * ClientOptions & MovieOptions
+     * ClientOptions
+     * MovieOptions
+     * Rental
      */
     private void initCommands() {
         commands.put(0, "Exit");
@@ -53,5 +56,7 @@ public class Commands {
             commands.put(commands.size(), clientOptions.getCmdMessage());
         for (MovieOptions movieOptions : MovieOptions.values())
             commands.put(commands.size(), movieOptions.getCmdMessage());
+        for (RentalOptions rentalOptions : RentalOptions.values())
+            commands.put(commands.size(), rentalOptions.getCmdMessage());
     }
 }
