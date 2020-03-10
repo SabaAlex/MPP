@@ -5,6 +5,7 @@ import model.domain.Movie;
 import model.domain.Rental;
 import model.exceptions.MyException;
 import model.exceptions.ValidatorException;
+import repository.ClientFileRepository;
 import repository.IRepository;
 import repository.RentalFileRepository;
 
@@ -116,4 +117,9 @@ public class RentalService {
         return filteredRentals;
     }
 
+    public void saveToFile() {
+        if (RentalRepository instanceof RentalFileRepository){
+            ((RentalFileRepository)RentalRepository).saveToFile();
+        }
+    }
 }

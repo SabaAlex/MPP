@@ -4,7 +4,9 @@ import model.domain.Client;
 
 import model.exceptions.MyException;
 import model.exceptions.ValidatorException;
+import repository.ClientFileRepository;
 import repository.IRepository;
+import repository.MovieFileRepository;
 
 
 import java.util.HashSet;
@@ -93,5 +95,9 @@ public class ClientService {
     }
 
 
-
+    public void saveToFile() {
+        if (repository instanceof ClientFileRepository){
+            ((ClientFileRepository)repository).saveToFile();
+        }
+    }
 }

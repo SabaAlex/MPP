@@ -454,8 +454,10 @@ public class Console {
 
             String cmd = commands.getCommandValue(key);
 
-            if (cmd.equals("Exit"))
+            if (cmd.equals("Exit")) {
+                uiSaveToFile();
                 return;
+            }
 
             if (!fctLinks.containsKey(cmd)) {
                 System.out.println("Functionality not yet implemented!");
@@ -468,6 +470,12 @@ public class Console {
                 System.out.println(e.getMessage());
             }
         }
+    }
+
+    private void uiSaveToFile() {
+        clientService.saveToFile();
+        movieService.saveToFile();
+        rentalService.saveToFile();
     }
 }
 

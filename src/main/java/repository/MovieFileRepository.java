@@ -7,10 +7,12 @@ import model.validators.Validator;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -60,6 +62,28 @@ public class MovieFileRepository extends InMemoryRepository<Long, Movie> {
         }
         saveToFile(entity);
         return Optional.empty();
+    }
+
+    public void saveToFile(){
+        Path path = Paths.get(fileName);
+        Iterable<Movie> entityList = super.findAll();
+
+        try (PrintWriter printWriter = new PrintWriter(this.fileName)) {
+            printWriter.write("");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        entityList.forEach(entity -> {
+            try (BufferedWriter bufferedWriter = Files.newBufferedWriter(path, StandardOpenOption.APPEND)) {
+                bufferedWriter.write(
+                        entity.getId() + ","  + entity.getTitle() + "," + entity.getGenre()+","+
+                                entity.getYearOfRelease()+","+entity.getDirector()+","+entity.getMainStar());
+                bufferedWriter.newLine();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
     }
 
     private void saveToFile(Movie entity) {

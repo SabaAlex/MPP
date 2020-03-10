@@ -1,5 +1,6 @@
 package repository;
 
+import model.domain.Client;
 import model.domain.Movie;
 
 import model.domain.Rental;
@@ -8,6 +9,7 @@ import model.validators.Validator;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -69,11 +71,34 @@ public class RentalFileRepository extends InMemoryRepository<Long, Rental> {
 
         try (BufferedWriter bufferedWriter = Files.newBufferedWriter(path, StandardOpenOption.APPEND)) {
             bufferedWriter.write(
-                    entity.getId() + "," + "," + entity.getClientID() + "," + entity.getMovieID()+","+
+                    entity.getId() + "," + entity.getClientID() + "," + entity.getMovieID()+","+
                             entity.getYear()+","+entity.getMonth()+","+entity.getDay());
             bufferedWriter.newLine();
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public void saveToFile(){
+        Path path = Paths.get(fileName);
+
+        Iterable<Rental> entityList = super.findAll();
+
+        try (PrintWriter printWriter = new PrintWriter(this.fileName)) {
+            printWriter.write("");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        entityList.forEach(entity -> {
+            try (BufferedWriter bufferedWriter = Files.newBufferedWriter(path, StandardOpenOption.APPEND)) {
+                bufferedWriter.write(
+                        entity.getId() + "," + entity.getClientID() + "," + entity.getMovieID()+","+
+                                entity.getYear()+","+entity.getMonth()+","+entity.getDay());
+                bufferedWriter.newLine();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
     }
 }

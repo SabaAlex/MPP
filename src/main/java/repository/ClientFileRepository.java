@@ -6,6 +6,7 @@ import model.validators.Validator;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -61,12 +62,34 @@ public class ClientFileRepository extends InMemoryRepository<Long, Client> {
         return Optional.empty();
     }
 
+    public void saveToFile(){
+        Path path = Paths.get(fileName);
+
+        Iterable<Client> entityList = super.findAll();
+
+        try (PrintWriter printWriter = new PrintWriter(this.fileName)) {
+            printWriter.write("");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        entityList.forEach(entity -> {
+            try (BufferedWriter bufferedWriter = Files.newBufferedWriter(path, StandardOpenOption.APPEND)) {
+                bufferedWriter.write(
+                        entity.getId() + "," + entity.getFirstName() + "," + entity.getLastName()+","+ entity.getAge());
+                bufferedWriter.newLine();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
     private void saveToFile(Client entity) {
         Path path = Paths.get(fileName);
 
         try (BufferedWriter bufferedWriter = Files.newBufferedWriter(path, StandardOpenOption.APPEND)) {
             bufferedWriter.write(
-                    entity.getId() + ","  + "," + entity.getFirstName() + "," + entity.getLastName()+","+
+                    entity.getId() + ","  + entity.getFirstName() + "," + entity.getLastName()+","+
                             entity.getAge());
             bufferedWriter.newLine();
         } catch (IOException e) {
