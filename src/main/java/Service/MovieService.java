@@ -10,6 +10,7 @@ import repository.MovieFileRepository;
 
 
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -21,6 +22,11 @@ public class MovieService {
     {
         this.validator=validator;
         this.repository=repository;
+    }
+
+    public Optional<Movie> FindOne(Long ID)
+    {
+        return this.repository.findOne(ID);
     }
 
     /**

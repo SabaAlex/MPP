@@ -25,6 +25,11 @@ public class ClientService {
         this.validator=validator;
         this.repository=repository;
     }
+
+    public Optional<Client> FindOne(Long ID)
+    {
+        return this.repository.findOne(ID);
+    }
     /**
      * Calls the repository save method with a given Client Object
      *

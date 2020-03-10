@@ -12,28 +12,29 @@ import repository.RentalFileRepository;
 
 import java.time.Year;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 public class RentalService {
 
-    private IRepository<Long, Client> ClientRepository;
-    private IRepository<Long, Movie> MovieRepository;
+    private ClientService clientServ;
+    private MovieService movieServ;
     private IRepository<Long, Rental> RentalRepository;
     private Validator<Rental> validator;
-    public RentalService(IRepository<Long,Client> ClientRepository, IRepository<Long,Movie> MovieRepository, IRepository<Long,Rental> RentalRepository,Validator<Rental> validator )
+    public RentalService(ClientService clientServ,MovieService movieServ,IRepository<Long,Rental> RentalRepository,Validator<Rental> validator )
 
     {
         this.validator=validator;
-        this.ClientRepository=ClientRepository;
-        this.MovieRepository=MovieRepository;
+        this.clientServ=clientServ;
+        this.movieServ=movieServ;
         this.RentalRepository=RentalRepository;
     }
     public void checkIDs(Long ClientID,Long MovieID)
     {
-        ClientRepository.findOne(ClientID).orElseThrow(()->new MyException("Invalid Client ID"));
-        MovieRepository.findOne(MovieID).orElseThrow(()->new MyException("Invalid Movie ID"));
+        clientServ.FindOne(ClientID).orElseThrow(()->new MyException("Client ID not found! "));
+        movieServ.FindOne(MovieID).orElseThrow(()->new MyException("Movie ID not found! "));
     }
     /**
      * Calls the repository save method with a given Rental Object

@@ -28,7 +28,7 @@ public class Main {
 
         MovieService movieService = new MovieService(inFileRepositoryMovie,movieValidator);
 
-        RentalService rentalService= new RentalService(inFileRepositoryClient,inFileRepositoryMovie,inFileRepositoryRental,rentalValidator);
+        RentalService rentalService= new RentalService(clientService,movieService,inFileRepositoryRental,rentalValidator);
 
         Console console = new Console(clientService, movieService,rentalService);
 
