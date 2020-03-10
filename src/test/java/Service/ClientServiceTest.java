@@ -39,11 +39,12 @@ public class ClientServiceTest {
         startInterval = 1;
         endInterval = 21;
 
-        IntStream.range(startInterval, endInterval)
-                .peek(i -> clientArrayList.add(new Client((long) i,"f" + Integer.toString(i),"l" + Integer.toString(i), i)));
+        for (int i = startInterval; i < endInterval; i++){
+            Client client = new Client((long) i,"f" + Integer.toString(i),"l" + Integer.toString(i), i);
+            clientArrayList.add(client);
+            clientService.addClient(client);
+        }
 
-        IntStream.range(0, clientArrayList.size())
-                .peek(n -> clientService.addClient(clientArrayList.get(n)));
     }
 
     public long length(Iterable<Client> clients)
@@ -61,7 +62,7 @@ public class ClientServiceTest {
 
     @Test
     public void updateClient() throws MyException {
-        Client client=new Client(3L,"f5","l1",21);
+        Client client = new Client(130L,"f5","l1",21);
         try {
             clientService.updateClient(client);
         }

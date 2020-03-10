@@ -40,11 +40,12 @@ public class MovieServiceTest {
         startInterval = 1;
         endInterval = 21;
 
-        IntStream.range(startInterval, endInterval)
-                .peek(i -> movieArrayList.add(new Movie((long) i,"t" + Integer.toString(i),1900 + i,"ms" + Integer.toString(i),"d" + Integer.toString(i),"g"  + Integer.toString(i))));
+        for (int i = startInterval; i < endInterval; i++){
+            Movie movie = new Movie((long) i,"t" + Integer.toString(i),1900 + i,"ms" + Integer.toString(i),"d" + Integer.toString(i),"g"  + Integer.toString(i));
+            movieArrayList.add(movie);
+            movieService.addMovie(movie);
+        }
 
-        IntStream.range(0, movieArrayList.size())
-                .peek(n -> movieService.addMovie(movieArrayList.get(n)));
     }
 
     public long length(Iterable<Movie> movies)
@@ -63,7 +64,7 @@ public class MovieServiceTest {
 
     @Test
     public void updateMovie() {
-        Movie movie=new Movie(3L,"t8",2010,"ms5","d1","g21");
+        Movie movie=new Movie(130L,"t8",2010,"ms5","d1","g21");
         try {
             movieService.updateMovie(movie);
         }
@@ -73,7 +74,7 @@ public class MovieServiceTest {
 
         List<Movie> updatedMovie = movieService.filterMoviesByTitle("t8").stream().filter(client1 -> client1.getId() == 3L).collect(Collectors.toList());
 
-        Optional<Client> opt = Optional.ofNullable(updatedMovie.get(0));
+        Optional<Movie> opt = Optional.ofNullable(updatedMovie.get(0));
 
         opt.ifPresent(optional->{throw new MyException("It will break");});
     }
