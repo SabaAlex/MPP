@@ -36,10 +36,10 @@ public class Rental extends BaseEntity<Long> {
     public String toString() {
         return "Rental ID: '" + getId() + '\'' +
                 ", Client ID: '" + ClientID + '\'' +
-                ", Movie ID: " + MovieID + '\'' +
-                ", Year: " + year + '\'' +
-                ", Month: " + month + '\'' +
-                ", Day:" + day;
+                ", Movie ID: '" + MovieID + '\'' +
+                ", Year: '" + year + '\'' +
+                ", Month: '" + month + '\'' +
+                ", Day: '" + day+"\'";
     }
 
     public Long getClientID() {

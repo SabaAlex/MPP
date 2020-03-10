@@ -9,31 +9,26 @@ import model.validators.ClientValidator;
 import model.validators.MovieValidator;
 import model.validators.RentalValidator;
 import model.validators.Validator;
-import repository.ClientFileRepository;
-import repository.IRepository;
-import repository.InMemoryRepository;
-import repository.MovieFileRepository;
+import repository.*;
 
 import java.nio.file.Paths;
 
 public class Main {
     public static void main(String[] args) {
         ClientValidator clientValidator = new ClientValidator();
-        IRepository<Long, Client> inMemoryRepositoryClient = new ClientFileRepository(clientValidator, Paths.get("projectResources\\Clients.txt").toString());
-        //IRepository<Long, Client> inMemoryRepositoryClient = new InMemoryRepository<>(clientValidator);
+        IRepository<Long, Client> inFileRepositoryClient = new ClientFileRepository(clientValidator, Paths.get("projectResources\\Clients.txt").toString());
 
         MovieValidator movieValidator = new MovieValidator();
-        IRepository<Long, Movie> inMemoryRepositoryMovie= new MovieFileRepository(movieValidator, Paths.get("projectResources\\Movies.txt").toString());
-        //IRepository<Long, Movie> inMemoryRepositoryMovie = new InMemoryRepository<>(movieValidator);
+        IRepository<Long, Movie> inFileRepositoryMovie= new MovieFileRepository(movieValidator, Paths.get("projectResources\\Movies.txt").toString());
 
         RentalValidator rentalValidator = new RentalValidator();
-        IRepository<Long, Rental> inMemoryRepositoryRental = new InMemoryRepository(rentalValidator);
+        IRepository<Long, Rental> inFileRepositoryRental = new RentalFileRepository(rentalValidator,Paths.get("projectResources\\Rentals.txt").toString());
 
-        ClientService clientService = new ClientService(inMemoryRepositoryClient);
+        ClientService clientService = new ClientService(inFileRepositoryClient);
 
-        MovieService movieService = new MovieService(inMemoryRepositoryMovie);
+        MovieService movieService = new MovieService(inFileRepositoryMovie);
 
-        RentalService rentalService= new RentalService(inMemoryRepositoryClient,inMemoryRepositoryMovie,inMemoryRepositoryRental);
+        RentalService rentalService= new RentalService(inFileRepositoryClient,inFileRepositoryMovie,inFileRepositoryRental);
 
         Console console = new Console(clientService, movieService,rentalService);
 
