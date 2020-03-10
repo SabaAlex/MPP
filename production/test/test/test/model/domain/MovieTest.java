@@ -24,8 +24,7 @@ public class MovieTest {
 
     @Before
     public void setUp() throws Exception {
-        movie = new Movie(NUMBER, TITLE,YEAR,MainStar,DIRECTOR,GENRE );
-        movie.setId(ID);
+        movie = new Movie(ID,NUMBER, TITLE,YEAR,MainStar,DIRECTOR,GENRE );
     }
 
     @After

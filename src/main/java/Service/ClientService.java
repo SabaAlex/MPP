@@ -4,10 +4,13 @@ import model.domain.Client;
 
 import model.exceptions.MyException;
 import model.exceptions.ValidatorException;
+import repository.ClientFileRepository;
 import repository.IRepository;
+import repository.MovieFileRepository;
 
 
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -22,7 +25,7 @@ public class ClientService {
     /**
      * Calls the repository save method with a given Client Object
      *
-     * @param client created movie object to be passed over to the repository
+     * @param client created client object to be passed over to the repository
      * @throws ValidatorException
      *             if the entity is not valid.
      * @throws MyException
@@ -92,5 +95,9 @@ public class ClientService {
     }
 
 
-
+    public void saveToFile() {
+        if (repository instanceof ClientFileRepository){
+            ((ClientFileRepository)repository).saveToFile();
+        }
+    }
 }

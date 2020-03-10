@@ -27,15 +27,15 @@ public class MoviesInMemoryRepositoryTest {
     public void setUp() throws Exception {
         Movie_Validator= new MovieValidator();
         movies=new InMemoryRepository<Long,Movie>(Movie_Validator);
-        Movie movie=new Movie(1l,"c1","t1",2000,"ms1","d1","g1");
+        Movie movie=new Movie(1l,"t1",2000,"ms1","d1","g1");
         movies.save(movie);
-        Movie movie2=new Movie(2L,"m2","f1",2000,"ms2","d1","g1");
+        Movie movie2=new Movie(2L,"f1",2000,"ms2","d1","g1");
         movies.save(movie2);
-        Movie movie3=new Movie(3L,"m3","t3",2001,"ms2","d4","g23");
+        Movie movie3=new Movie(3L,"t3",2001,"ms2","d4","g23");
         movies.save(movie3);
-        Movie movie4=new Movie(4L,"m4","t4",2000,"ms2","d5","g21");
+        Movie movie4=new Movie(4L,"t4",2000,"ms2","d5","g21");
         movies.save(movie4);
-        Movie movie5=new Movie(5L,"m5","t1",2005,"ms2","d5","g25");
+        Movie movie5=new Movie(5L,"t1",2005,"ms2","d5","g25");
         movies.save(movie5);
     }
 
@@ -57,14 +57,14 @@ public class MoviesInMemoryRepositoryTest {
 
     @Test
     public void testSave() throws Exception {
-        movies.save(new Movie(7l,"m6","t5",2009,"ms1","d6","g21"));
+        movies.save(new Movie(7l,"t5",2009,"ms1","d6","g21"));
         assertEquals("Lenght should be 6 ",length(movies.findAll()),6);
     }
 
 
     @Test(expected = MyException.class)
     public void testSaveException() throws Exception {
-        Movie movie=new Movie(3L,"m1","t8",2010,"ms5","d1","g21");
+        Movie movie=new Movie(3L,"t8",2010,"ms5","d1","g21");
         Optional<Movie> opt = movies.save(movie);
         opt.ifPresent(optional->{throw new MyException("It will break");});
     }
@@ -82,7 +82,7 @@ public class MoviesInMemoryRepositoryTest {
     }
     @Test
     public void testUpdate() throws MyException,Throwable {
-        Movie movie=new Movie(3L,"m1","title",2000,"ms5","d1","g22");
+        Movie movie=new Movie(3L,"title",2000,"ms5","d1","g22");
         Optional<Movie> opt = movies.update(movie);
         opt.orElseThrow(()->{throw new MyException("It will break");});
         Movie updated=movies.findOne(3L).orElseThrow(()->{throw new MyException("It will break");});
@@ -91,7 +91,7 @@ public class MoviesInMemoryRepositoryTest {
 
     @Test(expected = MyException.class)
     public void testUpdateException() throws Exception,Throwable {
-        Movie movie=new Movie(7L,"c1","t",2000,"f5","l1","21");
+        Movie movie=new Movie(7L,"t",2000,"f5","l1","21");
         Optional<Movie> opt = movies.update(movie);
         opt.orElseThrow(()->{throw new MyException("No client with that name");});
     }

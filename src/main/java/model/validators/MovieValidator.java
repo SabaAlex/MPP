@@ -21,10 +21,6 @@ public class MovieValidator implements Validator<Movie> {
                 .filter(e -> !e.equals(""))
                 .orElseThrow(()-> new ValidatorException("Title is empty"));
 
-        Optional.ofNullable(entity.getMovieNumber())
-                .filter(e -> !e.equals(""))
-                .orElseThrow(()-> new ValidatorException("Movie Number is empty"));
-
         Optional.ofNullable(entity.getDirector())
                 .filter(e -> !e.equals(""))
                 .orElseThrow(()-> new ValidatorException("Director is empty"));
@@ -32,8 +28,8 @@ public class MovieValidator implements Validator<Movie> {
         Optional.ofNullable(entity.getMainStar())
                 .orElseThrow(()-> new ValidatorException("Main Star is empty"));
 
-        Optional.of(entity.getYearOfRelease())
-                .filter(e -> e > 0 && e < Year.now().getValue())
+        Optional.ofNullable(entity.getYearOfRelease())
+                .filter(e -> e > 1900 && e < Year.now().getValue())
                 .orElseThrow(()-> new ValidatorException("Year is wrong"));
 
         Optional.ofNullable(entity.getId())

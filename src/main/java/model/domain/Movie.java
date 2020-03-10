@@ -3,7 +3,6 @@ package model.domain;
 import java.util.Objects;
 
 public class Movie extends BaseEntity<Long> {
-    private String movieNumber;
     private String title;
     private  String genre;
     private int yearOfRelease;
@@ -13,8 +12,7 @@ public class Movie extends BaseEntity<Long> {
 
     @Override
     public String toString() {
-        return "Movie Number='" + movieNumber + '\'' +
-                ", Title='" + title + '\'' +
+        return "Title='" + title + '\'' +
                 ", Year Of Release=" + yearOfRelease +
                 ", Main Star='" + mainStar + '\'' +
                 ", Director='" + director + '\'' +
@@ -27,18 +25,17 @@ public class Movie extends BaseEntity<Long> {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Movie movie = (Movie) o;
-        return getMovieNumber().equals(movie.getMovieNumber());
+        return super.getId().equals(movie.getId());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getMovieNumber());
+        return Objects.hash(getId());
     }
 
     public Movie(){
 
         setId(0L);
-        movieNumber = "";
         title = "";
         yearOfRelease = 0;
         mainStar = "";
@@ -46,22 +43,13 @@ public class Movie extends BaseEntity<Long> {
         genre = "";
     }
 
-    public Movie(Long ID,String movieNumber, String title, int yearOfRelease ,String mainStar, String director, String genre) {
+    public Movie(Long ID, String title, int yearOfRelease ,String mainStar, String director, String genre) {
         super.setId(ID);
-        this.movieNumber = movieNumber;
         this.title = title;
         this.genre = genre;
         this.yearOfRelease = yearOfRelease;
         this.director = director;
         this.mainStar = mainStar;
-    }
-
-    public String getMovieNumber() {
-        return movieNumber;
-    }
-
-    public void setMovieNumber(String movieNumber) {
-        this.movieNumber = movieNumber;
     }
 
     public String getTitle() {

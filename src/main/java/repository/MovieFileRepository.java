@@ -7,10 +7,12 @@ import model.validators.Validator;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -33,14 +35,13 @@ public class MovieFileRepository extends InMemoryRepository<Long, Movie> {
                 List<String> items = Arrays.asList(line.split(","));
 
                 Long id = Long.valueOf(items.get(0));
-                String movieNumber=items.get(1);
-                String title=items.get(2);
-                String genre=items.get(3);
-                int yearOfRelease= Integer.valueOf(items.get(4));
-                String director=items.get(5);
-                String mainStar=items.get(6);
+                String title=items.get(1);
+                String genre=items.get(2);
+                int yearOfRelease= Integer.valueOf(items.get(3));
+                String director=items.get(4);
+                String mainStar=items.get(5);
 
-                Movie movie = new Movie(id,movieNumber,title,yearOfRelease,mainStar,director,genre);
+                Movie movie = new Movie(id,title,yearOfRelease,mainStar,director,genre);
 
                 try {
                     super.save(movie);
@@ -63,13 +64,35 @@ public class MovieFileRepository extends InMemoryRepository<Long, Movie> {
         return Optional.empty();
     }
 
+    public void saveToFile(){
+        Path path = Paths.get(fileName);
+        Iterable<Movie> entityList = super.findAll();
+
+        try (PrintWriter printWriter = new PrintWriter(this.fileName)) {
+            printWriter.write("");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        entityList.forEach(entity -> {
+            try (BufferedWriter bufferedWriter = Files.newBufferedWriter(path, StandardOpenOption.APPEND)) {
+                bufferedWriter.write(
+                        entity.getId() + ","  + entity.getTitle() + "," + entity.getGenre()+","+
+                                entity.getYearOfRelease()+","+entity.getDirector()+","+entity.getMainStar());
+                bufferedWriter.newLine();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
     private void saveToFile(Movie entity) {
         Path path = Paths.get(fileName);
 
         try (BufferedWriter bufferedWriter = Files.newBufferedWriter(path, StandardOpenOption.APPEND)) {
             bufferedWriter.write(
-                    entity.getId() + "," + entity.getMovieNumber() + "," + entity.getTitle() + "," + entity.getYearOfRelease()+","+
-                            entity.getMainStar()+","+entity.getDirector()+","+entity.getGenre());
+                    entity.getId() + ","  + entity.getTitle() + "," + entity.getGenre()+","+
+                            entity.getYearOfRelease()+","+entity.getDirector()+","+entity.getMainStar());
             bufferedWriter.newLine();
         } catch (IOException e) {
             e.printStackTrace();

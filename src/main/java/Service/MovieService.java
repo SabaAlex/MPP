@@ -5,6 +5,7 @@ import model.domain.Movie;
 import model.exceptions.MyException;
 import model.exceptions.ValidatorException;
 import repository.IRepository;
+import repository.MovieFileRepository;
 
 
 import java.util.HashSet;
@@ -93,5 +94,9 @@ public class MovieService {
     }
 
 
-
+    public void saveToFile() {
+        if (repository instanceof MovieFileRepository){
+            ((MovieFileRepository)repository).saveToFile();
+        }
+    }
 }
