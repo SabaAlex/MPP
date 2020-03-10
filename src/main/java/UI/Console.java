@@ -431,7 +431,6 @@ public class Console {
     public void run() {
 
         Scanner scanner = new Scanner(System.in);
-        printMenu();
 
         while (true) {
 
