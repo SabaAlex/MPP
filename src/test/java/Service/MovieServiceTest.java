@@ -73,7 +73,7 @@ public class MovieServiceTest {
 
         List<Movie> updatedMovie = movieService.filterMoviesByTitle("t8").stream().filter(client1 -> client1.getId() == 3L).collect(Collectors.toList());
 
-        Optional<Client> opt = Optional.ofNullable(updatedMovie.get(0));
+        Optional<Movie> opt = Optional.ofNullable(updatedMovie.get(0));
 
         opt.ifPresent(optional->{throw new MyException("It will break");});
     }
