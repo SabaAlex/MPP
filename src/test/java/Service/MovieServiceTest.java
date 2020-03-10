@@ -56,15 +56,18 @@ public class MovieServiceTest {
     @Test
     public void addMovie() {
         assertEquals("Length should be " + Integer.toString(movieArrayList.size()) + " ", length(movieService.getAllMovies()), movieArrayList.size());
-        IntStream.range(1, 21)
-                .peek(i -> movieService.addMovie(new Movie((long) i + 100,"t1",1900,"ms" + Integer.toString(i + 100),"d" + Integer.toString(i + 100),"g"  + Integer.toString(i + 100))));
+
+        for (int i = startInterval; i < endInterval; i++){
+            Movie movie = new Movie((long) i+100,"t" + Integer.toString(i+100),1900 + i,"ms" + Integer.toString(i),"d" + Integer.toString(i),"g"  + Integer.toString(i));
+            movieService.addMovie(movie);
+        }
         assertEquals("Length should be " + Integer.toString(movieArrayList.size() * 2) + " ", length(movieService.getAllMovies()), movieArrayList.size() * 2);
 
     }
 
     @Test
     public void updateMovie() {
-        Movie movie=new Movie(130L,"t8",2010,"ms5","d1","g21");
+        Movie movie=new Movie(1L,"t8",2010,"ms5","d1","g21");
         try {
             movieService.updateMovie(movie);
         }
@@ -72,11 +75,10 @@ public class MovieServiceTest {
             throw new MyException("It will break");
         }
 
-        List<Movie> updatedMovie = movieService.filterMoviesByTitle("t8").stream().filter(client1 -> client1.getId() == 3L).collect(Collectors.toList());
 
-        Optional<Movie> opt = Optional.ofNullable(updatedMovie.get(0));
+        Optional<Movie> opt = movies.findOne(movie.getId());
 
-        opt.ifPresent(optional->{throw new MyException("It will break");});
+        opt.orElseThrow(()-> new MyException("No movie to update"));
     }
 
     @Test(expected = MyException.class)
@@ -86,8 +88,9 @@ public class MovieServiceTest {
 
     @Test
     public void deleteMovie() {
-        IntStream.range(0, movieArrayList.size())
-                .peek(i -> movieService.deleteMovie(movieArrayList.get(i).getId()));
+        for (int i = startInterval; i < endInterval; i++){
+            movieService.deleteMovie((long)i);
+        }
 
         assertEquals("Length should be 0 ", length(movieService.getAllMovies()), 0);
     }
