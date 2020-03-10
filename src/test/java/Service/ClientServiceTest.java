@@ -55,14 +55,17 @@ public class ClientServiceTest {
     @Test
     public void addClient() {
         assertEquals("Length should be " + Integer.toString(clientArrayList.size()) + " ", length(clientService.getAllClients()), clientArrayList.size());
-        IntStream.range(startInterval, endInterval)
-                .peek(i -> clientService.addClient(new Client((long) i + 100,"f" + Integer.toString(i + 100),"l" + Integer.toString(i + 100), i + 100)));
-        assertEquals("Length should be " + Integer.toString(clientArrayList.size() * 2) + " ", length(clientService.getAllClients()), clientArrayList.size() * 2);
+
+        for (int i = startInterval; i < endInterval; i++){
+            clientService.addClient(new Client((long) i + 100,"f" + Integer.toString(i + 100),"l" + Integer.toString(i + 100), i + 100));
+        }
+
+       assertEquals("Length should be " + Integer.toString(clientArrayList.size() * 2) + " ", length(clientService.getAllClients()), clientArrayList.size() * 2);
     }
 
     @Test
     public void updateClient() throws MyException {
-        Client client = new Client(130L,"f5","l1",21);
+        Client client = new Client(1L,"f5","l1",21);
         try {
             clientService.updateClient(client);
         }
@@ -70,11 +73,9 @@ public class ClientServiceTest {
             throw new MyException("It will break");
         }
 
-        List<Client> updatedClients = clientService.filterClientsByName("f5").stream().filter(client1 -> client1.getId() == 3L).collect(Collectors.toList());
+        Optional<Client> opt = clients.findOne(client.getId());
 
-        Optional<Client> opt = Optional.ofNullable(updatedClients.get(0));
-
-        opt.ifPresent(optional->{throw new MyException("It will break");});
+        opt.orElseThrow(()-> new MyException("IT will break"));
 
     }
 
@@ -85,8 +86,7 @@ public class ClientServiceTest {
 
     @Test
     public void deleteClient() {
-        IntStream.range(0, clientArrayList.size())
-                .peek(i -> clientService.deleteClient(clientArrayList.get(i).getId()));
+        clientArrayList.forEach(i -> clientService.deleteClient(i.getId()));
 
         assertEquals("Length should be 0 ", length(clientService.getAllClients()), 0);
     }
