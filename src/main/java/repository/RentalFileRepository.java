@@ -4,6 +4,7 @@ import model.domain.Client;
 import model.domain.Movie;
 
 import model.domain.Rental;
+import model.exceptions.MyException;
 import model.exceptions.ValidatorException;
 import model.validators.Validator;
 
@@ -17,6 +18,9 @@ import java.nio.file.StandardOpenOption;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 public class RentalFileRepository extends InMemoryRepository<Long, Rental> {
     private String fileName;
@@ -46,6 +50,12 @@ public class RentalFileRepository extends InMemoryRepository<Long, Rental> {
                 Rental rental = new Rental(id,ClientId,MovieID,year,month,day);
 
                 try {
+                    Iterable<Rental> rentals=super.findAll();
+                    Set<Rental> filteredRentals= StreamSupport.stream(rentals.spliterator(),false).collect(Collectors.toSet());
+                    filteredRentals
+                            .stream()
+                            .filter(exists-> (exists.getClientID()==rental.getClientID()) && exists.getMovieID()==rental.getMovieID())
+                            .findFirst().ifPresent(optional->{throw new MyException("Error loading file rental for that movie and client exists");});
                     validator.validate(rental);
                     super.save(rental);
                 } catch (ValidatorException e) {
