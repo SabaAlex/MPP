@@ -10,6 +10,9 @@ import repository.ClientFileRepository;
 import repository.IRepository;
 import repository.RentalFileRepository;
 
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
+import java.io.IOException;
 import java.time.Year;
 import java.util.HashSet;
 import java.util.Optional;
@@ -99,13 +102,28 @@ public class RentalService {
 
     }
 
+
+
     public void DeleteClientRentals(Long id)
     {
-        //TO DO
+        Iterable<Rental> rentals=RentalRepository.findAll();
+        Set<Rental> filteredRentals=StreamSupport.stream(rentals.spliterator(),false).collect(Collectors.toSet());
+        filteredRentals
+                .stream()
+                .filter(toDeleteRentals-> !((toDeleteRentals.getClientID()) ==id))
+                .forEach(toDelete->{RentalRepository.delete(toDelete.getId());}
+                );
+
     }
     public void DeleteMovieRentals(Long id)
     {
-        //TO DO
+        Iterable<Rental> rentals=RentalRepository.findAll();
+        Set<Rental> filteredRentals=StreamSupport.stream(rentals.spliterator(),false).collect(Collectors.toSet());
+        filteredRentals
+                .stream()
+                .filter(toDeleteRentals-> !((toDeleteRentals.getMovieID()) ==id))
+                .forEach(toDelete->{RentalRepository.delete(toDelete.getId());}
+                );
     }
     /**
      * Filters all the rentals by their Years
