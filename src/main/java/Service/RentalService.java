@@ -10,6 +10,9 @@ import repository.ClientFileRepository;
 import repository.IRepository;
 import repository.RentalFileRepository;
 
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
+import java.io.IOException;
 import java.time.Year;
 import java.util.HashSet;
 import java.util.Optional;
@@ -48,6 +51,13 @@ public class RentalService {
     public void addRental(Rental rental) throws ValidatorException,MyException
     {
         checkIDs(rental.getClientID(),rental.getMovieID());
+        Iterable<Rental> rentals=RentalRepository.findAll();
+        Set<Rental> filteredRentals=StreamSupport.stream(rentals.spliterator(),false).collect(Collectors.toSet());
+        filteredRentals
+                .stream()
+                .filter(exists-> (exists.getClientID()==rental.getClientID()) && exists.getMovieID()==rental.getMovieID())
+                .findFirst().ifPresent(optional->{throw new MyException("Rental for that movie and client exists");});
+
         validator.validate(rental);
         RentalRepository.save(rental).ifPresent(optional->{throw new MyException("Rental already exists");});
     }
@@ -99,13 +109,28 @@ public class RentalService {
 
     }
 
+
+
     public void DeleteClientRentals(Long id)
     {
-        //TO DO
+        Iterable<Rental> rentals=RentalRepository.findAll();
+        Set<Rental> filteredRentals=StreamSupport.stream(rentals.spliterator(),false).collect(Collectors.toSet());
+        filteredRentals
+                .stream()
+                .filter(toDeleteRentals-> (toDeleteRentals.getClientID() ==id))
+                .forEach(toDelete->{RentalRepository.delete(toDelete.getId());}
+                );
+
     }
     public void DeleteMovieRentals(Long id)
     {
-        //TO DO
+        Iterable<Rental> rentals=RentalRepository.findAll();
+        Set<Rental> filteredRentals=StreamSupport.stream(rentals.spliterator(),false).collect(Collectors.toSet());
+        filteredRentals
+                .stream()
+                .filter(toDeleteRentals-> !((toDeleteRentals.getMovieID()) ==id))
+                .forEach(toDelete->{RentalRepository.delete(toDelete.getId());}
+                );
     }
     /**
      * Filters all the rentals by their Years

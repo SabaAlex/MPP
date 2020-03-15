@@ -70,6 +70,7 @@ public class Console {
         }
         try {
             clientService.deleteClient(id);
+            rentalService.DeleteClientRentals(id);
         }
         catch( MyException e)
         {
@@ -382,6 +383,7 @@ public class Console {
         }
         try {
             movieService.deleteMovie(id);
+            rentalService.DeleteMovieRentals(id);
         }catch( MyException e)
         {
             System.out.println(e.getMessage());
