@@ -24,8 +24,8 @@ public class Main {
             IRepository<Long, Movie> inFileRepositoryMovie = new MovieFileRepository(movieValidator, Paths.get("projectResources\\Movies.txt").toString());
 
             RentalValidator rentalValidator = new RentalValidator();
-            IRepository<Long, Rental> inFileRepositoryRental = new RentalFileRepository(rentalValidator, Paths.get("projectResources\\Rentals.txt").toString());
-
+            //IRepository<Long, Rental> inFileRepositoryRental = new RentalFileRepository(rentalValidator, Paths.get("projectResources\\Rentals.txt").toString());
+            IRepository<Long, Rental> inFileRepositoryRental = new RentalXMLRepository(rentalValidator, Paths.get("projectResources\\Rentals.xml").toString());
             ClientService clientService = new ClientService(inFileRepositoryClient, clientValidator);
 
             MovieService movieService = new MovieService(inFileRepositoryMovie, movieValidator);

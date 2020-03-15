@@ -1,7 +1,5 @@
 package repository;
 
-package repository;
-
 import model.domain.Client;
 import model.domain.Movie;
 
@@ -18,6 +16,7 @@ import org.xml.sax.SAXException;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
@@ -111,27 +110,50 @@ public class RentalXMLRepository extends InMemoryRepository<Long, Rental> {
         if (optional.isPresent()) {
             return optional;
         }
-        saveToFile(entity);
+        saveRental(entity,this.fileName);
         return Optional.empty();
     }
 
-    private static void saveRental(Rental rental,String fileName) throws ParserConfigurationException, IOException, SAXException, TransformerException {
-        org.w3c.dom.Document document=  DocumentBuilderFactory
-                .newInstance()
-                .newDocumentBuilder()
-                .parse(fileName);
+    public void saveToFile(){
 
-        Element root=document.getDocumentElement();
+        Iterable<Rental> entityList = super.findAll();
 
-        Node rentalNode=rentalToNode(rental,document);
 
-        root.appendChild(rentalNode);
+        entityList.forEach(entity -> {
+            saveRental(entity,this.fileName);
+        });
+    }
 
-        //TODO save in XML
+    private static void saveRental(Rental rental,String fileName) {
+        try {
+            org.w3c.dom.Document document = DocumentBuilderFactory
+                    .newInstance()
+                    .newDocumentBuilder()
+                    .parse(fileName);
 
-        Transformer transformer= TransformerFactory.newInstance().newTransformer();
+            Element root = document.getDocumentElement();
 
-        transformer.transform(new DOMSource(document),new StreamResult(new File(fileName)));
+            Node rentalNode = rentalToNode(rental, document);
+
+            root.appendChild(rentalNode);
+
+            //TODO save in XML
+
+            Transformer transformer = TransformerFactory.newInstance().newTransformer();
+
+            transformer.transform(new DOMSource(document), new StreamResult(new File(fileName)));
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        } catch (TransformerConfigurationException e) {
+            e.printStackTrace();
+        } catch (ParserConfigurationException e) {
+            e.printStackTrace();
+        } catch (SAXException e) {
+            e.printStackTrace();
+        } catch (TransformerException e) {
+            e.printStackTrace();
+        }
 
     }
 
