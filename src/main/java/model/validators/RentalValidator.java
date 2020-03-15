@@ -30,7 +30,7 @@ public class RentalValidator implements Validator<Rental> {
                 .filter(e -> e > 0 && e <=12)
                 .orElseThrow(()->new ValidatorException("Month is empty or the value is not between 1 and 12"));
         Optional.ofNullable(entity.getDay())
-                .filter(e-> e > 1 && e <= 31 )
+                .filter(e-> e >= 1 && e <= 31 )
                 .orElseThrow(()->new ValidatorException("Day is empty or the value is not between 1 and 31"));
     }
 }

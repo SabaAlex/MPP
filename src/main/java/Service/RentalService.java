@@ -9,6 +9,7 @@ import model.validators.Validator;
 import repository.ClientFileRepository;
 import repository.IRepository;
 import repository.RentalFileRepository;
+import repository.RentalXMLRepository;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
@@ -74,7 +75,13 @@ public class RentalService {
      */
     public Rental updateRental(Rental rental) throws ValidatorException,MyException
     {
-        checkIDs(rental.getClientID(),rental.getMovieID());
+
+        Optional<Rental> found_rental=RentalRepository.findOne(rental.getId());
+        found_rental.orElseThrow(()-> new MyException("No Rental to update"));
+        Long ClientID=found_rental.get().getClientID();
+        Long MovieID=found_rental.get().getMovieID();
+        rental.setClientID(ClientID);
+        rental.setMovieID(MovieID);
         validator.validate(rental);
         return RentalRepository.update(rental).orElseThrow(()-> new MyException("No Rental to update"));
     }
@@ -151,6 +158,10 @@ public class RentalService {
     public void saveToFile() {
         if (RentalRepository instanceof RentalFileRepository){
             ((RentalFileRepository)RentalRepository).saveToFile();
+        }
+        else if(RentalRepository instanceof RentalXMLRepository)
+        {
+            ((RentalXMLRepository)RentalRepository).saveToFile();
         }
     }
 }

@@ -50,6 +50,7 @@ public class RentalFileRepository extends InMemoryRepository<Long, Rental> {
                 Rental rental = new Rental(id,ClientId,MovieID,year,month,day);
 
                 try {
+
                     Iterable<Rental> rentals=super.findAll();
                     Set<Rental> filteredRentals= StreamSupport.stream(rentals.spliterator(),false).collect(Collectors.toSet());
                     filteredRentals

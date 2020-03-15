@@ -161,11 +161,6 @@ public class Console {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Input Rental ID:");
         String rentalID =scanner.nextLine();
-        System.out.println("Input new Client ID: ");
-        String clientID = scanner.nextLine();
-
-        System.out.println("Input new Movie ID: ");
-        String MovieID = scanner.nextLine();
 
         System.out.println("Input new Rental Year: ");
         String yearString = scanner.nextLine();
@@ -179,15 +174,13 @@ public class Console {
         int day;
         int month;
         int year;
-        long movieId;
-        long clientId;
+        long movieId=0L;
+        long clientId=0L;
         long id;
         try {
             day = Integer.parseInt(dayString);
             month = Integer.parseInt(monthString);
             year = Integer.parseInt(yearString);
-            clientId= Long.parseLong(clientID);
-            movieId= Long.parseLong(MovieID);
             id= Long.parseLong(rentalID);
         } catch (NumberFormatException e) {
             throw new DataTypeException();
@@ -266,9 +259,9 @@ public class Console {
         fctLinks.put(MovieOptions.UPDATE.getCmdMessage(), this::uiUpdateMovie);
         fctLinks.put(RentalOptions.ADD.getCmdMessage(), this::uiAddRental);
         fctLinks.put(RentalOptions.PRINT.getCmdMessage(), this::uiPrintAllRentals);
-        fctLinks.put(MovieOptions.FILTER.getCmdMessage(), this::uiFilterRentalsByYear);
-        fctLinks.put(MovieOptions.DELETE.getCmdMessage(), this::uiDeleteRental);
-        fctLinks.put(MovieOptions.UPDATE.getCmdMessage(), this::uiUpdateRental);
+        fctLinks.put(RentalOptions.FILTER.getCmdMessage(), this::uiFilterRentalsByYear);
+        fctLinks.put(RentalOptions.DELETE.getCmdMessage(), this::uiDeleteRental);
+        fctLinks.put(RentalOptions.UPDATE.getCmdMessage(), this::uiUpdateRental);
     }
 
     private void uiUpdateMovie() {
