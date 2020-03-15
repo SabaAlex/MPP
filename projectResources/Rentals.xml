@@ -1,1 +1,31 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?><rentals><rental rentalID="1"><clientID>2</clientID><movieID>1</movieID><year>2000</year><month>12</month><day>20</day></rental></rentals>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<rentals>
+    <rental rentalID="1">
+        <clientID>2</clientID>
+        <movieID>1</movieID>
+        <year>2000</year>
+        <month>12</month>
+        <day>20</day>
+    </rental>
+    <rental rentalID="4">
+        <clientID>1</clientID>
+        <movieID>1</movieID>
+        <year>2000</year>
+        <month>12</month>
+        <day>20</day>
+    </rental>
+    <rental rentalID="11">
+        <clientID>5</clientID>
+        <movieID>1</movieID>
+        <year>1999</year>
+        <month>10</month>
+        <day>1</day>
+    </rental>
+    <rental rentalID="44">
+        <clientID>2</clientID>
+        <movieID>4</movieID>
+        <year>1999</year>
+        <month>5</month>
+        <day>5</day>
+    </rental>
+</rentals>

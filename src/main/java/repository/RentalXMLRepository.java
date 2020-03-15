@@ -15,10 +15,7 @@ import org.xml.sax.SAXException;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerConfigurationException;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.*;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.awt.print.Book;
@@ -115,14 +112,38 @@ public class RentalXMLRepository extends InMemoryRepository<Long, Rental> {
     }
 
     public void saveToFile(){
-
         Iterable<Rental> entityList = super.findAll();
+        try {
+            org.w3c.dom.Document document = DocumentBuilderFactory
+                    .newInstance()
+                    .newDocumentBuilder()
+                    .newDocument();
 
+            Element root = document.createElement("rentals");
+            document.appendChild(root);
+            entityList.forEach(entity -> {
+                Node rentalNode = rentalToNode(entity, document);
 
-        entityList.forEach(entity -> {
-            saveRental(entity,this.fileName);
-        });
+                root.appendChild(rentalNode);;
+            });
+
+            Transformer transformer = TransformerFactory.
+                    newInstance().
+                    newTransformer();
+            transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
+            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+            transformer.transform(new DOMSource(document), new StreamResult(new File(fileName)));
+        }
+         catch (TransformerConfigurationException e) {
+            e.printStackTrace();
+        } catch (ParserConfigurationException e) {
+            e.printStackTrace();
+        } catch (TransformerException e) {
+            e.printStackTrace();
+        }
     }
+
+
 
     private static void saveRental(Rental rental,String fileName) {
         try {
@@ -138,9 +159,11 @@ public class RentalXMLRepository extends InMemoryRepository<Long, Rental> {
             root.appendChild(rentalNode);
 
             //TODO save in XML
-
-            Transformer transformer = TransformerFactory.newInstance().newTransformer();
-
+            Transformer transformer = TransformerFactory.
+                    newInstance().
+                    newTransformer();
+            transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
+            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
             transformer.transform(new DOMSource(document), new StreamResult(new File(fileName)));
         }
         catch (IOException e) {
