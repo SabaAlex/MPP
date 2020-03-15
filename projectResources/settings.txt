@@ -1,0 +1,3 @@
+clients,.txt
+movies,.txt
+rentals,.xml
