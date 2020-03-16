@@ -29,7 +29,7 @@ public class MovieValidator implements Validator<Movie> {
                 .orElseThrow(()-> new ValidatorException("Main Star is empty"));
 
         Optional.ofNullable(entity.getYearOfRelease())
-                .filter(e -> e > 1900 && e < Year.now().getValue())
+                .filter(e -> e > 1900 && e <= Year.now().getValue())
                 .orElseThrow(()-> new ValidatorException("Year is wrong"));
 
         Optional.ofNullable(entity.getId())

@@ -65,6 +65,4 @@ public class InMemoryRepository<ID, T extends BaseEntity<ID>> implements IReposi
         return Optional.ofNullable(entities.computeIfPresent(entity.getId(), (k, v) -> entity));
     }
 
-
-
 }

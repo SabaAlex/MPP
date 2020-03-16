@@ -18,7 +18,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-public class MovieFileRepository extends InMemoryRepository<Long, Movie> {
+public class MovieFileRepository extends InMemoryRepository<Long, Movie> implements SavesToFile {
     private String fileName;
     private Validator<Movie> validator;
     public MovieFileRepository(Validator<Movie> validator, String fileName) {
