@@ -6,18 +6,21 @@ import model.domain.Client;
 import model.domain.Movie;
 import model.domain.Rental;
 import model.exceptions.MyException;
-import model.exceptions.ValidatorException;
 import model.validators.ClientValidator;
 import model.validators.MovieValidator;
 import model.validators.RentalValidator;
-import model.validators.Validator;
 import repository.*;
+import repository.file.ClientFileRepository;
+import repository.file.MovieFileRepository;
+import repository.file.RentalFileRepository;
+import repository.xml.ClientXMLRepository;
+import repository.xml.MovieXMLRepository;
+import repository.xml.RentalXMLRepository;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
 import java.util.List;
 
 public class Main {
