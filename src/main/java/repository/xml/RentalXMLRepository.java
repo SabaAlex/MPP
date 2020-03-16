@@ -1,4 +1,4 @@
-package repository;
+package repository.xml;
 
 import model.domain.Rental;
 import model.validators.Validator;

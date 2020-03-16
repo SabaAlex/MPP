@@ -1,4 +1,4 @@
-package repository;
+package repository.xml;
 
 import model.domain.Movie;
 import model.validators.Validator;
