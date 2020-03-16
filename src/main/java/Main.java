@@ -35,28 +35,39 @@ public class Main {
             IRepository<Long, Movie> MovieRepository;
             RentalValidator rentalValidator = new RentalValidator();
             IRepository<Long, Rental> RentalRepository;
+
             if (client[1].equals(".txt")) {
                 ClientRepository = new ClientFileRepository(clientValidator, Paths.get("projectResources\\Clients.txt").toString());
-            } else {
+            }
+            else if(client[1].equals(".xml")) {
+                ClientRepository = new ClientXMLRepository(clientValidator, Paths.get("projectResources\\Clients.xml").toString());
+            }
+            else {
                 ClientRepository = new InMemoryRepository<>();
             }
+
             if (movie[1].equals(".txt")){
                 MovieRepository = new MovieFileRepository(movieValidator, Paths.get("projectResources\\Movies.txt").toString());
+            }
+            else if(movie[1].equals(".xml")) {
+                MovieRepository = new MovieXMLRepository(movieValidator, Paths.get("projectResources\\Movies.xml").toString());
             }
             else
             {
                 MovieRepository = new InMemoryRepository<>();
             }
+
             if(rental[1].equals(".txt")) {
                 RentalRepository = new RentalFileRepository(rentalValidator, Paths.get("projectResources\\Rentals.txt").toString());
             }
             else if(rental[1].equals(".xml")) {
-                RentalRepository=new RentalXMLRepository(rentalValidator, Paths.get("projectResources\\Rentals.xml").toString());
+                RentalRepository = new RentalXMLRepository(rentalValidator, Paths.get("projectResources\\Rentals.xml").toString());
             }
             else
             {
-                RentalRepository=new InMemoryRepository<>();
+                RentalRepository = new InMemoryRepository<>();
             }
+
             ClientService clientService = new ClientService(ClientRepository, clientValidator);
 
             MovieService movieService = new MovieService(MovieRepository, movieValidator);

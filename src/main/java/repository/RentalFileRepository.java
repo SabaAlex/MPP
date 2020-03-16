@@ -22,7 +22,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-public class RentalFileRepository extends InMemoryRepository<Long, Rental> {
+public class RentalFileRepository extends InMemoryRepository<Long, Rental> implements SavesToFile {
     private String fileName;
     Validator<Rental> validator;
     public RentalFileRepository(Validator<Rental> validator, String fileName) {

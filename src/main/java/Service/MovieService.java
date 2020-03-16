@@ -7,6 +7,7 @@ import model.exceptions.ValidatorException;
 import model.validators.Validator;
 import repository.IRepository;
 import repository.MovieFileRepository;
+import repository.SavesToFile;
 
 
 import java.util.HashSet;
@@ -104,8 +105,8 @@ public class MovieService {
 
 
     public void saveToFile() {
-        if (repository instanceof MovieFileRepository){
-            ((MovieFileRepository)repository).saveToFile();
+        if (repository instanceof SavesToFile){
+            ((SavesToFile)repository).saveToFile();
         }
     }
 }

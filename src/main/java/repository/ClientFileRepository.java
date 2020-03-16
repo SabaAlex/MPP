@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Optional;
 
 
-public class ClientFileRepository extends InMemoryRepository<Long, Client> {
+public class ClientFileRepository extends InMemoryRepository<Long, Client> implements SavesToFile {
     private String fileName;
     private Validator<Client> validator;
     public ClientFileRepository(Validator<Client> validator, String fileName) {

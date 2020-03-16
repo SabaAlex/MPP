@@ -6,10 +6,7 @@ import model.domain.Rental;
 import model.exceptions.MyException;
 import model.exceptions.ValidatorException;
 import model.validators.Validator;
-import repository.ClientFileRepository;
-import repository.IRepository;
-import repository.RentalFileRepository;
-import repository.RentalXMLRepository;
+import repository.*;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
@@ -156,12 +153,8 @@ public class RentalService {
     }
 
     public void saveToFile() {
-        if (RentalRepository instanceof RentalFileRepository){
-            ((RentalFileRepository)RentalRepository).saveToFile();
-        }
-        else if(RentalRepository instanceof RentalXMLRepository)
-        {
-            ((RentalXMLRepository)RentalRepository).saveToFile();
+        if (RentalRepository instanceof SavesToFile){
+            ((SavesToFile)RentalRepository).saveToFile();
         }
     }
 }
