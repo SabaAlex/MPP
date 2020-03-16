@@ -1,18 +1,16 @@
 package Service;
 
-import model.domain.Client;
 import model.domain.Movie;
+import model.domain.Rental;
 import model.exceptions.MyException;
 import model.exceptions.ValidatorException;
 import model.validators.Validator;
 import repository.IRepository;
-import repository.MovieFileRepository;
 import repository.SavesToFile;
 
 
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
+import java.time.Year;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -101,6 +99,15 @@ public class MovieService {
         movies.forEach(filteredMovies::add);
         filteredMovies.removeIf(movie->!(movie.getTitle().contains(title)) );
         return filteredMovies;
+    }
+
+
+    public Map<Integer, List<Movie>> statMostRichYearsInMovies(){
+        List<Movie> movieList = StreamSupport.stream(repository.findAll().spliterator(),false).collect(Collectors.toList());
+
+        return movieList.stream()
+                .collect(Collectors.groupingBy(Movie::getYearOfRelease))
+                ;
     }
 
 

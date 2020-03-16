@@ -24,7 +24,7 @@ public class RentalValidator implements Validator<Rental> {
         Optional.ofNullable(entity.getMovieID())
                 .orElseThrow(()->new ValidatorException("Movie ID is empty"));
         Optional.ofNullable(entity.getYear())
-                .filter(e -> e > 1970 && e < Year.now().getValue())
+                .filter(e -> e > 1970 && e <= Year.now().getValue())
                 .orElseThrow(()->new ValidatorException("Year is empty or the  value is not between 1970 and this year"));
         Optional.ofNullable(entity.getMonth())
                 .filter(e -> e > 0 && e <=12)

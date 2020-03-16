@@ -13,9 +13,10 @@ import model.domain.Rental;
 import model.exceptions.DataTypeException;
 import model.exceptions.MyException;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Scanner;
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class Console {
 
@@ -252,16 +253,53 @@ public class Console {
         fctLinks.put(ClientOptions.FILTER.getCmdMessage(), this::uiFilterClientsByName);
         fctLinks.put(ClientOptions.DELETE.getCmdMessage(), this::uiDeleteClient);
         fctLinks.put(ClientOptions.UPDATE.getCmdMessage(), this::uiUpdateClient);
+        fctLinks.put(ClientOptions.STAT.getCmdMessage(), this::uiStatOldestClients);
         fctLinks.put(MovieOptions.ADD.getCmdMessage(), this::uiAddMovie);
         fctLinks.put(MovieOptions.PRINT.getCmdMessage(), this::uiPrintAllMovie);
         fctLinks.put(MovieOptions.FILTER.getCmdMessage(), this::uiFilterMovieByTitle);
         fctLinks.put(MovieOptions.DELETE.getCmdMessage(), this::uiDeleteMovie);
         fctLinks.put(MovieOptions.UPDATE.getCmdMessage(), this::uiUpdateMovie);
+        fctLinks.put(MovieOptions.STAT.getCmdMessage(), this::uiStatMostRichYearsInMovies);
         fctLinks.put(RentalOptions.ADD.getCmdMessage(), this::uiAddRental);
         fctLinks.put(RentalOptions.PRINT.getCmdMessage(), this::uiPrintAllRentals);
         fctLinks.put(RentalOptions.FILTER.getCmdMessage(), this::uiFilterRentalsByYear);
         fctLinks.put(RentalOptions.DELETE.getCmdMessage(), this::uiDeleteRental);
         fctLinks.put(RentalOptions.UPDATE.getCmdMessage(), this::uiUpdateRental);
+        fctLinks.put(RentalOptions.STAT.getCmdMessage(), this::uiStatMonthsOfMostRentedMovie);
+    }
+
+    private void uiStatOldestClients() {
+        System.out.println("Top 5 oldest Clients: ");
+        IntStream.range(0, 5)
+                .mapToObj(index -> clientService.statOldestClients().get(index))
+                .forEach(client -> System.out.println("Age: " + client.getAge() +
+                        "\nName: " + client.getFirstName() + " " + client.getLastName() + "\n"
+                        ));
+    }
+
+    private void uiStatMostRichYearsInMovies() {
+        System.out.println("The most rich years in movies are: ");
+        movieService.statMostRichYearsInMovies()
+                .entrySet().stream()
+                .sorted((o1, o2) -> o2.getValue().size() - o1.getValue().size())
+                .forEach(integerListEntry -> System.out.println("Year: " + integerListEntry.getKey() +
+                        "\nMovies: " +
+                        integerListEntry.getValue().stream().map(Movie::getTitle).collect(Collectors.joining(", ")) +
+                        "\n"
+                ));
+    }
+
+    private void uiStatMonthsOfMostRentedMovie() {
+        Set<Rental> rentals = rentalService.statMostRentedMovieRentals();
+        System.out.println("Most ranted Movie: " + movieService.FindOne(rentals.iterator().next().getMovieID()).get().getTitle());
+        System.out.println("The rental months of the most rented movie: ");
+        rentals.stream()
+                .map(rental -> rental.getMonth())
+                .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()))
+                .entrySet()
+                .stream()
+                .sorted(((o1, o2) -> -1*o1.getValue().compareTo(o2.getValue())))
+                .forEach(entity -> System.out.println(entity.getKey()));
     }
 
     private void uiUpdateMovie() {

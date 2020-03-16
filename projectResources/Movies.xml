@@ -7,12 +7,26 @@
         <director>Quentin Tarantino</director>
         <genre>Master Piece</genre>
     </movie>
+    <movie Id="8">
+        <title>Mulan</title>
+        <year>2020</year>
+        <mainStar>Yifei Liu</mainStar>
+        <director>Niki Caro</director>
+        <genre>Drama, Action, Adventure</genre>
+    </movie>
     <movie Id="2">
         <title>Soul</title>
         <year>2020</year>
         <mainStar>Jamiee Foxx</mainStar>
         <director>Pete Docter</director>
         <genre>Animation</genre>
+    </movie>
+    <movie Id="19">
+        <title>Once Upon a Time... in Hollywood</title>
+        <year>2019</year>
+        <mainStar>Leonardo DiCaprio, Brad Pitt</mainStar>
+        <director>Quentin Tarantino</director>
+        <genre>Drama</genre>
     </movie>
     <movie Id="3">
         <title>1917</title>
