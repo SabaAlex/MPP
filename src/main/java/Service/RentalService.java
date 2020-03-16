@@ -1,20 +1,13 @@
 package Service;
 
-import model.domain.Client;
-import model.domain.Movie;
 import model.domain.Rental;
 import model.exceptions.MyException;
 import model.exceptions.ValidatorException;
 import model.validators.Validator;
 import repository.*;
 
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.TransformerException;
-import java.io.IOException;
-import java.time.Year;
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -132,7 +125,7 @@ public class RentalService {
         Set<Rental> filteredRentals=StreamSupport.stream(rentals.spliterator(),false).collect(Collectors.toSet());
         filteredRentals
                 .stream()
-                .filter(toDeleteRentals-> !((toDeleteRentals.getMovieID()) ==id))
+                .filter(toDeleteRentals-> !((toDeleteRentals.getMovieID()) == id))
                 .forEach(toDelete->{RentalRepository.delete(toDelete.getId());}
                 );
     }
@@ -149,6 +142,24 @@ public class RentalService {
         Set<Rental> filteredRentals=new HashSet<>();
         rentals.forEach(filteredRentals::add);
         filteredRentals.removeIf(rental->!(rental.getYear()==year) );
+        return filteredRentals;
+    }
+
+    public Set<Rental> statMostRentedMovieRentals(){
+        List<Rental> rentalsList = StreamSupport.stream(RentalRepository.findAll().spliterator(),false).collect(Collectors.toList());
+
+        Long mostRentedMovie = Collections.max(rentalsList.stream()
+                .map(Rental::getMovieID)
+                .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()))
+                .entrySet()
+                ,
+                Comparator.comparingLong(Map.Entry::getValue))
+                .getKey();
+
+        Set<Rental> filteredRentals = rentalsList.stream()
+                .filter(rental -> rental.getMovieID().equals(mostRentedMovie))
+                .collect(Collectors.toSet());
+
         return filteredRentals;
     }
 

@@ -2,16 +2,16 @@ package Service;
 
 import model.domain.Client;
 
+import model.domain.Movie;
 import model.exceptions.MyException;
 import model.exceptions.ValidatorException;
 import model.validators.Validator;
 import repository.*;
 
 
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import java.util.stream.StreamSupport;
 
 public class ClientService {
@@ -102,6 +102,12 @@ public class ClientService {
         return filteredClients;
     }
 
+    public List<Client> statOldestClients(){
+        return StreamSupport.stream(repository.findAll().spliterator(),false).collect(Collectors.toList())
+                .stream()
+                .sorted((o1, o2) -> o2.getAge() - o1.getAge())
+                .collect(Collectors.toList());
+    }
 
     public void saveToFile() {
         if (repository instanceof SavesToFile){
