@@ -304,8 +304,8 @@ public class Console {
             throw new DataTypeException();
         }
         Set<Rental> rentals = rentalService.statMostRentedMovieReleasedThatYearRentalsByClientsAgedMoreThan(release_year,age);
-        System.out.println("Most rented Movie: " + movieService.FindOne(rentals.iterator().next().getMovieID()).get().getTitle());
-        System.out.println("The rental months of the most rented movie: ");
+        System.out.println("Most rented Movie of the year "+yearString+" " + movieService.FindOne(rentals.iterator().next().getMovieID()).get().getTitle());
+        System.out.println("The rental months of the most rented movie by clients older than:"+ageString +" years");
         rentals.stream()
                 .map(rental -> rental.getMonth())
                 .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()))

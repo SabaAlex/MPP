@@ -9,7 +9,7 @@ public enum RentalOptions {
     FILTER("FILTER Rentals"),
     UPDATE("UPDATE Rentals"),
     DELETE("DELETE Rentals"),
-    STAT("Print the the sorted rented months(in terms of number of rents) of the most rented movie");
+    STAT("Print the the sorted rented months(in terms of number of rents) of the most rented movie of a given year by clients older than a given age:");
 
     private String cmdMessage;
 
