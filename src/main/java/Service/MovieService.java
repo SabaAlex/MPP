@@ -1,24 +1,31 @@
 package Service;
 
-import model.domain.Client;
 import model.domain.Movie;
+import model.domain.Rental;
 import model.exceptions.MyException;
 import model.exceptions.ValidatorException;
+import model.validators.Validator;
 import repository.IRepository;
-import repository.MovieFileRepository;
+import repository.SavesToFile;
 
 
-import java.util.HashSet;
-import java.util.Set;
+import java.time.Year;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 public class MovieService {
     private IRepository<Long, Movie> repository;
-
-    public MovieService(IRepository<Long,Movie> repository)
+    private Validator<Movie> validator;
+    public MovieService(IRepository<Long,Movie> repository,Validator<Movie> validator)
     {
+        this.validator=validator;
         this.repository=repository;
+    }
+
+    public Optional<Movie> FindOne(Long ID)
+    {
+        return this.repository.findOne(ID);
     }
 
     /**
@@ -32,7 +39,7 @@ public class MovieService {
      */
     public void addMovie(Movie movie) throws ValidatorException
     {
-
+        validator.validate(movie);
         repository.save(movie).ifPresent(optional->{throw new MyException("Movie already exists");});
     }
 
@@ -48,6 +55,7 @@ public class MovieService {
      */
     public Movie updateMovie(Movie movie) throws ValidatorException, MyException
     {
+        validator.validate(movie);
         return repository.update(movie).orElseThrow(()-> new MyException("No movie to update"));
     }
 
@@ -94,9 +102,18 @@ public class MovieService {
     }
 
 
+    public Map<Integer, List<Movie>> statMostRichYearsInMovies(){
+        List<Movie> movieList = StreamSupport.stream(repository.findAll().spliterator(),false).collect(Collectors.toList());
+
+        return movieList.stream()
+                .collect(Collectors.groupingBy(Movie::getYearOfRelease))
+                ;
+    }
+
+
     public void saveToFile() {
-        if (repository instanceof MovieFileRepository){
-            ((MovieFileRepository)repository).saveToFile();
+        if (repository instanceof SavesToFile){
+            ((SavesToFile)repository).saveToFile();
         }
     }
 }

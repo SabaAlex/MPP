@@ -26,7 +26,7 @@ public class MoviesInMemoryRepositoryTest {
     @Before
     public void setUp() throws Exception {
         Movie_Validator= new MovieValidator();
-        movies=new InMemoryRepository<Long,Movie>(Movie_Validator);
+        movies=new InMemoryRepository<Long,Movie>();
         Movie movie=new Movie(1l,"t1",2000,"ms1","d1","g1");
         movies.save(movie);
         Movie movie2=new Movie(2L,"f1",2000,"ms2","d1","g1");

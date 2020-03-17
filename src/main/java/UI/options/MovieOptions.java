@@ -8,7 +8,8 @@ public enum MovieOptions {
     PRINT("PRINT all Movies"),
     FILTER("FILTER Movies"),
     UPDATE("UPDATE Movie"),
-    DELETE("DELETE Movie");
+    DELETE("DELETE Movie"),
+    STAT("Print the most rich years in movies");
 
     private String cmdMessage;
 

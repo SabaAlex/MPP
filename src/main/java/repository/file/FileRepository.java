@@ -1,8 +1,11 @@
-package repository;
+package repository.file;
 
+import model.domain.BaseEntity;
 import model.domain.Client;
 import model.exceptions.ValidatorException;
 import model.validators.Validator;
+import repository.InMemoryRepository;
+import repository.SavesToFile;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -15,12 +18,12 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+public abstract class FileRepository<ID, T extends BaseEntity<ID>> extends InMemoryRepository<ID, T> implements SavesToFile {
 
-public class ClientFileRepository extends InMemoryRepository<Long, Client> {
     private String fileName;
-
-    public ClientFileRepository(Validator<Client> validator, String fileName) {
-        super(validator);
+    private Validator<T> validator;
+    public FileRepository(Validator<T> validator, String fileName){
+        this.validator = validator;
         this.fileName = fileName;
 
         loadData();
@@ -33,16 +36,11 @@ public class ClientFileRepository extends InMemoryRepository<Long, Client> {
             Files.lines(path).forEach(line -> {
                 List<String> items = Arrays.asList(line.split(","));
 
-                Long id = Long.valueOf(items.get(0));
-                String firstName=items.get(1);
-                String lastName=items.get(2);
-                int age=Integer.valueOf(items.get(3));
-
-
-                Client client= new Client(id,firstName,lastName,age);
+                T entity = this.createEntity(items);
 
                 try {
-                    super.save(client);
+                    validator.validate(entity);
+                    super.save(entity);
                 } catch (ValidatorException e) {
                     e.printStackTrace();
                 }
@@ -53,19 +51,30 @@ public class ClientFileRepository extends InMemoryRepository<Long, Client> {
     }
 
     @Override
-    public Optional<Client> save(Client entity) throws ValidatorException {
-        Optional<Client> optional = super.save(entity);
+    public Optional<T> save(T entity) throws ValidatorException {
+        Optional<T> optional = super.save(entity);
         if (optional.isPresent()) {
             return optional;
         }
-        saveToFile(entity);
+        addToFile(entity);
         return Optional.empty();
+    }
+
+    private void addToFile(T entity) {
+        Path path = Paths.get(this.fileName);
+
+        try (BufferedWriter bufferedWriter = Files.newBufferedWriter(path, StandardOpenOption.APPEND)) {
+            bufferedWriter.write(formatEntity(entity));
+            bufferedWriter.newLine();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void saveToFile(){
         Path path = Paths.get(fileName);
 
-        Iterable<Client> entityList = super.findAll();
+        Iterable<T> entityList = super.findAll();
 
         try (PrintWriter printWriter = new PrintWriter(this.fileName)) {
             printWriter.write("");
@@ -75,8 +84,7 @@ public class ClientFileRepository extends InMemoryRepository<Long, Client> {
 
         entityList.forEach(entity -> {
             try (BufferedWriter bufferedWriter = Files.newBufferedWriter(path, StandardOpenOption.APPEND)) {
-                bufferedWriter.write(
-                        entity.getId() + "," + entity.getFirstName() + "," + entity.getLastName()+","+ entity.getAge());
+                bufferedWriter.write(this.formatEntity(entity));
                 bufferedWriter.newLine();
             } catch (IOException e) {
                 e.printStackTrace();
@@ -84,16 +92,11 @@ public class ClientFileRepository extends InMemoryRepository<Long, Client> {
         });
     }
 
-    private void saveToFile(Client entity) {
-        Path path = Paths.get(fileName);
-
-        try (BufferedWriter bufferedWriter = Files.newBufferedWriter(path, StandardOpenOption.APPEND)) {
-            bufferedWriter.write(
-                    entity.getId() + ","  + entity.getFirstName() + "," + entity.getLastName()+","+
-                            entity.getAge());
-            bufferedWriter.newLine();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    public String getFileName() {
+        return fileName;
     }
+
+    protected abstract String formatEntity(T entity);
+
+    protected abstract T createEntity(List<String> items);
 }

@@ -32,18 +32,19 @@ public class ClientServiceTest {
     public void setUp() throws Exception {
 
         ClientValidator= new ClientValidator();
-        clients=new InMemoryRepository<Long, Client>(ClientValidator);
-        clientService = new ClientService(clients);
+        clients=new InMemoryRepository<Long, Client>();
+        clientService = new ClientService(clients,ClientValidator);
         clientArrayList = new ArrayList<>();
 
         startInterval = 1;
         endInterval = 21;
 
-        IntStream.range(startInterval, endInterval)
-                .peek(i -> clientArrayList.add(new Client((long) i,"f" + Integer.toString(i),"l" + Integer.toString(i), i)));
+        for (int i = startInterval; i < endInterval; i++){
+            Client client = new Client((long) i,"f" + Integer.toString(i),"l" + Integer.toString(i), i);
+            clientArrayList.add(client);
+            clientService.addClient(client);
+        }
 
-        IntStream.range(0, clientArrayList.size())
-                .peek(n -> clientService.addClient(clientArrayList.get(n)));
     }
 
     public long length(Iterable<Client> clients)
@@ -54,14 +55,17 @@ public class ClientServiceTest {
     @Test
     public void addClient() {
         assertEquals("Length should be " + Integer.toString(clientArrayList.size()) + " ", length(clientService.getAllClients()), clientArrayList.size());
-        IntStream.range(startInterval, endInterval)
-                .peek(i -> clientService.addClient(new Client((long) i + 100,"f" + Integer.toString(i + 100),"l" + Integer.toString(i + 100), i + 100)));
-        assertEquals("Length should be " + Integer.toString(clientArrayList.size() * 2) + " ", length(clientService.getAllClients()), clientArrayList.size() * 2);
+
+        for (int i = startInterval; i < endInterval; i++){
+            clientService.addClient(new Client((long) i + 100,"f" + Integer.toString(i + 100),"l" + Integer.toString(i + 100), i + 100));
+        }
+
+       assertEquals("Length should be " + Integer.toString(clientArrayList.size() * 2) + " ", length(clientService.getAllClients()), clientArrayList.size() * 2);
     }
 
     @Test
     public void updateClient() throws MyException {
-        Client client=new Client(3L,"f5","l1",21);
+        Client client = new Client(1L,"f5","l1",21);
         try {
             clientService.updateClient(client);
         }
@@ -69,11 +73,9 @@ public class ClientServiceTest {
             throw new MyException("It will break");
         }
 
-        List<Client> updatedClients = clientService.filterClientsByName("f5").stream().filter(client1 -> client1.getId() == 3L).collect(Collectors.toList());
+        Optional<Client> opt = clients.findOne(client.getId());
 
-        Optional<Client> opt = Optional.ofNullable(updatedClients.get(0));
-
-        opt.ifPresent(optional->{throw new MyException("It will break");});
+        opt.orElseThrow(()-> new MyException("IT will break"));
 
     }
 
@@ -84,8 +86,7 @@ public class ClientServiceTest {
 
     @Test
     public void deleteClient() {
-        IntStream.range(0, clientArrayList.size())
-                .peek(i -> clientService.deleteClient(clientArrayList.get(i).getId()));
+        clientArrayList.forEach(i -> clientService.deleteClient(i.getId()));
 
         assertEquals("Length should be 0 ", length(clientService.getAllClients()), 0);
     }
@@ -105,5 +106,10 @@ public class ClientServiceTest {
         assertEquals("Length should be " + Integer.toString(clientArrayList.size()) + " ",length(clientService.filterClientsByName("f")),clientArrayList.size());
         assertEquals("Length should be " + Integer.toString(clientArrayList.size()) + " ",length(clientService.filterClientsByName("l")),clientArrayList.size());
         assertEquals("Length should be 1 ",length(clientService.filterClientsByName("10")), 1);
+    }
+    @Test
+    public void Stats() {
+        assertEquals("Oldest client should be " + Integer.toString(20) + " years old ",clientService.statOldestClients().get(0).getAge(),20);
+
     }
 }

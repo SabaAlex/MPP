@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<movies>
+    <movie Id="1">
+        <title>Pulp Fiction</title>
+        <year>1994</year>
+        <mainStar>John Travolta</mainStar>
+        <director>Quentin Tarantino</director>
+        <genre>Master Piece</genre>
+    </movie>
+    <movie Id="8">
+        <title>Mulan</title>
+        <year>2020</year>
+        <mainStar>Yifei Liu</mainStar>
+        <director>Niki Caro</director>
+        <genre>Drama, Action, Adventure</genre>
+    </movie>
+    <movie Id="2">
+        <title>Soul</title>
+        <year>2020</year>
+        <mainStar>Jamiee Foxx</mainStar>
+        <director>Pete Docter</director>
+        <genre>Animation</genre>
+    </movie>
+    <movie Id="19">
+        <title>Once Upon a Time... in Hollywood</title>
+        <year>2019</year>
+        <mainStar>Leonardo DiCaprio, Brad Pitt</mainStar>
+        <director>Quentin Tarantino</director>
+        <genre>Drama</genre>
+    </movie>
+    <movie Id="3">
+        <title>1917</title>
+        <year>2019</year>
+        <mainStar>Dean-Charles Chapman</mainStar>
+        <director>Sam Mandes</director>
+        <genre>War</genre>
+    </movie>
+    <movie Id="4">
+        <title>Parasite</title>
+        <year>2019</year>
+        <mainStar>Kang-ho Song</mainStar>
+        <director>Bong Joon Ho</director>
+        <genre>Master Piece</genre>
+    </movie>
+    <movie Id="10">
+        <title>Interstellar</title>
+        <year>2014</year>
+        <mainStar>Matthew McConaughey</mainStar>
+        <director>Christopher Nolan</director>
+        <genre>Sci-Fi</genre>
+    </movie>
+</movies>

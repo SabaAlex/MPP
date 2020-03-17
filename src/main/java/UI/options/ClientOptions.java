@@ -8,7 +8,8 @@ public enum ClientOptions {
     PRINT("PRINT all Clients"),
     FILTER("FILTER Clients"),
     UPDATE("UPDATE Client"),
-    DELETE("DELETE Client");
+    DELETE("DELETE Client"),
+    STAT("Print the top 5 oldest clients");
 
     private final String cmdMessage;
 

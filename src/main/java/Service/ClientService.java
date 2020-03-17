@@ -2,25 +2,31 @@ package Service;
 
 import model.domain.Client;
 
+import model.domain.Movie;
 import model.exceptions.MyException;
 import model.exceptions.ValidatorException;
-import repository.ClientFileRepository;
-import repository.IRepository;
-import repository.MovieFileRepository;
+import model.validators.Validator;
+import repository.*;
 
 
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import java.util.stream.StreamSupport;
 
 public class ClientService {
     private IRepository<Long, Client> repository;
+    private Validator<Client> validator;
 
-    public ClientService(IRepository<Long,Client> repository)
+    public ClientService(IRepository<Long,Client> repository,Validator<Client> validator)
     {
+        this.validator=validator;
         this.repository=repository;
+    }
+
+    public Optional<Client> FindOne(Long ID)
+    {
+        return this.repository.findOne(ID);
     }
     /**
      * Calls the repository save method with a given Client Object
@@ -33,6 +39,7 @@ public class ClientService {
      */
     public void addClient(Client client) throws ValidatorException
     {
+        validator.validate(client);
         repository.save(client).ifPresent(optional->{throw new MyException("Client already exists");});
     }
 
@@ -48,6 +55,7 @@ public class ClientService {
      */
     public Client updateClient(Client client) throws ValidatorException,MyException
     {
+        validator.validate(client);
         return repository.update(client).orElseThrow(()-> new MyException("No client to update"));
     }
 
@@ -94,10 +102,16 @@ public class ClientService {
         return filteredClients;
     }
 
+    public List<Client> statOldestClients(){
+        return StreamSupport.stream(repository.findAll().spliterator(),false).collect(Collectors.toList())
+                .stream()
+                .sorted((o1, o2) -> o2.getAge() - o1.getAge())
+                .collect(Collectors.toList());
+    }
 
     public void saveToFile() {
-        if (repository instanceof ClientFileRepository){
-            ((ClientFileRepository)repository).saveToFile();
+        if (repository instanceof SavesToFile){
+            ((SavesToFile)repository).saveToFile();
         }
     }
 }
