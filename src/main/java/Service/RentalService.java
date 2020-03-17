@@ -127,7 +127,7 @@ public class RentalService {
         Set<Rental> filteredRentals=StreamSupport.stream(rentals.spliterator(),false).collect(Collectors.toSet());
         filteredRentals
                 .stream()
-                .filter(toDeleteRentals-> !((toDeleteRentals.getMovieID()) == id))
+                .filter(toDeleteRentals-> toDeleteRentals.getMovieID() == id)
                 .forEach(toDelete->{RentalRepository.delete(toDelete.getId());}
                 );
     }
