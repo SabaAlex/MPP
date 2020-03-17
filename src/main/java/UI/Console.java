@@ -290,8 +290,21 @@ public class Console {
     }
 
     private void uiStatMonthsOfMostRentedMovie() {
-        Set<Rental> rentals = rentalService.statMostRentedMovieRentals();
-        System.out.println("Most ranted Movie: " + movieService.FindOne(rentals.iterator().next().getMovieID()).get().getTitle());
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Input Release Year: ");
+        String yearString = scanner.nextLine();
+        System.out.println("Input Client Least Age: ");
+        String ageString= scanner.nextLine();
+        int age;
+        int release_year;
+        try {
+            release_year = Integer.parseInt(yearString);
+            age = Integer.parseInt(ageString);
+        } catch (NumberFormatException e) {
+            throw new DataTypeException();
+        }
+        Set<Rental> rentals = rentalService.statMostRentedMovieReleasedThatYearRentalsByClientsAgedMoreThan(release_year,age);
+        System.out.println("Most rented Movie: " + movieService.FindOne(rentals.iterator().next().getMovieID()).get().getTitle());
         System.out.println("The rental months of the most rented movie: ");
         rentals.stream()
                 .map(rental -> rental.getMonth())

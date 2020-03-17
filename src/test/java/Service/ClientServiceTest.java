@@ -107,4 +107,9 @@ public class ClientServiceTest {
         assertEquals("Length should be " + Integer.toString(clientArrayList.size()) + " ",length(clientService.filterClientsByName("l")),clientArrayList.size());
         assertEquals("Length should be 1 ",length(clientService.filterClientsByName("10")), 1);
     }
+    @Test
+    public void Stats() {
+        assertEquals("Oldest client should be " + Integer.toString(20) + " years old ",clientService.statOldestClients().get(0).getAge(),20);
+
+    }
 }
