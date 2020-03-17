@@ -156,4 +156,10 @@ public class RentalServiceTest {
         assertEquals("Length should be 20",length(rentalService.filterRentalsByYear(1997)),19);
         assertEquals("Length should be 0 ",length(rentalService.filterRentalsByYear(2000)), 0);
     }
+
+    @Test
+    public void Stats() {
+        assertEquals("The year 1915 has 1 rental for clients aged 15 or higher ",rentalService.statMostRentedMovieReleasedThatYearRentalsByClientsAgedMoreThan(1915,15).size(),1);
+
+    }
 }

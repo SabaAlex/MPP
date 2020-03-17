@@ -110,4 +110,13 @@ public class MovieServiceTest {
         assertEquals("Length should be " + Integer.toString(movieArrayList.size()) + " ",length(movieService.filterMoviesByTitle("t")),movieArrayList.size());
         assertEquals("Length should be 1 ",length(movieService.filterMoviesByTitle("10")), 1);
     }
+
+    @Test
+    public void Stats() {
+        int i=20;
+        Movie movie = new Movie((long) 120,"t" + Integer.toString(i),1900 + i,"ms" + Integer.toString(i),"d" + Integer.toString(i),"g"  + Integer.toString(i));
+        movieService.addMovie(movie);
+        assertEquals("The year 1920  should have 2 movies ",movieService.statMostRichYearsInMovies().get(1920).size(),2);
+
+    }
 }

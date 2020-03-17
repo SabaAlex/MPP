@@ -36,7 +36,7 @@
         <day>20</day>
     </rental>
     <rental rentalID="100">
-        <clientID>10</clientID>
+        <clientID>4</clientID>
         <movieID>3</movieID>
         <year>2018</year>
         <month>4</month>

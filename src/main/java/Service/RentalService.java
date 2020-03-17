@@ -1,5 +1,7 @@
 package Service;
 
+import model.domain.Client;
+import model.domain.Movie;
 import model.domain.Rental;
 import model.exceptions.MyException;
 import model.exceptions.ValidatorException;
@@ -145,8 +147,13 @@ public class RentalService {
         return filteredRentals;
     }
 
-    public Set<Rental> statMostRentedMovieRentals(){
-        List<Rental> rentalsList = StreamSupport.stream(RentalRepository.findAll().spliterator(),false).collect(Collectors.toList());
+    public Set<Rental> statMostRentedMovieReleasedThatYearRentalsByClientsAgedMoreThan(int movie_year,int age){
+        List<Client> ClientList=clientServ.getAllClients().stream().filter(client->client.getAge()>=age).collect(Collectors.toList());
+        List<Movie> MovieList=movieServ.getAllMovies().stream().filter(movie->movie.getYearOfRelease()==movie_year).collect(Collectors.toList());
+        List<Rental> rentalsList = StreamSupport.stream(RentalRepository.findAll().spliterator(),false)
+                .filter(rental->ClientList.stream().filter(client->client.getId().equals(rental.getClientID())).collect(Collectors.toList()).size()>0)
+                .filter(rental->MovieList.stream().filter(movie->movie.getId().equals(rental.getMovieID())).collect(Collectors.toList()).size()>0)
+                .collect(Collectors.toList());
 
         Long mostRentedMovie = Collections.max(rentalsList.stream()
                 .map(Rental::getMovieID)
