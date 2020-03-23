@@ -1,9 +1,10 @@
-package repository.postgreSQL.statements;
+package repository.postgreSQL;
 
 import model.domain.Client;
 import model.domain.Movie;
 import model.exceptions.MyException;
 import repository.postgreSQL.PostgreSQLRepository;
+import repository.postgreSQL.statements.MovieSQLStatements;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
