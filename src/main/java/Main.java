@@ -13,6 +13,7 @@ import repository.*;
 import repository.file.ClientFileRepository;
 import repository.file.MovieFileRepository;
 import repository.file.RentalFileRepository;
+import repository.postgreSQL.ClientSQLRepository;
 import repository.xml.ClientXMLRepository;
 import repository.xml.MovieXMLRepository;
 import repository.xml.RentalXMLRepository;
@@ -33,15 +34,6 @@ public class Main {
     private static final String Password=System.getProperty("password");
     public static void main(String[] args) throws SQLException {
         Path path = Paths.get("projectResources\\settings.txt");
-        Client clienter=new Client(10L,"Ion","Pop",10);
-        String sql="insert into client (id,firstname,lastname,age) values( ?,?,?,?)";
-        Connection conn= DriverManager.getConnection(URL,UserName,Password);
-        PreparedStatement prep=conn.prepareStatement(sql);
-        prep.setLong(1,clienter.getId());
-        prep.setString(2,clienter.getFirstName());
-        prep.setString(3,clienter.getLastName());
-        prep.setInt(4,clienter.getAge());
-        prep.executeUpdate();
         try {
             List<String> lines = Files.readAllLines(path);
             String[] client = lines.get(0).split(",");
@@ -63,6 +55,8 @@ public class Main {
             else {
                 ClientRepository = new InMemoryRepository<>();
             }
+
+            ClientRepository = new ClientSQLRepository();
 
             if (movie[1].equals(".txt")){
                 MovieRepository = new MovieFileRepository(movieValidator, Paths.get("projectResources\\Movies.txt").toString());
