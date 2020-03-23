@@ -1,6 +1,6 @@
 package repository.postgreSQL;
 
-import model.domain.Movie;
+import model.domain.Rental;
 import model.exceptions.MyException;
 import repository.postgreSQL.statements.MovieSQLStatements;
 
@@ -8,32 +8,32 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class MovieSQLRepository extends PostgreSQLRepository<Long, Movie> {
-    public MovieSQLRepository() throws SQLException {
-        super("movie");
+public class RentalSQLRepository extends PostgreSQLRepository<Long, Rental> {
+    public RentalSQLRepository() throws SQLException {
+        super("rental");
     }
 
     @Override
-    protected Movie processData(ResultSet resultSet) throws SQLException {
+    protected Rental processData(ResultSet resultSet) throws SQLException {
         long ID = resultSet.getLong(1);
-        String title = resultSet.getString(2);
-        String director = resultSet.getString(3);
-        int yearOfRelease = resultSet.getInt(4);
-        String mainStar = resultSet.getString(5);
-        String genre = resultSet.getString(6);
+        long clientid = resultSet.getLong(2);
+        long movieid = resultSet.getLong(3);
+        int day = resultSet.getInt(4);
+        int month = resultSet.getInt(5);
+        int year = resultSet.getInt(6);
 
-        return new Movie(ID, title, yearOfRelease ,mainStar, director, genre);
+        return new Rental(ID, clientid, movieid , year, month, day);
     }
 
     @Override
-    protected void executeInsert(Movie entity) {
+    protected void executeInsert(Rental entity) {
         try(PreparedStatement prep = conn.prepareStatement(MovieSQLStatements.INSERT.composeMessage(super.getTableName()))) {
             prep.setLong(1, entity.getId());
-            prep.setString(2, entity.getTitle());
-            prep.setString(3, entity.getDirector());
-            prep.setInt(4, entity.getYearOfRelease());
-            prep.setString(5, entity.getMainStar());
-            prep.setString(6, entity.getGenre());
+            prep.setLong(2, entity.getClientID());
+            prep.setLong(3, entity.getMovieID());
+            prep.setInt(4, entity.getDay());
+            prep.setInt(5, entity.getMonth());
+            prep.setInt(6, entity.getYear());
             prep.executeUpdate();
         }
         catch (SQLException e){
@@ -52,14 +52,14 @@ public class MovieSQLRepository extends PostgreSQLRepository<Long, Movie> {
     }
 
     @Override
-    protected void executeUpdate(Movie entity) {
+    protected void executeUpdate(Rental entity) {
         try(PreparedStatement prep = conn.prepareStatement(
                 "UPDATE " + super.getTableName() +
-                        " SET title = " + "'" + entity.getTitle() + "', " +
-                        "director = " + "'" + entity.getDirector() + "', " +
-                        "yearofrelease = " + "'" + entity.getYearOfRelease() + "', " +
-                        "mainstar = " + "'" + entity.getMainStar() + "' " +
-                        "genre = " + "'" + entity.getGenre() + "' " +
+                        " SET clientid = " + "'" + entity.getClientID() + "', " +
+                        "movieid = " + "'" + entity.getMovieID() + "', " +
+                        "day = " + "'" + entity.getDay() + "', " +
+                        "month = " + "'" + entity.getMonth() + "' " +
+                        "year = " + "'" + entity.getYear() + "' " +
                         "WHERE id = " + entity.getId()
         )) {
             prep.executeUpdate();
