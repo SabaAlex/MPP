@@ -21,16 +21,27 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.List;
 
 public class Main {
     private static final String URL="jdbc:postgresql://localhost:5432/MPP";
     private static final String UserName=System.getProperty("username");
     private static final String Password=System.getProperty("password");
-    public static void main(String[] args) {
+    public static void main(String[] args) throws SQLException {
         Path path = Paths.get("projectResources\\settings.txt");
-
-
+        Client clienter=new Client(10L,"Ion","Pop",10);
+        String sql="insert into client (id,firstname,lastname,age) values( ?,?,?,?)";
+        Connection conn= DriverManager.getConnection(URL,UserName,Password);
+        PreparedStatement prep=conn.prepareStatement(sql);
+        prep.setLong(1,clienter.getId());
+        prep.setString(2,clienter.getFirstName());
+        prep.setString(3,clienter.getLastName());
+        prep.setInt(4,clienter.getAge());
+        prep.executeUpdate();
         try {
             List<String> lines = Files.readAllLines(path);
             String[] client = lines.get(0).split(",");
