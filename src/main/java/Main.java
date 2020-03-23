@@ -24,8 +24,12 @@ import java.nio.file.Paths;
 import java.util.List;
 
 public class Main {
+    private static final String URL="jdbc:postgresql://localhost:5432/MPP";
+    private static final String UserName=System.getProperty("username");
+    private static final String Password=System.getProperty("password");
     public static void main(String[] args) {
         Path path = Paths.get("projectResources\\settings.txt");
+
 
         try {
             List<String> lines = Files.readAllLines(path);
