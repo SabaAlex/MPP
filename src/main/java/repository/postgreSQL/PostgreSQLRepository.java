@@ -1,7 +1,6 @@
 package repository.postgreSQL;
 
 import model.domain.BaseEntity;
-import model.domain.Client;
 import model.exceptions.ValidatorException;
 import repository.IRepository;
 import repository.Sort;
@@ -23,9 +22,6 @@ public abstract class PostgreSQLRepository<ID, T extends BaseEntity<ID>> impleme
     public String getTableName() {
         return tableName;
     }
-
-    ///delete, insert, update executeUpdate
-    ///select, new executeQuerry
 
     public PostgreSQLRepository(String tableName) throws SQLException {
         conn = DriverManager.getConnection(URL,UserName,Password);
