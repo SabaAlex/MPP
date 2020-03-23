@@ -70,7 +70,7 @@ public class Sort {
 
     private Object getValueByFieldName(Object objectToInvokeOn, String fieldName) throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, IllegalAccessException{
         String fullClassName;
-        if(fieldName.equals("ID")){
+        if(fieldName.equals("Id")){
             fullClassName = AddPackage("BaseEntity");
         } else {
             fullClassName = AddPackage(className);

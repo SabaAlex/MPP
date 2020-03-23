@@ -86,6 +86,17 @@ public class ClientService {
 
     }
 
+    public Set<Client> getAllClientsSorted(Sort sort)
+    {
+        if(repository instanceof  SortingRepository)
+        {
+            Iterable<Client> clients=((SortingRepository) repository).findAll(sort);
+            return StreamSupport.stream(clients.spliterator(),false).collect(Collectors.toSet());
+        }
+        throw new MyException("This is not A SUPPORTED SORTING REPOSITORY");
+
+    }
+
     /**
      * Filters all the clients by their First or Last Name
      *

@@ -1,5 +1,6 @@
 package Service;
 
+import model.domain.Client;
 import model.domain.Movie;
 import model.domain.Rental;
 import model.exceptions.MyException;
@@ -7,6 +8,8 @@ import model.exceptions.ValidatorException;
 import model.validators.Validator;
 import repository.IRepository;
 import repository.SavesToFile;
+import repository.Sort;
+import repository.SortingRepository;
 
 
 import java.time.Year;
@@ -83,6 +86,17 @@ public class MovieService {
     {
         Iterable<Movie> movies=repository.findAll();
         return StreamSupport.stream(movies.spliterator(),false).collect(Collectors.toSet());
+
+    }
+
+    public Set<Movie> getAllMoviesSorted(Sort sort)
+    {
+        if(repository instanceof SortingRepository)
+        {
+            Iterable<Movie> movies=((SortingRepository) repository).findAll(sort);
+            return StreamSupport.stream(movies.spliterator(),false).collect(Collectors.toSet());
+        }
+        throw new MyException("This is not A SUPPORTED SORTING REPOSITORY");
 
     }
 

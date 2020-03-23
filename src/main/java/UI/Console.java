@@ -250,18 +250,21 @@ public class Console {
     private void initFunctionLinks() {
         fctLinks.put(ClientOptions.ADD.getCmdMessage(), this::uiAddClient);
         fctLinks.put(ClientOptions.PRINT.getCmdMessage(), this::uiPrintAllClients);
+        fctLinks.put(ClientOptions.SORT.getCmdMessage(), this::uiPrintAllClientsSorted);
         fctLinks.put(ClientOptions.FILTER.getCmdMessage(), this::uiFilterClientsByName);
         fctLinks.put(ClientOptions.DELETE.getCmdMessage(), this::uiDeleteClient);
         fctLinks.put(ClientOptions.UPDATE.getCmdMessage(), this::uiUpdateClient);
         fctLinks.put(ClientOptions.STAT.getCmdMessage(), this::uiStatOldestClients);
         fctLinks.put(MovieOptions.ADD.getCmdMessage(), this::uiAddMovie);
         fctLinks.put(MovieOptions.PRINT.getCmdMessage(), this::uiPrintAllMovie);
+        fctLinks.put(MovieOptions.SORT.getCmdMessage(), this::uiPrintAllMoviesSorted);
         fctLinks.put(MovieOptions.FILTER.getCmdMessage(), this::uiFilterMovieByTitle);
         fctLinks.put(MovieOptions.DELETE.getCmdMessage(), this::uiDeleteMovie);
         fctLinks.put(MovieOptions.UPDATE.getCmdMessage(), this::uiUpdateMovie);
         fctLinks.put(MovieOptions.STAT.getCmdMessage(), this::uiStatMostRichYearsInMovies);
         fctLinks.put(RentalOptions.ADD.getCmdMessage(), this::uiAddRental);
         fctLinks.put(RentalOptions.PRINT.getCmdMessage(), this::uiPrintAllRentals);
+        fctLinks.put(RentalOptions.SORT.getCmdMessage(), this::uiPrintAllRentalsSorted);
         fctLinks.put(RentalOptions.FILTER.getCmdMessage(), this::uiFilterRentalsByYear);
         fctLinks.put(RentalOptions.DELETE.getCmdMessage(), this::uiDeleteRental);
         fctLinks.put(RentalOptions.UPDATE.getCmdMessage(), this::uiUpdateRental);
@@ -411,6 +414,28 @@ public class Console {
 
     private void uiPrintAllMovie() {
         movieService.getAllMovies().forEach(System.out::println);
+    }
+
+    private void uiPrintAllClientsSorted() {
+        HashMap<String,String> dict=new HashMap<>();
+        dict.put("id","Id");
+        dict.put("firstname","FirstName");
+        dict.put("lastname","LastName");
+        dict.put("age","Age");
+        String direction="asc";
+        String input="1";
+        while(input.equals('0'))
+        {
+
+        }
+        clientService.getAllClients().forEach(System.out::println);
+    }
+
+    private void uiPrintAllMoviesSorted() {
+        movieService.getAllMovies().forEach(System.out::println);
+    }
+    private void uiPrintAllRentalsSorted() {
+        rentalService.getAllRentals().forEach(System.out::println);
     }
 
     private void uiDeleteMovie() {

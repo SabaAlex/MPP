@@ -108,6 +108,17 @@ public class RentalService {
 
     }
 
+    public Set<Rental> getAllRentalsSorted(Sort sort)
+    {
+        if(RentalRepository instanceof SortingRepository)
+        {
+            Iterable<Rental> rentals=((SortingRepository) RentalRepository).findAll(sort);
+            return StreamSupport.stream(rentals.spliterator(),false).collect(Collectors.toSet());
+        }
+        throw new MyException("This is not A SUPPORTED SORTING REPOSITORY");
+
+    }
+
 
 
     public void DeleteClientRentals(Long id)

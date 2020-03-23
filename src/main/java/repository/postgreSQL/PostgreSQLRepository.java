@@ -4,15 +4,14 @@ import model.domain.BaseEntity;
 import model.domain.Client;
 import model.exceptions.ValidatorException;
 import repository.IRepository;
+import repository.Sort;
+import repository.SortingRepository;
 
 import java.sql.*;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
-public abstract class PostgreSQLRepository<ID, T extends BaseEntity<ID>> implements IRepository<ID, T> {
+public abstract class PostgreSQLRepository<ID, T extends BaseEntity<ID>> implements SortingRepository<ID, T> {
 
     private static final String URL = "jdbc:postgresql://localhost:5432/MPP";
     private static final String UserName = System.getProperty("username");
@@ -62,6 +61,12 @@ public abstract class PostgreSQLRepository<ID, T extends BaseEntity<ID>> impleme
         Set<T> allEntities = entities.entrySet().stream().map(entry->entry.getValue()).collect(Collectors.toSet());
         return allEntities;
     }
+    @Override
+    public Iterable<T> findAll(Sort sort)
+    {
+        return sort.sort( entities.entrySet().stream().map(entry->entry.getValue()).collect(Collectors.toSet()));
+    }
+
 
     @Override
     public Optional<T> save(T entity) throws ValidatorException {

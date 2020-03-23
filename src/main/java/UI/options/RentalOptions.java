@@ -6,6 +6,7 @@ package UI.options;
 public enum RentalOptions {
     ADD("ADD Rental"),
     PRINT("PRINT all Rentals"),
+    SORT("PRINT all Rentals sorted"),
     FILTER("FILTER Rentals"),
     UPDATE("UPDATE Rentals"),
     DELETE("DELETE Rentals"),
