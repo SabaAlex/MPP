@@ -12,7 +12,9 @@ import model.domain.Movie;
 import model.domain.Rental;
 import model.exceptions.DataTypeException;
 import model.exceptions.MyException;
+import repository.Sort;
 
+import java.io.IOException;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -29,7 +31,7 @@ public class Console {
     public Console(ClientService clientService, MovieService movieService, RentalService rentalService) {
         this.clientService = clientService;
         this.movieService = movieService;
-        this.rentalService=rentalService;
+        this.rentalService = rentalService;
         commands = new Commands();
         fctLinks = new HashMap<>();
         initFunctionLinks();
@@ -50,9 +52,7 @@ public class Console {
         String name = scanner.nextLine();
         try {
             clientService.filterClientsByName(name).forEach(System.out::println);
-        }
-        catch( MyException e)
-        {
+        } catch (MyException e) {
             System.out.println(e.getMessage());
         }
     }
@@ -72,9 +72,7 @@ public class Console {
         try {
             clientService.deleteClient(id);
             rentalService.DeleteClientRentals(id);
-        }
-        catch( MyException e)
-        {
+        } catch (MyException e) {
             System.out.println(e.getMessage());
         }
     }
@@ -108,9 +106,7 @@ public class Console {
         Client client = new Client(id, fName, lName, age);
         try {
             clientService.updateClient(client);
-        }
-        catch( MyException e)
-        {
+        } catch (MyException e) {
             System.out.println(e.getMessage());
         }
     }
@@ -129,9 +125,7 @@ public class Console {
         }
         try {
             rentalService.deleteRental(id);
-        }
-        catch( MyException e)
-        {
+        } catch (MyException e) {
             System.out.println(e.getMessage());
         }
     }
@@ -150,18 +144,15 @@ public class Console {
         }
         try {
             rentalService.filterRentalsByYear(year).forEach(System.out::println);
-        }
-        catch( MyException e)
-        {
+        } catch (MyException e) {
             System.out.println(e.getMessage());
         }
     }
 
-    private void uiUpdateRental()
-    {
+    private void uiUpdateRental() {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Input Rental ID:");
-        String rentalID =scanner.nextLine();
+        String rentalID = scanner.nextLine();
 
         System.out.println("Input new Rental Year: ");
         String yearString = scanner.nextLine();
@@ -175,32 +166,30 @@ public class Console {
         int day;
         int month;
         int year;
-        long movieId=0L;
-        long clientId=0L;
+        long movieId = 0L;
+        long clientId = 0L;
         long id;
         try {
             day = Integer.parseInt(dayString);
             month = Integer.parseInt(monthString);
             year = Integer.parseInt(yearString);
-            id= Long.parseLong(rentalID);
+            id = Long.parseLong(rentalID);
         } catch (NumberFormatException e) {
             throw new DataTypeException();
         }
 
-        Rental rental = new Rental(id, clientId, movieId,year,month, day);
+        Rental rental = new Rental(id, clientId, movieId, year, month, day);
         try {
             rentalService.updateRental(rental);
-        }
-        catch( MyException e)
-        {
+        } catch (MyException e) {
             System.out.println(e.getMessage());
         }
     }
-    private void uiAddRental()
-    {
+
+    private void uiAddRental() {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Input Rental ID:");
-        String rentalID =scanner.nextLine();
+        String rentalID = scanner.nextLine();
         System.out.println("Input Client ID: ");
         String clientID = scanner.nextLine();
 
@@ -226,19 +215,17 @@ public class Console {
             day = Integer.parseInt(dayString);
             month = Integer.parseInt(monthString);
             year = Integer.parseInt(yearString);
-            clientId= Long.parseLong(clientID);
-            movieId= Long.parseLong(MovieID);
-            id= Long.parseLong(rentalID);
+            clientId = Long.parseLong(clientID);
+            movieId = Long.parseLong(MovieID);
+            id = Long.parseLong(rentalID);
         } catch (NumberFormatException e) {
             throw new DataTypeException();
         }
 
-        Rental rental = new Rental(id, clientId, movieId,year,month, day);
+        Rental rental = new Rental(id, clientId, movieId, year, month, day);
         try {
             rentalService.addRental(rental);
-        }
-        catch( MyException e)
-        {
+        } catch (MyException e) {
             System.out.println(e.getMessage());
         }
     }
@@ -277,7 +264,7 @@ public class Console {
                 .mapToObj(index -> clientService.statOldestClients().get(index))
                 .forEach(client -> System.out.println("Age: " + client.getAge() +
                         "\nName: " + client.getFirstName() + " " + client.getLastName() + "\n"
-                        ));
+                ));
     }
 
     private void uiStatMostRichYearsInMovies() {
@@ -297,7 +284,7 @@ public class Console {
         System.out.println("Input Release Year: ");
         String yearString = scanner.nextLine();
         System.out.println("Input Client Least Age: ");
-        String ageString= scanner.nextLine();
+        String ageString = scanner.nextLine();
         int age;
         int release_year;
         try {
@@ -306,15 +293,15 @@ public class Console {
         } catch (NumberFormatException e) {
             throw new DataTypeException();
         }
-        Set<Rental> rentals = rentalService.statMostRentedMovieReleasedThatYearRentalsByClientsAgedMoreThan(release_year,age);
-        System.out.println("Most rented Movie of the year "+yearString+" " + movieService.FindOne(rentals.iterator().next().getMovieID()).get().getTitle());
-        System.out.println("The rental months of the most rented movie by clients older than:"+ageString +" years");
+        Set<Rental> rentals = rentalService.statMostRentedMovieReleasedThatYearRentalsByClientsAgedMoreThan(release_year, age);
+        System.out.println("Most rented Movie of the year " + yearString + " " + movieService.FindOne(rentals.iterator().next().getMovieID()).get().getTitle());
+        System.out.println("The rental months of the most rented movie by clients older than:" + ageString + " years");
         rentals.stream()
                 .map(rental -> rental.getMonth())
                 .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()))
                 .entrySet()
                 .stream()
-                .sorted(((o1, o2) -> -1*o1.getValue().compareTo(o2.getValue())))
+                .sorted(((o1, o2) -> -1 * o1.getValue().compareTo(o2.getValue())))
                 .forEach(entity -> System.out.println(entity.getKey()));
     }
 
@@ -352,9 +339,7 @@ public class Console {
         Movie movie = new Movie(id, title, year, mainStar, director, genre);
         try {
             movieService.updateMovie(movie);
-        }
-        catch( MyException e)
-        {
+        } catch (MyException e) {
             System.out.println(e.getMessage());
         }
     }
@@ -384,7 +369,7 @@ public class Console {
         long id;
         try {
             year = Integer.parseInt(yearStr);
-            id=Long.parseLong(movieID);
+            id = Long.parseLong(movieID);
         } catch (NumberFormatException e) {
             throw new DataTypeException();
         }
@@ -392,8 +377,7 @@ public class Console {
         Movie movie = new Movie(id, title, year, mainStar, director, genre);
         try {
             movieService.addMovie(movie);
-        }catch( MyException e)
-        {
+        } catch (MyException e) {
             System.out.println(e.getMessage());
         }
     }
@@ -405,9 +389,7 @@ public class Console {
         String name = scanner.nextLine();
         try {
             movieService.filterMoviesByTitle(name).forEach(System.out::println);
-        }
-        catch( MyException e)
-        {
+        } catch (MyException e) {
             System.out.println(e.getMessage());
         }
     }
@@ -417,136 +399,161 @@ public class Console {
     }
 
     private void uiPrintAllClientsSorted() {
-        HashMap<String,String> dict=new HashMap<>();
-        dict.put("id","Id");
-        dict.put("firstname","FirstName");
-        dict.put("lastname","LastName");
-        dict.put("age","Age");
-        String direction="asc";
-        String input="1";
-        while(input.equals('0'))
-        {
-
-        }
-        clientService.getAllClients().forEach(System.out::println);
+        Sort sort = new Sort("FirstName","LastName").and(new Sort(Sort.Direction.DESC, "Age"));
+        sort.setClassName("Client");
+        clientService.getAllClientsSorted(sort).forEach(System.out::println);
     }
+
 
     private void uiPrintAllMoviesSorted() {
-        movieService.getAllMovies().forEach(System.out::println);
-    }
-    private void uiPrintAllRentalsSorted() {
-        rentalService.getAllRentals().forEach(System.out::println);
-    }
-
-    private void uiDeleteMovie() {
+        List<String> criterias = Arrays.asList("Id", "MainStar", "Title", "Genre", "YearOfRelease", "Director");
         Scanner scanner = new Scanner(System.in);
-
-        System.out.println("Input Movie Id: ");
-        String input = scanner.nextLine();
-
-        long id;
+        Sort sort = null;
         try {
-            id = Long.parseLong(input);
-        } catch (NumberFormatException E) {
-            throw new DataTypeException();
-        }
-        try {
-            movieService.deleteMovie(id);
-            rentalService.DeleteMovieRentals(id);
-        }catch( MyException e)
-        {
+            while (true) {
+                System.out.println("Pick order DESC or ASC: ");
+                String order = scanner.nextLine();
+                if (order.equals("done")) break;
+                Sort.Direction sortingDirection;
+                if (order.equals("ASC")) {
+                    sortingDirection = Sort.Direction.ASC;
+                } else if (order.equals("DESC")) {
+                    sortingDirection = Sort.Direction.DESC;
+                } else {
+                    System.out.println("Wrong input!");
+                    break;
+                }
+                System.out.println("Pick column be careful it should be one of(Id,MainStar,Title,Director,Genre,YearOfRelease):");
+                String columnName = scanner.nextLine();
+                if (criterias.stream().filter(criteria -> criteria == columnName).collect(Collectors.toList()).size() == 0) {
+                    System.out.println("Wrong column next time be more careful !");
+                    break;
+                }
+                if (sort == null) {
+                    sort = new Sort(sortingDirection, columnName);
+                    sort.setClassName("Movie");
+                } else {
+                    sort = sort.and(new Sort(sortingDirection, columnName));
+                }
+
+            }
+            movieService.getAllMoviesSorted(sort).forEach(System.out::println);
+        } catch (MyException e) {
             System.out.println(e.getMessage());
         }
     }
-
-
-    private void uiPrintAllClients() {
-        clientService.getAllClients().forEach(System.out::println);
-    }
-
-    private void uiAddClient() {
-        Scanner scanner = new Scanner(System.in);
-
-        System.out.println("Input Client ID: ");
-        String clientID = scanner.nextLine();
-
-        System.out.println("Input Client First Name: ");
-        String fName = scanner.nextLine();
-
-        System.out.println("Input Client Last Name: ");
-        String lName = scanner.nextLine();
-
-        System.out.println("Input Client Age: ");
-        String ageStr = scanner.nextLine();
-
-        int age;
-        long id;
-        try {
-            age = Integer.parseInt(ageStr);
-            id= Long.parseLong(clientID);
-        } catch (NumberFormatException e) {
-            throw new DataTypeException();
+        private void uiPrintAllRentalsSorted () {
+            Sort sort = new Sort( "Day").and(new Sort(Sort.Direction.DESC, "Month"));
+            sort.setClassName("Rental");
+            rentalService.getAllRentalsSorted(sort).forEach(System.out::println);
         }
 
-        Client client = new Client(id, fName, lName, age);
-        try {
-            clientService.addClient(client);
-        }
-        catch( MyException e)
-        {
-            System.out.println(e.getMessage());
-        }
+        private void uiDeleteMovie () {
+            Scanner scanner = new Scanner(System.in);
 
-    }
-
-    public void run() {
-
-        Scanner scanner = new Scanner(System.in);
-
-        while (true) {
-
-            printMenu();
-
-            System.out.println("Enter input");
+            System.out.println("Input Movie Id: ");
             String input = scanner.nextLine();
-            int key;
 
+            long id;
             try {
-                key = Integer.parseInt(input);
-            } catch (NumberFormatException e) {
-                System.out.println("Command needs to be a number");
-                continue;
+                id = Long.parseLong(input);
+            } catch (NumberFormatException E) {
+                throw new DataTypeException();
             }
-
-            if (!commands.containsCommand(key)) {
-                System.out.println("Invalid Option");
-            }
-
-            String cmd = commands.getCommandValue(key);
-
-            if (cmd.equals("Exit")) {
-                uiSaveToFile();
-                return;
-            }
-
-            if (!fctLinks.containsKey(cmd)) {
-                System.out.println("Functionality not yet implemented!");
-                continue;
-            }
-
             try {
-                fctLinks.get(cmd).run();
-            } catch (Exception e) {
+                movieService.deleteMovie(id);
+                rentalService.DeleteMovieRentals(id);
+            } catch (MyException e) {
                 System.out.println(e.getMessage());
             }
         }
-    }
 
-    private void uiSaveToFile() {
-        clientService.saveToFile();
-        movieService.saveToFile();
-        rentalService.saveToFile();
+
+        private void uiPrintAllClients () {
+            clientService.getAllClients().forEach(System.out::println);
+        }
+
+        private void uiAddClient () {
+            Scanner scanner = new Scanner(System.in);
+
+            System.out.println("Input Client ID: ");
+            String clientID = scanner.nextLine();
+
+            System.out.println("Input Client First Name: ");
+            String fName = scanner.nextLine();
+
+            System.out.println("Input Client Last Name: ");
+            String lName = scanner.nextLine();
+
+            System.out.println("Input Client Age: ");
+            String ageStr = scanner.nextLine();
+
+            int age;
+            long id;
+            try {
+                age = Integer.parseInt(ageStr);
+                id = Long.parseLong(clientID);
+            } catch (NumberFormatException e) {
+                throw new DataTypeException();
+            }
+
+            Client client = new Client(id, fName, lName, age);
+            try {
+                clientService.addClient(client);
+            } catch (MyException e) {
+                System.out.println(e.getMessage());
+            }
+
+        }
+
+        public void run () {
+
+            Scanner scanner = new Scanner(System.in);
+
+            while (true) {
+
+                printMenu();
+
+                System.out.println("Enter input");
+                String input = scanner.nextLine();
+                int key;
+
+                try {
+                    key = Integer.parseInt(input);
+                } catch (NumberFormatException e) {
+                    System.out.println("Command needs to be a number");
+                    continue;
+                }
+
+                if (!commands.containsCommand(key)) {
+                    System.out.println("Invalid Option");
+                }
+
+                String cmd = commands.getCommandValue(key);
+
+                if (cmd.equals("Exit")) {
+                    uiSaveToFile();
+                    return;
+                }
+
+                if (!fctLinks.containsKey(cmd)) {
+                    System.out.println("Functionality not yet implemented!");
+                    continue;
+                }
+
+                try {
+                    fctLinks.get(cmd).run();
+                } catch (Exception e) {
+                    System.out.println(e.getMessage());
+                }
+            }
+        }
+
+        private void uiSaveToFile () {
+            clientService.saveToFile();
+            movieService.saveToFile();
+            rentalService.saveToFile();
+        }
     }
-}
 
 
