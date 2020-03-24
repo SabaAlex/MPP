@@ -60,7 +60,7 @@ public abstract class PostgreSQLRepository<ID, T extends BaseEntity<ID>> impleme
     @Override
     public Iterable<T> findAll(Sort sort)
     {
-        return sort.sort( entities.entrySet().stream().map(entry->entry.getValue()).collect(Collectors.toSet()));
+        return sort.sort( entities.entrySet().stream().map(entry->entry.getValue()).collect(Collectors.toList()));
     }
 
 

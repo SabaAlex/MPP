@@ -6,7 +6,7 @@ package UI.options;
 public enum MovieOptions {
     ADD("ADD Movie"),
     PRINT("PRINT all Movies"),
-    SORT("PRINT all Movies sorted"),
+    SORT("PRINT all Movies sorted by whatever you pick"),
     FILTER("FILTER Movies"),
     UPDATE("UPDATE Movie"),
     DELETE("DELETE Movie"),

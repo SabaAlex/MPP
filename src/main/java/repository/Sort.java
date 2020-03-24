@@ -58,9 +58,10 @@ public class Sort {
                 .collect(Collectors.toList());
     }
 
-    public void and(Sort otherSortFields)
+    public Sort and(Sort otherSortFields)
     {
         this.sortOrder.addAll(otherSortFields.GetSortOrder());
+        return this;
     }
 
     public ArrayList<AbstractMap.SimpleEntry<Direction,String>> GetSortOrder()
@@ -85,7 +86,7 @@ public class Sort {
     }
 
     private String AddPackage(String className) {
-        return "model.domain"+className;
+        return "model.domain."+className;
     }
 
 
@@ -109,6 +110,7 @@ public class Sort {
                 if (entry.getKey() == Direction.DESC) {
                     compareResult *= -1; // reverse result
                 }
+
             } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException | ClassNotFoundException e) {
                 throw new MyException("No such Class or Field !");
             }

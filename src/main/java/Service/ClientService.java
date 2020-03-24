@@ -86,12 +86,12 @@ public class ClientService {
 
     }
 
-    public Set<Client> getAllClientsSorted(Sort sort)
+    public List<Client> getAllClientsSorted(Sort sort)
     {
         if(repository instanceof  SortingRepository)
         {
             Iterable<Client> clients=((SortingRepository) repository).findAll(sort);
-            return StreamSupport.stream(clients.spliterator(),false).collect(Collectors.toSet());
+            return StreamSupport.stream(clients.spliterator(),false).collect(Collectors.toList());
         }
         throw new MyException("This is not A SUPPORTED SORTING REPOSITORY");
 

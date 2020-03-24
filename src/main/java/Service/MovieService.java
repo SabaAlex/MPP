@@ -89,12 +89,12 @@ public class MovieService {
 
     }
 
-    public Set<Movie> getAllMoviesSorted(Sort sort)
+    public List<Movie> getAllMoviesSorted(Sort sort)
     {
         if(repository instanceof SortingRepository)
         {
             Iterable<Movie> movies=((SortingRepository) repository).findAll(sort);
-            return StreamSupport.stream(movies.spliterator(),false).collect(Collectors.toSet());
+            return StreamSupport.stream(movies.spliterator(),false).collect(Collectors.toList());
         }
         throw new MyException("This is not A SUPPORTED SORTING REPOSITORY");
 

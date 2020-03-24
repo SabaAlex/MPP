@@ -6,7 +6,7 @@ package UI.options;
 public enum ClientOptions {
     ADD("ADD Client"),
     PRINT("PRINT all Clients"),
-    SORT("PRINT all Clients sorted"),
+    SORT("PRINT all Clients sorted ascending by first name,then last name then descending by age"),
     FILTER("FILTER Clients"),
     UPDATE("UPDATE Client"),
     DELETE("DELETE Client"),
