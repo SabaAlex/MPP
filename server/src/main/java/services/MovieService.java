@@ -9,6 +9,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -18,29 +19,29 @@ public class MovieService extends BaseService<Long, Movie> {
     }
 
     @Override
-    public Set<Movie> filterEntitiesField(String field) {
+    public Future<Set<Movie>> filterEntitiesField(String field) {
         Iterable<Movie> movies = repository.findAll();
         Set<Movie> filteredMovies=new HashSet<>();
         movies.forEach(filteredMovies::add);
         filteredMovies.removeIf(movie->!(movie.getTitle().contains(field)) );
-        return filteredMovies;
+        return executorService.submit(() -> filteredMovies);
     }
 
     @Override
-    public List<Movie> statEntities(String... fields) {
+    public Future<List<Movie>> statEntities(String... fields) {
         if (fields.length != 0)
             throw new MyException("Something went wrong!");
 
         List<Movie> movieList = StreamSupport.stream(repository.findAll().spliterator(),false).collect(Collectors.toList());
 
-        return movieList.stream()
+        return executorService.submit(() ->movieList.stream()
                 .collect(Collectors.groupingBy(Movie::getYearOfRelease))
                 .entrySet()
                 .stream()
-                .sorted((o1, o2) -> o2.getValue().size() - o1.getValue().size())
-                .findFirst()
+                .max((o1, o2) -> o2.getValue().size() - o1.getValue().size())
                 .get()
                 .getValue()
+        )
                 ;
     }
 }
