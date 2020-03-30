@@ -46,31 +46,16 @@ public abstract class BaseService<ID, T extends BaseEntity<ID>> implements IServ
     public abstract Future<T> addEntity(T entity) throws MyException;
 
     @Override
-    public T updateEntity(T entity) throws MyException {
-        validator.validate(entity);
-        return repository.update(entity).orElseThrow(()-> new MyException(this.className + " does not exist"));
-    }
+    public abstract Future<T> updateEntity(T entity) throws MyException ;
 
     @Override
-    public T deleteEntity(ID id) throws ValidatorException {
-        return repository.delete(id).orElseThrow(()-> new MyException(this.className +" with that ID does not exist"));
-    }
+    public abstract Future<T> deleteEntity(ID id) throws ValidatorException ;
 
     @Override
-    public Set<T> getAllEntities() {
-        Iterable<T> entities = repository.findAll();
-        return StreamSupport.stream(entities.spliterator(),false).collect(Collectors.toSet());
-    }
+    public abstract Future<Set<T>> getAllEntities() ;
 
     @Override
-    public List<T> getAllEntitiesSorted(Sort sort) {
-        if(repository instanceof SortingRepository)
-        {
-            Iterable<T> entities=((SortingRepository<ID, T>) repository).findAll(sort);
-            return StreamSupport.stream(entities.spliterator(),false).collect(Collectors.toList());
-        }
-        throw new MyException("This is not A SUPPORTED SORTING REPOSITORY");
-    }
+    public abstract Future<List<T> >getAllEntitiesSorted();
 
     @Override
     public void saveToFile() {

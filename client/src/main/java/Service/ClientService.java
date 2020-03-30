@@ -3,9 +3,12 @@ package Service;
 import UI.TCPClient;
 import model.domain.Client;
 import model.domain.utils.FactorySerializable;
+import model.domain.utils.FactorySerializeCollection;
 import model.exceptions.MyException;
 import model.validators.Validator;
 import repository.IRepository;
+import repository.Sort;
+import repository.SortingRepository;
 import services.Message;
 
 
@@ -23,30 +26,72 @@ public class ClientService extends BaseService<Long, Client> {
     }
 
     @Override
-    public Set<Client> filterEntitiesField(String field) {
-        Iterable<Client> clients=repository.findAll();
-        Set<Client> filteredClients=new HashSet<>();
-        clients.forEach(filteredClients::add);
-        filteredClients.removeIf(client->!(client.getLastName().contains(field) || client.getFirstName().contains(field)) );
-        return filteredClients;
+    public Future<Set<Client>> filterEntitiesField(String field) {
+        Message request = new Message(Commands.FILTER_CLIENT.getCmdMessage(),field);
+        System.out.println("sending request: " + request);
+        Message response = client.sendAndReceive(request);
+        System.out.println("received response: " + response);
+        Set<Client> clients= (Set)FactorySerializeCollection.createClients(request.getBody());
+        return executorService.submit(()->clients);
     }
 
     @Override
-    public List<Client> statEntities(String... fields) {
-        if (fields.length != 0)
-            throw new MyException("Something went wrong!");
-        return StreamSupport.stream(repository.findAll().spliterator(),false).collect(Collectors.toList())
-                .stream()
-                .sorted((o1, o2) -> o2.getAge() - o1.getAge())
-                .collect(Collectors.toList());
+    public Future<List<Client>> statEntities(String... fields) {
+        Message request = new Message(Commands.STAT_CLIENT.getCmdMessage(),"");
+        System.out.println("sending request: " + request);
+        Message response = client.sendAndReceive(request);
+        System.out.println("received response: " + response);
+        List<Client> clients= (List)FactorySerializeCollection.createClients(request.getBody());
+        return executorService.submit(()->clients);
     }
     @Override
     public Future<Client> addEntity(Client entity) {
-        Message request = new Message(Commands.ADD_ENTITY.getCmdMessage(), FactorySerializable.toStringEntity((Client) entity));
+        Message request = new Message(Commands.ADD_CLIENT.getCmdMessage(), FactorySerializable.toStringEntity(entity));
         System.out.println("sending request: " + request);
         Message response = client.sendAndReceive(request);
         System.out.println("received response: " + response);
         Client client=FactorySerializable.createClient(request.getBody());
         return executorService.submit(() -> client);
+    }
+    @Override
+    public Future<Client> updateEntity(Client new_entity)
+    {
+        Message request = new Message(Commands.UPDATE_CLIENT.getCmdMessage(), FactorySerializable.toStringEntity(new_entity));
+        System.out.println("sending request: " + request);
+        Message response = client.sendAndReceive(request);
+        System.out.println("received response: " + response);
+        Client client=FactorySerializable.createClient(request.getBody());
+        return executorService.submit(() -> client);
+    }
+    @Override
+    public Future<Client> deleteEntity(Long id_delete)
+    {
+        Message request = new Message(Commands.UPDATE_CLIENT.getCmdMessage(),id_delete.toString());
+        System.out.println("sending request: " + request);
+        Message response = client.sendAndReceive(request);
+        System.out.println("received response: " + response);
+        Client client=FactorySerializable.createClient(request.getBody());
+        return executorService.submit(() -> client);
+    }
+
+    @Override
+    public Future<Set<Client>> getAllEntities()
+    {
+        Message request = new Message(Commands.ALL_CLIENT.getCmdMessage(),"");
+        System.out.println("sending request: " + request);
+        Message response = client.sendAndReceive(request);
+        System.out.println("received response: " + response);
+        Set<Client> clients= (Set)FactorySerializeCollection.createClients(request.getBody());
+        return executorService.submit(() -> clients);
+    }
+
+    @Override
+    public Future<List<Client> >getAllEntitiesSorted() {
+        Message request = new Message(Commands.SORT_CLIENT.getCmdMessage(),"");
+        System.out.println("sending request: " + request);
+        Message response = client.sendAndReceive(request);
+        System.out.println("received response: " + response);
+        List<Client> clients= (List)FactorySerializeCollection.createClients(request.getBody());
+        return executorService.submit(() -> clients);
     }
 }

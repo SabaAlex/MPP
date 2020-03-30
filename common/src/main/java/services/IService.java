@@ -22,7 +22,7 @@ public interface IService<ID, T extends BaseEntity<ID>> {
 
     Future<Set<T>> getAllEntities();
 
-    Future<List<T>> getAllEntitiesSorted(Sort sort);
+    Future<List<T>> getAllEntitiesSorted();
 
     Future<Set<T>> filterEntitiesField(String field);
 

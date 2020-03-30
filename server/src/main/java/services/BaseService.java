@@ -64,7 +64,7 @@ public abstract class BaseService<ID, T extends BaseEntity<ID>> implements IServ
     }
 
     @Override
-    public Future<List<T>> getAllEntitiesSorted(Sort sort) {
+    public Future<List<T>> getAllEntitiesSorted() {
         if(repository instanceof SortingRepository)
         {
             Iterable<T> entities=((SortingRepository<ID, T>) repository).findAll(sort);

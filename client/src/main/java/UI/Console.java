@@ -56,9 +56,21 @@ public class Console {
         System.out.println("Input Client Name: ");
         String name = scanner.nextLine();
         try {
-            clientService.filterEntitiesField(name).forEach(System.out::println);
+            execute.submit(
+                    ()->{
+                        try {
+                            clientService.filterEntitiesField(name).get().forEach(System.out::println);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        } catch (ExecutionException e) {
+                            e.printStackTrace();
+                        }
+
+                    });
+
         } catch (MyException e) {
             System.out.println(e.getMessage());
+
         }
     }
 
@@ -75,8 +87,13 @@ public class Console {
             throw new DataTypeException();
         }
         try {
-            clientService.deleteEntity(id);
-            rentalService.DeleteClientRentals(id);
+            execute.submit(
+                    ()->{
+                        clientService.deleteEntity(id);
+                        rentalService.DeleteClientRentals(id);
+
+                    });
+
         } catch (MyException e) {
             System.out.println(e.getMessage());
         }
@@ -110,6 +127,7 @@ public class Console {
 
         Client client = new Client(id, fName, lName, age);
         try {
+
             clientService.updateEntity(client);
         } catch (MyException e) {
             System.out.println(e.getMessage());

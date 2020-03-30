@@ -4,10 +4,13 @@ import UI.TCPClient;
 import model.domain.Client;
 import model.domain.Movie;
 import model.domain.Rental;
+import model.domain.utils.FactorySerializable;
+import model.domain.utils.FactorySerializeCollection;
 import model.exceptions.MyException;
 import model.exceptions.ValidatorException;
 import model.validators.Validator;
 import repository.IRepository;
+import services.Message;
 
 
 import java.util.*;
@@ -28,93 +31,91 @@ public class RentalService extends BaseService<Long, Rental> {
         this.movieService = movieService;
     }
 
-    private void checkIDs(Long ClientID, Long MovieID)
-    {
-        clientService.FindOne(ClientID).orElseThrow(()->new MyException("Client ID not found! "));
-        movieService.FindOne(MovieID).orElseThrow(()->new MyException("Movie ID not found! "));
-    }
-
-    private void checkRentalInRepository(Rental rental){
-        checkIDs(rental.getClientID(),rental.getMovieID());
-        Iterable<Rental> rentals = repository.findAll();
-        Set<Rental> filteredRentals=StreamSupport.stream(rentals.spliterator(),false).collect(Collectors.toSet());
-        filteredRentals
-                .stream()
-                .filter(exists-> (Objects.equals(exists.getClientID(), rental.getClientID()))
-                        && Objects.equals(exists.getMovieID(), rental.getMovieID()))
-                .findFirst()
-                .ifPresent(optional->{throw new MyException("Rental for that movie and client exists");});
+    @Override
+    public Future<Set<Rental>> filterEntitiesField(String field) {
+        Message request = new Message(Commands.FILTER_RENTAL.getCmdMessage(),field);
+        System.out.println("sending request: " + request);
+        Message response = client.sendAndReceive(request);
+        System.out.println("received response: " + response);
+        Set<Rental> rentals= (Set)FactorySerializeCollection.createRentals(request.getBody());
+        return executorService.submit(()->rentals);
     }
 
     @Override
-    public Future<Rental> addEntity(Rental entity) throws ValidatorException {
-        this.checkRentalInRepository(entity);
-        return super.addEntity(entity);
-    }
-
-    @Override
-    public Set<Rental> filterEntitiesField(String field) {
-        Iterable<Rental> rentals = repository.findAll();
-        Set<Rental> filteredRentals=new HashSet<>();
-        rentals.forEach(filteredRentals::add);
-        filteredRentals.removeIf(rental->!(rental.getYear()==Integer.parseInt(field)) );
-        return filteredRentals;
-    }
-
-    @Override
-    public List<Rental> statEntities(String... fields) {
-        if (fields.length != 2)
+    public Future<List<Rental>> statEntities(String... fields) {
+        if (fields.length != 0)
             throw new MyException("Something went wrong!");
+        String fieldS=Arrays.stream(fields).collect(Collectors.joining(","));
+        Message request = new Message(Commands.STAT_RENTAL.getCmdMessage(),fieldS);
+        System.out.println("sending request: " + request);
+        Message response = client.sendAndReceive(request);
+        System.out.println("received response: " + response);
+        List<Rental> rentals= (List)FactorySerializeCollection.createRentals(request.getBody());
+        return executorService.submit(()->rentals);
+    }
+    @Override
+    public Future<Rental> addEntity(Rental entity) {
+        Message request = new Message(Commands.ADD_RENTAL.getCmdMessage(), FactorySerializable.toStringEntity(entity));
+        System.out.println("sending request: " + request);
+        Message response = client.sendAndReceive(request);
+        System.out.println("received response: " + response);
+        Rental rental=FactorySerializable.createRental(request.getBody());
+        return executorService.submit(() -> rental);
+    }
+    @Override
+    public Future<Rental> updateEntity(Rental new_entity)
+    {
+        Message request = new Message(Commands.UPDATE_RENTAL.getCmdMessage(), FactorySerializable.toStringEntity(new_entity));
+        System.out.println("sending request: " + request);
+        Message response = client.sendAndReceive(request);
+        System.out.println("received response: " + response);
+        Rental rental=FactorySerializable.createRental(request.getBody());
+        return executorService.submit(() -> rental);
+    }
+    @Override
+    public Future<Rental> deleteEntity(Long id_delete)
+    {
+        Message request = new Message(Commands.UPDATE_RENTAL.getCmdMessage(),id_delete.toString());
+        System.out.println("sending request: " + request);
+        Message response = client.sendAndReceive(request);
+        System.out.println("received response: " + response);
+        Rental rental=FactorySerializable.createRental(request.getBody());
+        return executorService.submit(() -> rental);
+    }
 
-        int movie_year = Integer.parseInt(fields[0]);
-        int age = Integer.parseInt(fields[1]);
+    @Override
+    public Future<Set<Rental>> getAllEntities()
+    {
+        Message request = new Message(Commands.ALL_CLIENT.getCmdMessage(),"");
+        System.out.println("sending request: " + request);
+        Message response = client.sendAndReceive(request);
+        System.out.println("received response: " + response);
+        Set<Rental> rentals= (Set) FactorySerializeCollection.createRentals(request.getBody());
+        return executorService.submit(() -> rentals);
+    }
 
-        List<Client> ClientList = clientService.getAllEntities()
-                .stream()
-                .filter(client->client.getAge()>=age)
-                .collect(Collectors.toList());
-        List<Movie> MovieList = movieService.getAllEntities()
-                .stream()
-                .filter(movie->movie.getYearOfRelease()==movie_year)
-                .collect(Collectors.toList());
-
-        List<Rental> rentalsList = StreamSupport.stream(repository.findAll().spliterator(),false)
-                .filter(rental-> ClientList.stream().anyMatch(client -> client.getId().equals(rental.getClientID())))
-                .filter(rental-> MovieList.stream().anyMatch(movie -> movie.getId().equals(rental.getMovieID())))
-                .collect(Collectors.toList());
-
-        Long mostRentedMovie = Collections.max(rentalsList.stream()
-                        .map(Rental::getMovieID)
-                        .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()))
-                        .entrySet()
-                ,
-                Comparator.comparingLong(Map.Entry::getValue))
-                .getKey();
-
-        return rentalsList.stream()
-                .filter(rental -> rental.getMovieID().equals(mostRentedMovie))
-                .collect(Collectors.toList());
+    @Override
+    public Future<List<Rental> >getAllEntitiesSorted() {
+        Message request = new Message(Commands.SORT_CLIENT.getCmdMessage(),"");
+        System.out.println("sending request: " + request);
+        Message response = client.sendAndReceive(request);
+        System.out.println("received response: " + response);
+        List<Rental> rentals= (List)FactorySerializeCollection.createRentals(request.getBody());
+        return executorService.submit(() -> rentals);
     }
 
     public void DeleteClientRentals(Long id)
     {
-        Iterable<Rental> rentals=repository.findAll();
-        Set<Rental> filteredRentals= StreamSupport.stream(rentals.spliterator(),false).collect(Collectors.toSet());
-        filteredRentals
-                .stream()
-                .filter(toDeleteRentals-> (toDeleteRentals.getClientID().equals(id)))
-                .forEach(toDelete-> repository.delete(toDelete.getId())
-                );
+        Message request = new Message(Commands.DEL.getCmdMessage(),id.toString());
+        System.out.println("sending request: " + request);
+        Message response = client.sendAndReceive(request);
+
 
     }
     public void DeleteMovieRentals(Long id)
     {
-        Iterable<Rental> rentals = repository.findAll();
-        Set<Rental> filteredRentals = StreamSupport.stream(rentals.spliterator(),false).collect(Collectors.toSet());
-        filteredRentals
-                .stream()
-                .filter(toDeleteRentals-> toDeleteRentals.getMovieID().equals(id))
-                .forEach(toDelete-> repository.delete(toDelete.getId())
-                );
+        Message request = new Message(Commands.DEL.getCmdMessage(),id.toString());
+        System.out.println("sending request: " + request);
+        Message response = client.sendAndReceive(request);
     }
 }
