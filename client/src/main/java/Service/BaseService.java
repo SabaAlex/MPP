@@ -1,6 +1,8 @@
 package Service;
 
 import model.domain.BaseEntity;
+import model.domain.Client;
+import model.domain.utils.FactorySerializable;
 import model.exceptions.MyException;
 import model.exceptions.ValidatorException;
 import model.validators.Validator;
@@ -9,6 +11,8 @@ import repository.SavesToFile;
 import repository.Sort;
 import repository.SortingRepository;
 import services.IService;
+import services.Message;
+import UI.TCPClient;
 
 import java.util.List;
 import java.util.Optional;
@@ -23,13 +27,14 @@ public abstract class BaseService<ID, T extends BaseEntity<ID>> implements IServ
     private Validator<T> validator;
     private String className;
     protected ExecutorService executorService;
+    protected TCPClient client;
 
-
-    public BaseService(IRepository<ID,T> repository, Validator<T> validator, String className, ExecutorService executor) {
+    public BaseService(IRepository<ID,T> repository, Validator<T> validator, String className, ExecutorService executor,TCPClient client) {
         this.validator=validator;
         this.repository=repository;
         this.className = className;
         this.executorService = executorService;
+        this.client=client;
     }
 
     @Override
@@ -38,11 +43,7 @@ public abstract class BaseService<ID, T extends BaseEntity<ID>> implements IServ
     }
 
     @Override
-    public Future<T> addEntity(T entity) throws MyException {
-        validator.validate(entity);
-        T add_entity=repository.save(entity).orElseThrow(()-> new MyException("No "+this.className+" to add"));
-        return executorService.submit( ()->add_entity);
-    }
+    public abstract Future<T> addEntity(T entity) throws MyException;
 
     @Override
     public T updateEntity(T entity) throws MyException {

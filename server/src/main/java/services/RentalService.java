@@ -1,7 +1,7 @@
 package services;
 
-import Service.ClientService;
-import Service.MovieService;
+import services.ClientService;
+import services.MovieService;
 import model.domain.Client;
 import model.domain.Movie;
 import model.domain.Rental;

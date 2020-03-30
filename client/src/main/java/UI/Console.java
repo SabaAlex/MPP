@@ -16,6 +16,9 @@ import repository.Sort;
 import services.IService;
 
 import java.util.*;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -27,11 +30,13 @@ public class Console {
     private RentalService rentalService;
     private Map<String, Runnable> fctLinks;
     private Commands commands;
+    private ExecutorService execute;
 
-    public Console(IService<Long, Client> clientService, IService<Long, Movie> movieService, RentalService rentalService) {
+    public Console(IService<Long, Client> clientService, IService<Long, Movie> movieService, RentalService rentalService, ExecutorService executor) {
         this.clientService = clientService;
         this.movieService = movieService;
         this.rentalService = rentalService;
+        this.execute=executor;
         commands = new Commands();
         fctLinks = new HashMap<>();
         initFunctionLinks();
@@ -497,7 +502,12 @@ public class Console {
 
             Client client = new Client(id, fName, lName, age);
             try {
-                clientService.addEntity(client);
+                execute.submit(
+                        ()->{
+                            Future<Client> future=clientService.addEntity(client);
+
+                        }
+                );
             } catch (MyException e) {
                 System.out.println(e.getMessage());
             }

@@ -1,10 +1,11 @@
 package Service;
 
+import UI.TCPClient;
 import model.domain.Movie;
 import model.exceptions.MyException;
 import model.validators.Validator;
 import repository.IRepository;
-import services.BaseService;
+
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -15,8 +16,8 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 public class MovieService extends BaseService<Long, Movie> {
-    public MovieService(IRepository<Long, Movie> repository, Validator<Movie> validator, ExecutorService executor) {
-        super(repository, validator, "Movie",executor);
+    public MovieService(IRepository<Long, Movie> repository, Validator<Movie> validator, ExecutorService executor, TCPClient client) {
+        super(repository, validator, "Movie",executor,client);
     }
 
     @Override

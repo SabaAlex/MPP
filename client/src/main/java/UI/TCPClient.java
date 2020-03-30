@@ -1,4 +1,4 @@
-
+package UI;
 
 import model.exceptions.MyException;
 import services.Message;
