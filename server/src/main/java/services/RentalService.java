@@ -7,6 +7,8 @@ import model.exceptions.MyException;
 import model.exceptions.ValidatorException;
 import model.validators.Validator;
 import repository.IRepository;
+import repository.Sort;
+import repository.SortingRepository;
 
 import java.util.*;
 import java.util.concurrent.ExecutionException;
@@ -98,6 +100,19 @@ public class RentalService extends BaseService<Long, Rental> {
             e.printStackTrace();
         }
         return null;
+    }
+
+    @Override
+    public Future<List<Rental>> getAllEntitiesSorted() {
+        if(repository instanceof SortingRepository)
+        {
+            Sort sort = new Sort( "Day").and(new Sort(Sort.Direction.DESC, "Month"));
+            sort.setClassName("Rental");
+            Iterable<Rental> entities=((SortingRepository<Long, Rental>) repository).findAll(sort);
+            List<Rental> entity_set = StreamSupport.stream(entities.spliterator(), false).collect(Collectors.toList());
+            return executorService.submit(() -> entity_set);
+        }
+        throw new MyException("This is not A SUPPORTED SORTING REPOSITORY");
     }
 
     public void DeleteClientRentals(Long id) {

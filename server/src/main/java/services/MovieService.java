@@ -1,9 +1,12 @@
 package services;
 
 import model.domain.Movie;
+import model.domain.Rental;
 import model.exceptions.MyException;
 import model.validators.Validator;
 import repository.IRepository;
+import repository.Sort;
+import repository.SortingRepository;
 
 import java.util.HashSet;
 import java.util.List;
@@ -43,5 +46,18 @@ public class MovieService extends BaseService<Long, Movie> {
                 .getValue()
         )
                 ;
+    }
+
+    @Override
+    public Future<List<Movie>> getAllEntitiesSorted() {
+        if(repository instanceof SortingRepository)
+        {
+            Sort sort = new Sort( "Genre").and(new Sort(Sort.Direction.DESC, "YearOfRelease"));
+            sort.setClassName("Movie");
+            Iterable<Movie> entities=((SortingRepository<Long, Movie>) repository).findAll(sort);
+            List<Movie> entity_set = StreamSupport.stream(entities.spliterator(), false).collect(Collectors.toList());
+            return executorService.submit(() -> entity_set);
+        }
+        throw new MyException("This is not A SUPPORTED SORTING REPOSITORY");
     }
 }

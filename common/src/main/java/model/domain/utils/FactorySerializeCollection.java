@@ -30,24 +30,21 @@ public class FactorySerializeCollection {
     public static Collection<Client> createClients(String message){
         String[] tokens = message.split("_");
         Collection<Client> result = new ArrayList<>();
-        for (int i = 0; i <= tokens.length; i++)
-            result.add(FactorySerializable.createClient(tokens[i]));
+        for (String token : tokens) result.add(FactorySerializable.createClient(token));
         return result;
     }
 
     public static Collection<Movie> createMovies(String message){
         String[] tokens = message.split("_");
         Collection<Movie> result = new ArrayList<>();
-        for (int i = 0; i <= tokens.length; i++)
-            result.add(FactorySerializable.createMovie(tokens[i]));
+        for (String token : tokens) result.add(FactorySerializable.createMovie(token));
         return result;
     }
 
     public static Collection<Rental> createRentals(String message){
         String[] tokens = message.split("_");
         Collection<Rental> result = new ArrayList<>();
-        for (int i = 0; i <= tokens.length; i++)
-            result.add(FactorySerializable.createRental(tokens[i]));
+        for (String token : tokens) result.add(FactorySerializable.createRental(token));
         return result;
     }
 }

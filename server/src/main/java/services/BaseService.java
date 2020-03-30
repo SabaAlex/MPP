@@ -64,17 +64,6 @@ public abstract class BaseService<ID, T extends BaseEntity<ID>> implements IServ
     }
 
     @Override
-    public Future<List<T>> getAllEntitiesSorted(Sort sort) {
-        if(repository instanceof SortingRepository)
-        {
-            Iterable<T> entities=((SortingRepository<ID, T>) repository).findAll(sort);
-            List<T> entity_set = StreamSupport.stream(entities.spliterator(), false).collect(Collectors.toList());
-            return executorService.submit(() -> entity_set);
-        }
-        throw new MyException("This is not A SUPPORTED SORTING REPOSITORY");
-    }
-
-    @Override
     public void saveToFile() {
         if (repository instanceof SavesToFile){
             ((SavesToFile)repository).saveToFile();

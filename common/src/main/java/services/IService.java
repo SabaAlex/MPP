@@ -22,7 +22,7 @@ public interface IService<ID, T extends BaseEntity<ID>> {
 
     Future<Set<T>> getAllEntities();
 
-    Future<List<T>> getAllEntitiesSorted(Sort sort);
+    Future<List<T>> getAllEntitiesSorted();
 
     Future<Set<T>> filterEntitiesField(String field);
 
@@ -51,7 +51,9 @@ public interface IService<ID, T extends BaseEntity<ID>> {
         ALL_RENTAL("allRental"),
         STAT_CLIENT("statClient"),
         STAT_MOVIE("statMovie"),
-        STAT_RENTAL("statRental");
+        STAT_RENTAL("statRental"),
+        DELETE_RENTAL_CLIENT("deleteRentalsClients"),
+        DELETE_RENTAL_MOVIE("deleteRentalsMovies");
 
         private final String cmdMessage;
 
