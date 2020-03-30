@@ -47,8 +47,7 @@ public class Main {
                 ClientRepository = new ClientFileRepository(clientValidator, Paths.get("projectResources\\Clients.txt").toString());
             }
             else if(client[1].equals(".xml")) {
-                ClientRepository = new ClientXMLRepository(clientValidator, Paths.get("projectResources\\Clients.xml").toString());
-            }
+                ClientRepository = new ClientXMLRepository(clientValidator, Paths.get("projectResources\\Clients.xml").toString()); }
             else {
                 ClientRepository = new InMemoryRepository<>();
             }

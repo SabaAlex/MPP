@@ -1,12 +1,10 @@
-package Service;
+package services;
 
 import model.domain.Movie;
 import model.exceptions.MyException;
 import model.validators.Validator;
 import repository.IRepository;
-import services.BaseService;
 
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;

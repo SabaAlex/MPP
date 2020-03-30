@@ -1,10 +1,9 @@
-package Service;
+package services;
 
 import model.domain.Client;
 import model.exceptions.MyException;
 import model.validators.Validator;
 import repository.IRepository;
-import services.BaseService;
 
 import java.util.HashSet;
 import java.util.List;
@@ -14,8 +13,8 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 public class ClientService extends BaseService<Long, Client> {
-    public ClientService(IRepository<Long, Client> repository, Validator<Client> validator, ExecutorService executorService) {
-        super(repository, validator, "Client",executorService);
+    public ClientService(IRepository<Long, Client> repository, Validator<Client> validator, ExecutorService executor) {
+        super(repository, validator, "Client",executor);
     }
 
     @Override

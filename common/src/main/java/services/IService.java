@@ -9,11 +9,12 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.Future;
 
 public interface IService<ID, T extends BaseEntity<ID>> {
     Optional<T> FindOne(ID id);
 
-    void addEntity(T entity) throws MyException;
+    Future<Optional<T> > addEntity(T entity) throws MyException;
 
     T updateEntity(T entity) throws MyException;
 

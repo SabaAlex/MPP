@@ -1,4 +1,4 @@
-package services;
+package Service;
 
 import model.domain.BaseEntity;
 import model.exceptions.MyException;
@@ -8,10 +8,12 @@ import repository.IRepository;
 import repository.SavesToFile;
 import repository.Sort;
 import repository.SortingRepository;
+import services.IService;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -19,10 +21,14 @@ public abstract class BaseService<ID, T extends BaseEntity<ID>> implements IServ
     protected IRepository<ID, T> repository;
     private Validator<T> validator;
     private String className;
-    public BaseService(IRepository<ID,T> repository, Validator<T> validator, String className) {
+    private ExecutorService executorService;
+
+
+    public BaseService(IRepository<ID,T> repository, Validator<T> validator, String className, ExecutorService executor) {
         this.validator=validator;
         this.repository=repository;
         this.className = className;
+        this.executorService = executorService;
     }
 
     @Override
@@ -31,9 +37,9 @@ public abstract class BaseService<ID, T extends BaseEntity<ID>> implements IServ
     }
 
     @Override
-    public void addEntity(T entity) throws MyException {
+    public Optional<T> addEntity(T entity) throws MyException {
         validator.validate(entity);
-        repository.save(entity).ifPresent(optional->{throw new MyException(this.className + " already exists");});
+        return repository.save(entity);
     }
 
     @Override

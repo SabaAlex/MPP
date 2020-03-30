@@ -1,5 +1,7 @@
-package Service;
+package services;
 
+import Service.ClientService;
+import Service.MovieService;
 import model.domain.Client;
 import model.domain.Movie;
 import model.domain.Rental;
@@ -7,10 +9,10 @@ import model.exceptions.MyException;
 import model.exceptions.ValidatorException;
 import model.validators.Validator;
 import repository.IRepository;
-import services.BaseService;
 
 import java.util.*;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -45,7 +47,7 @@ public class RentalService extends BaseService<Long, Rental> {
     }
 
     @Override
-    public Optional<Rental> addEntity(Rental entity) throws ValidatorException {
+    public Future<Optional<Rental> > addEntity(Rental entity) throws ValidatorException {
         this.checkRentalInRepository(entity);
         return super.addEntity(entity);
     }
