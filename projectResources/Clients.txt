@@ -1,5 +1,0 @@
-1,f1,l1,31
-2,f2,l2,32
-4,Klaus,Santa,90
-5,asd,asd,31
-10,Ionut,Ion,20

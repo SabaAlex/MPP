@@ -7,9 +7,7 @@ import model.exceptions.ValidatorException;
 import model.validators.ClientValidator;
 import model.validators.MovieValidator;
 import model.validators.Validator;
-import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.Optional;

@@ -1,2 +1,0 @@
-1,t1,g1,2000,d1,ms1
-4,Ion,Doc,1999,Tarantino,DiCaprio

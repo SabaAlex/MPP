@@ -1,2 +1,5 @@
 rootProject.name = 'MPP Lab'
+include 'common'
+include 'server'
+include 'client'
 

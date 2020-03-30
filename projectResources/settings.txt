@@ -1,3 +1,0 @@
-clients,.xml
-movies,.xml
-rentals,.xml
