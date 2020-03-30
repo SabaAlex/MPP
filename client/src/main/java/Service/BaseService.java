@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -21,7 +22,7 @@ public abstract class BaseService<ID, T extends BaseEntity<ID>> implements IServ
     protected IRepository<ID, T> repository;
     private Validator<T> validator;
     private String className;
-    private ExecutorService executorService;
+    protected ExecutorService executorService;
 
 
     public BaseService(IRepository<ID,T> repository, Validator<T> validator, String className, ExecutorService executor) {
@@ -37,9 +38,10 @@ public abstract class BaseService<ID, T extends BaseEntity<ID>> implements IServ
     }
 
     @Override
-    public Optional<T> addEntity(T entity) throws MyException {
+    public Future<T> addEntity(T entity) throws MyException {
         validator.validate(entity);
-        return repository.save(entity);
+        T add_entity=repository.save(entity).orElseThrow(()-> new MyException("No "+this.className+" to add"));
+        return executorService.submit( ()->add_entity);
     }
 
     @Override

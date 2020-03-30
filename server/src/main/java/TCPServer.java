@@ -1,5 +1,6 @@
 
 
+import com.sun.security.ntlm.Server;
 import model.exceptions.MyException;
 import services.Message;
 
@@ -29,7 +30,7 @@ public class TCPServer {
     }
 
     public void startServer() {
-        try (var serverSocket = new ServerSocket(Message.PORT)) {
+        try (ServerSocket serverSocket = new ServerSocket(Message.PORT)) {
             while (true) {
                 Socket client = serverSocket.accept();
                 executorService.submit(new ClientHandler(client));

@@ -4,17 +4,15 @@ import model.exceptions.MyException;
 import services.Message;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.Socket;
-import java.net.UnknownHostException;
 
-/**
- * Created by radu.
- */
 public class TCPClient {
     public Message sendAndReceive(Message request) {
-        try (var socket = new Socket(Message.HOST, Message.PORT);
-             var is = socket.getInputStream();
-             var os = socket.getOutputStream()
+        try (Socket socket = new Socket(Message.HOST, Message.PORT);
+             InputStream is = socket.getInputStream();
+             OutputStream os = socket.getOutputStream()
         ) {
             System.out.println("sendAndReceive - sending request: " + request);
             request.writeTo(os);
