@@ -37,10 +37,10 @@ public class Client extends BaseEntity<Long> {
 
     @Override
     public String toString() {
-        return "First Name: '" + firstName + '\'' +
-                ", Last Name: '" + lastName + '\'' +
+        return "First Name: " + firstName +
+                ", Last Name: " + lastName +
                 ", Age: " + age +
-                ", ID: '" + getId() + '\'';
+                ", ID: " + getId();
     }
 
 

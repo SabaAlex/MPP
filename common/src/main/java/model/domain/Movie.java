@@ -12,12 +12,12 @@ public class Movie extends BaseEntity<Long> {
 
     @Override
     public String toString() {
-        return "Title='" + title + '\'' +
-                ", Year Of Release=" + yearOfRelease +
-                ", Main Star='" + mainStar + '\'' +
-                ", Director='" + director + '\'' +
-                ", Genre='" + genre + '\'' +
-                ", ID='" + getId() + '\'';
+        return "Title: " + title +
+                ", Year Of Release: " + yearOfRelease +
+                ", Main Star: " + mainStar +
+                ", Director: " + director +
+                ", Genre: " + genre +
+                ", ID: " + getId();
     }
 
     @Override
