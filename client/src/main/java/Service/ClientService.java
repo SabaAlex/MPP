@@ -66,7 +66,7 @@ public class ClientService extends BaseService<Long, Client> {
     @Override
     public Future<Client> deleteEntity(Long id_delete)
     {
-        Message request = new Message(Commands.UPDATE_CLIENT.getCmdMessage(),id_delete.toString());
+        Message request = new Message(Commands.DELETE_CLIENT.getCmdMessage(),id_delete.toString());
         System.out.println("sending request: " + request);
         Message response = client.sendAndReceive(request);
         System.out.println("received response: " + response);

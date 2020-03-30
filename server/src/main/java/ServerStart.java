@@ -221,7 +221,8 @@ public class ServerStart {
                     Future<Set<Client>> future = clientService.getAllEntities();
                     try {
                         Set<Client> result = future.get();
-
+                        System.out.println("LLOLLL");
+                        System.out.println(FactorySerializeCollection.toStringClients(result));
                         return new Message("ok", FactorySerializeCollection.toStringClients(result));
                     } catch (InterruptedException | ExecutionException | MyException e) {
                         e.printStackTrace();

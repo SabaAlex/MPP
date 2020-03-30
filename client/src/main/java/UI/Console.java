@@ -41,6 +41,29 @@ public class Console {
         fctLinks = new HashMap<>();
         initFunctionLinks();
     }
+    private void initFunctionLinks() {
+        fctLinks.put(ClientOptions.ADD.getCmdMessage(), this::uiAddClient);
+        fctLinks.put(ClientOptions.PRINT.getCmdMessage(), this::uiPrintAllClients);
+        fctLinks.put(ClientOptions.SORT.getCmdMessage(), this::uiPrintAllClientsSorted);
+        fctLinks.put(ClientOptions.FILTER.getCmdMessage(), this::uiFilterClientsByName);
+        fctLinks.put(ClientOptions.DELETE.getCmdMessage(), this::uiDeleteClient);
+        fctLinks.put(ClientOptions.UPDATE.getCmdMessage(), this::uiUpdateClient);
+        fctLinks.put(ClientOptions.STAT.getCmdMessage(), this::uiStatOldestClients);
+        fctLinks.put(MovieOptions.ADD.getCmdMessage(), this::uiAddMovie);
+        fctLinks.put(MovieOptions.PRINT.getCmdMessage(), this::uiPrintAllMovie);
+        fctLinks.put(MovieOptions.SORT.getCmdMessage(), this::uiPrintAllMoviesSorted);
+        fctLinks.put(MovieOptions.FILTER.getCmdMessage(), this::uiFilterMovieByTitle);
+        fctLinks.put(MovieOptions.DELETE.getCmdMessage(), this::uiDeleteMovie);
+        fctLinks.put(MovieOptions.UPDATE.getCmdMessage(), this::uiUpdateMovie);
+        fctLinks.put(MovieOptions.STAT.getCmdMessage(), this::uiStatMostMoviesReleasedInYear);
+        fctLinks.put(RentalOptions.ADD.getCmdMessage(), this::uiAddRental);
+        fctLinks.put(RentalOptions.PRINT.getCmdMessage(), this::uiPrintAllRentals);
+        fctLinks.put(RentalOptions.SORT.getCmdMessage(), this::uiPrintAllRentalsSorted);
+        fctLinks.put(RentalOptions.FILTER.getCmdMessage(), this::uiFilterRentalsByYear);
+        fctLinks.put(RentalOptions.DELETE.getCmdMessage(), this::uiDeleteRental);
+        fctLinks.put(RentalOptions.UPDATE.getCmdMessage(), this::uiUpdateRental);
+        fctLinks.put(RentalOptions.STAT.getCmdMessage(), this::uiStatMonthsOfMostRentedMovie);
+    }
 
     private void printMenu() {
         for (Map.Entry<Integer, String> com : commands.getCommands().entrySet()) {
@@ -127,8 +150,11 @@ public class Console {
 
         Client client = new Client(id, fName, lName, age);
         try {
+            execute.submit(
+                    ()->{
+                        clientService.updateEntity(client);
 
-            clientService.updateEntity(client);
+                    });
         } catch (MyException e) {
             System.out.println(e.getMessage());
         }
@@ -147,7 +173,11 @@ public class Console {
             throw new DataTypeException();
         }
         try {
-            rentalService.deleteEntity(id);
+            execute.submit(
+                    ()->{
+                        rentalService.deleteEntity(id);
+                    });
+
         } catch (MyException e) {
             System.out.println(e.getMessage());
         }
@@ -166,7 +196,16 @@ public class Console {
             throw new DataTypeException();
         }
         try {
-            rentalService.filterEntitiesField(Integer.toString(year)).forEach(System.out::println);
+            execute.submit(
+                    ()->{
+                        try {
+                            rentalService.filterEntitiesField(Integer.toString(year)).get().forEach(System.out::println);
+                        } catch (InterruptedException | ExecutionException e) {
+                            e.printStackTrace();
+                        }
+
+                    });
+
         } catch (MyException e) {
             System.out.println(e.getMessage());
         }
@@ -203,7 +242,10 @@ public class Console {
 
         Rental rental = new Rental(id, clientId, movieId, year, month, day);
         try {
-            rentalService.updateEntity(rental);
+            execute.submit(
+                    ()->{
+                        rentalService.updateEntity(rental);
+                    });
         } catch (MyException e) {
             System.out.println(e.getMessage());
         }
@@ -247,54 +289,68 @@ public class Console {
 
         Rental rental = new Rental(id, clientId, movieId, year, month, day);
         try {
-            rentalService.addEntity(rental);
+            execute.submit(
+                    ()->{
+                        rentalService.addEntity(rental);
+                    });
+
         } catch (MyException e) {
             System.out.println(e.getMessage());
         }
     }
 
     private void uiPrintAllRentals() {
-        rentalService.getAllEntities().forEach(System.out::println);
+        execute.submit(
+                ()->{
+                    try {
+                        rentalService.getAllEntities().get().forEach(System.out::println);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    } catch (ExecutionException e) {
+                        e.printStackTrace();
+                    }
+
+                });
+
     }
 
-    private void initFunctionLinks() {
-        fctLinks.put(ClientOptions.ADD.getCmdMessage(), this::uiAddClient);
-        fctLinks.put(ClientOptions.PRINT.getCmdMessage(), this::uiPrintAllClients);
-        fctLinks.put(ClientOptions.SORT.getCmdMessage(), this::uiPrintAllClientsSorted);
-        fctLinks.put(ClientOptions.FILTER.getCmdMessage(), this::uiFilterClientsByName);
-        fctLinks.put(ClientOptions.DELETE.getCmdMessage(), this::uiDeleteClient);
-        fctLinks.put(ClientOptions.UPDATE.getCmdMessage(), this::uiUpdateClient);
-        fctLinks.put(ClientOptions.STAT.getCmdMessage(), this::uiStatOldestClients);
-        fctLinks.put(MovieOptions.ADD.getCmdMessage(), this::uiAddMovie);
-        fctLinks.put(MovieOptions.PRINT.getCmdMessage(), this::uiPrintAllMovie);
-        fctLinks.put(MovieOptions.SORT.getCmdMessage(), this::uiPrintAllMoviesSorted);
-        fctLinks.put(MovieOptions.FILTER.getCmdMessage(), this::uiFilterMovieByTitle);
-        fctLinks.put(MovieOptions.DELETE.getCmdMessage(), this::uiDeleteMovie);
-        fctLinks.put(MovieOptions.UPDATE.getCmdMessage(), this::uiUpdateMovie);
-        fctLinks.put(MovieOptions.STAT.getCmdMessage(), this::uiStatMostMoviesReleasedInYear);
-        fctLinks.put(RentalOptions.ADD.getCmdMessage(), this::uiAddRental);
-        fctLinks.put(RentalOptions.PRINT.getCmdMessage(), this::uiPrintAllRentals);
-        fctLinks.put(RentalOptions.SORT.getCmdMessage(), this::uiPrintAllRentalsSorted);
-        fctLinks.put(RentalOptions.FILTER.getCmdMessage(), this::uiFilterRentalsByYear);
-        fctLinks.put(RentalOptions.DELETE.getCmdMessage(), this::uiDeleteRental);
-        fctLinks.put(RentalOptions.UPDATE.getCmdMessage(), this::uiUpdateRental);
-        fctLinks.put(RentalOptions.STAT.getCmdMessage(), this::uiStatMonthsOfMostRentedMovie);
-    }
+
 
     private void uiStatOldestClients() {
         System.out.println("Top 5 oldest Clients: ");
-        List<Client> list = clientService.statEntities();
-        IntStream.range(0, 5)
-                .mapToObj(list::get)
-                .forEach(client -> System.out.println("Age: " + client.getAge() +
-                        "\nName: " + client.getFirstName() + " " + client.getLastName() + "\n"
-                ));
+        execute.submit(
+                ()->{
+                    try {
+                        List<Client> list = clientService.statEntities().get();
+                        IntStream.range(0, 5)
+                                .mapToObj(list::get)
+                                .forEach(client -> System.out.println("Age: " + client.getAge() +
+                                        "\nName: " + client.getFirstName() + " " + client.getLastName() + "\n"
+                                ));
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    } catch (ExecutionException e) {
+                        e.printStackTrace();
+                    }
+
+                });
+
     }
 
     private void uiStatMostMoviesReleasedInYear() {
-        List<Movie> results = movieService.statEntities();
-        System.out.println("The most rich year in movies is: " + results.get(0).getYearOfRelease() + "\n");
-        results.forEach(System.out::println);
+        execute.submit(
+                ()->{
+                    try {
+                        List<Movie> results = movieService.statEntities().get();
+                        System.out.println("The most rich year in movies is: " + results.get(0).getYearOfRelease() + "\n");
+                        results.forEach(System.out::println);
+                    } catch (InterruptedException | ExecutionException e) {
+                        e.printStackTrace();
+                    }
+
+                });
+
+
     }
 
     private void uiStatMonthsOfMostRentedMovie() {
@@ -311,19 +367,27 @@ public class Console {
         } catch (NumberFormatException e) {
             throw new DataTypeException();
         }
+        execute.submit(
+                ()->{
+                    try {
+                        List<Rental> rentals = rentalService.statEntities(Integer.toString(release_year), Integer.toString(age)).get();
 
-        List<Rental> rentals = rentalService.statEntities(Integer.toString(release_year), Integer.toString(age));
+                        System.out.println("Most rented Movie of the year " + yearString + " " + movieService.FindOne(rentals.iterator().next().getMovieID()).get().getTitle());
+                        System.out.println("The rental months of the most rented movie by clients older than:" + ageString + " years");
 
-        System.out.println("Most rented Movie of the year " + yearString + " " + movieService.FindOne(rentals.iterator().next().getMovieID()).get().getTitle());
-        System.out.println("The rental months of the most rented movie by clients older than:" + ageString + " years");
+                        rentals.stream()
+                                .map(Rental::getMonth)
+                                .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()))
+                                .entrySet()
+                                .stream()
+                                .sorted(((o1, o2) -> -1 * o1.getValue().compareTo(o2.getValue())))
+                                .forEach(entity -> System.out.println(entity.getKey()));
+                    } catch (InterruptedException | ExecutionException e) {
+                        e.printStackTrace();
+                    }
 
-        rentals.stream()
-                .map(Rental::getMonth)
-                .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()))
-                .entrySet()
-                .stream()
-                .sorted(((o1, o2) -> -1 * o1.getValue().compareTo(o2.getValue())))
-                .forEach(entity -> System.out.println(entity.getKey()));
+                });
+
     }
 
     private void uiUpdateMovie() {
@@ -359,7 +423,11 @@ public class Console {
 
         Movie movie = new Movie(id, title, year, mainStar, director, genre);
         try {
-            movieService.updateEntity(movie);
+            execute.submit(
+                    ()->{
+                        movieService.updateEntity(movie);
+                    });
+
         } catch (MyException e) {
             System.out.println(e.getMessage());
         }
@@ -397,7 +465,10 @@ public class Console {
 
         Movie movie = new Movie(id, title, year, mainStar, director, genre);
         try {
-            movieService.addEntity(movie);
+            execute.submit(
+                    ()->{
+                        movieService.updateEntity(movie);
+                    });
         } catch (MyException e) {
             System.out.println(e.getMessage());
         }
@@ -409,64 +480,105 @@ public class Console {
         System.out.println("Input Movie Title: ");
         String name = scanner.nextLine();
         try {
-            movieService.filterEntitiesField(name).forEach(System.out::println);
+            execute.submit(
+                    ()->{
+                        try {
+                            movieService.filterEntitiesField(name).get().forEach(System.out::println);
+                        } catch (InterruptedException | ExecutionException e) {
+                            e.printStackTrace();
+                        }
+
+                    });
+
         } catch (MyException e) {
             System.out.println(e.getMessage());
         }
     }
 
     private void uiPrintAllMovie() {
-        movieService.getAllEntities().forEach(System.out::println);
+        execute.submit(
+                ()->{
+                    try {
+                        movieService.getAllEntities().get().forEach(System.out::println);
+                    } catch (InterruptedException | ExecutionException e) {
+                        e.printStackTrace();
+                    }
+
+                });
+
     }
 
     private void uiPrintAllClientsSorted() {
-        Sort sort = new Sort("FirstName","LastName").and(new Sort(Sort.Direction.DESC, "Age"));
-        sort.setClassName("Client");
-        clientService.getAllEntitiesSorted(sort).forEach(System.out::println);
+        execute.submit(
+                ()->{
+                    try {
+                        clientService.getAllEntitiesSorted().get().forEach(System.out::println);
+                    } catch (InterruptedException | ExecutionException e) {
+                        e.printStackTrace();
+                    }
+
+                });
+
     }
 
 
     private void uiPrintAllMoviesSorted() {
-        List<String> criterias = Arrays.asList("Id", "MainStar", "Title", "Genre", "YearOfRelease", "Director");
-        Scanner scanner = new Scanner(System.in);
-        Sort sort = null;
-        try {
-            while (true) {
-                System.out.println("Pick order DESC or ASC: ");
-                String order = scanner.nextLine();
-                if (order.equals("done")) break;
-                Sort.Direction sortingDirection;
-                if (order.equals("ASC")) {
-                    sortingDirection = Sort.Direction.ASC;
-                } else if (order.equals("DESC")) {
-                    sortingDirection = Sort.Direction.DESC;
-                } else {
-                    System.out.println("Wrong input!");
-                    break;
-                }
-                System.out.println("Pick column be careful it should be one of(Id,MainStar,Title,Director,Genre,YearOfRelease):");
-                String columnName = scanner.nextLine();
-                if (criterias.stream().filter(criteria -> criteria == columnName).collect(Collectors.toList()).size() == 0) {
-                    System.out.println("Wrong column next time be more careful !");
-                    break;
-                }
-                if (sort == null) {
-                    sort = new Sort(sortingDirection, columnName);
-                    sort.setClassName("Movie");
-                } else {
-                    sort = sort.and(new Sort(sortingDirection, columnName));
-                }
+        execute.submit(
+                ()->{
+                    try {
+                        movieService.getAllEntitiesSorted().get().forEach(System.out::println);
+                    } catch (InterruptedException | ExecutionException e) {
+                        e.printStackTrace();
+                    }
 
-            }
-            movieService.getAllEntitiesSorted(sort).forEach(System.out::println);
-        } catch (MyException e) {
-            System.out.println(e.getMessage());
-        }
+                });
+        //      Cata munca degeaba
+//        List<String> criterias = Arrays.asList("Id", "MainStar", "Title", "Genre", "YearOfRelease", "Director");
+//        Scanner scanner = new Scanner(System.in);
+//        Sort sort = null;
+//        try {
+//            while (true) {
+//                System.out.println("Pick order DESC or ASC: ");
+//                String order = scanner.nextLine();
+//                if (order.equals("done")) break;
+//                Sort.Direction sortingDirection;
+//                if (order.equals("ASC")) {
+//                    sortingDirection = Sort.Direction.ASC;
+//                } else if (order.equals("DESC")) {
+//                    sortingDirection = Sort.Direction.DESC;
+//                } else {
+//                    System.out.println("Wrong input!");
+//                    break;
+//                }
+//                System.out.println("Pick column be careful it should be one of(Id,MainStar,Title,Director,Genre,YearOfRelease):");
+//                String columnName = scanner.nextLine();
+//                if (criterias.stream().filter(criteria -> criteria == columnName).collect(Collectors.toList()).size() == 0) {
+//                    System.out.println("Wrong column next time be more careful !");
+//                    break;
+//                }
+//                if (sort == null) {
+//                    sort = new Sort(sortingDirection, columnName);
+//                    sort.setClassName("Movie");
+//                } else {
+//                    sort = sort.and(new Sort(sortingDirection, columnName));
+//                }
+//
+//            }
+//            movieService.getAllEntitiesSorted(sort).forEach(System.out::println);
+//        } catch (MyException e) {
+//            System.out.println(e.getMessage());
+//        }
     }
         private void uiPrintAllRentalsSorted () {
-            Sort sort = new Sort( "Day").and(new Sort(Sort.Direction.DESC, "Month"));
-            sort.setClassName("Rental");
-            rentalService.getAllEntitiesSorted(sort).forEach(System.out::println);
+            execute.submit(
+                    ()->{
+                        try {
+                            rentalService.getAllEntitiesSorted().get().forEach(System.out::println);
+                        } catch (InterruptedException | ExecutionException e) {
+                            e.printStackTrace();
+                        }
+
+                    });
         }
 
         private void uiDeleteMovie () {
@@ -482,8 +594,12 @@ public class Console {
                 throw new DataTypeException();
             }
             try {
-                movieService.deleteEntity(id);
-                rentalService.DeleteMovieRentals(id);
+                execute.submit(
+                        ()->{
+                            movieService.deleteEntity(id);
+                            rentalService.DeleteMovieRentals(id);
+                        });
+
             } catch (MyException e) {
                 System.out.println(e.getMessage());
             }
@@ -491,7 +607,16 @@ public class Console {
 
 
         private void uiPrintAllClients () {
-            clientService.getAllEntities().forEach(System.out::println);
+            execute.submit(
+                    ()->{
+                        try {
+                            clientService.getAllEntities().get().forEach(System.out::println);
+                        } catch (InterruptedException | ExecutionException e) {
+                            e.printStackTrace();
+                        }
+
+                    });
+
         }
 
         private void uiAddClient () {

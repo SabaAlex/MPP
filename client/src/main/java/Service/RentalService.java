@@ -106,7 +106,7 @@ public class RentalService extends BaseService<Long, Rental> {
 
     public void DeleteClientRentals(Long id)
     {
-        Message request = new Message(Commands.DEL.getCmdMessage(),id.toString());
+        Message request = new Message(Commands.DELETE_RENTAL_CLIENT.getCmdMessage(),id.toString());
         System.out.println("sending request: " + request);
         Message response = client.sendAndReceive(request);
 
@@ -114,7 +114,7 @@ public class RentalService extends BaseService<Long, Rental> {
     }
     public void DeleteMovieRentals(Long id)
     {
-        Message request = new Message(Commands.DEL.getCmdMessage(),id.toString());
+        Message request = new Message(Commands.DELETE_RENTAL_MOVIE.getCmdMessage(),id.toString());
         System.out.println("sending request: " + request);
         Message response = client.sendAndReceive(request);
     }
