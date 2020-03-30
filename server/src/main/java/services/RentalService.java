@@ -1,7 +1,5 @@
 package services;
 
-import Service.ClientService;
-import Service.MovieService;
 import model.domain.Client;
 import model.domain.Movie;
 import model.domain.Rental;
@@ -11,6 +9,7 @@ import model.validators.Validator;
 import repository.IRepository;
 
 import java.util.*;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.function.Function;
@@ -53,51 +52,55 @@ public class RentalService extends BaseService<Long, Rental> {
     }
 
     @Override
-    public Set<Rental> filterEntitiesField(String field) {
+    public Future<Set<Rental>> filterEntitiesField(String field) {
         Iterable<Rental> rentals = repository.findAll();
         Set<Rental> filteredRentals=new HashSet<>();
         rentals.forEach(filteredRentals::add);
         filteredRentals.removeIf(rental->!(rental.getYear()==Integer.parseInt(field)) );
-        return filteredRentals;
+        return executorService.submit(() ->filteredRentals);
     }
 
     @Override
-    public List<Rental> statEntities(String... fields) {
+    public Future<List<Rental>> statEntities(String... fields) {
         if (fields.length != 2)
             throw new MyException("Something went wrong!");
 
         int movie_year = Integer.parseInt(fields[0]);
         int age = Integer.parseInt(fields[1]);
 
-        List<Client> ClientList = clientService.getAllEntities()
-                .stream()
-                .filter(client->client.getAge()>=age)
-                .collect(Collectors.toList());
-        List<Movie> MovieList = movieService.getAllEntities()
-                .stream()
-                .filter(movie->movie.getYearOfRelease()==movie_year)
-                .collect(Collectors.toList());
+        try {
+            List<Client> ClientList = clientService.getAllEntities().get()
+                    .stream()
+                    .filter(client->client.getAge()>=age)
+                    .collect(Collectors.toList());
+            List<Movie> MovieList = movieService.getAllEntities().get()
+                    .stream()
+                    .filter(movie->movie.getYearOfRelease()==movie_year)
+                    .collect(Collectors.toList());
 
-        List<Rental> rentalsList = StreamSupport.stream(repository.findAll().spliterator(),false)
-                .filter(rental-> ClientList.stream().anyMatch(client -> client.getId().equals(rental.getClientID())))
-                .filter(rental-> MovieList.stream().anyMatch(movie -> movie.getId().equals(rental.getMovieID())))
-                .collect(Collectors.toList());
+            List<Rental> rentalsList = StreamSupport.stream(repository.findAll().spliterator(),false)
+                    .filter(rental-> ClientList.stream().anyMatch(client -> client.getId().equals(rental.getClientID())))
+                    .filter(rental-> MovieList.stream().anyMatch(movie -> movie.getId().equals(rental.getMovieID())))
+                    .collect(Collectors.toList());
 
-        Long mostRentedMovie = Collections.max(rentalsList.stream()
-                        .map(Rental::getMovieID)
-                        .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()))
-                        .entrySet()
-                ,
-                Comparator.comparingLong(Map.Entry::getValue))
-                .getKey();
+            Long mostRentedMovie = Collections.max(rentalsList.stream()
+                            .map(Rental::getMovieID)
+                            .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()))
+                            .entrySet()
+                    ,
+                    Comparator.comparingLong(Map.Entry::getValue))
+                    .getKey();
 
-        return rentalsList.stream()
-                .filter(rental -> rental.getMovieID().equals(mostRentedMovie))
-                .collect(Collectors.toList());
+            return executorService.submit(() -> rentalsList.stream()
+                    .filter(rental -> rental.getMovieID().equals(mostRentedMovie))
+                    .collect(Collectors.toList()));
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
-    public void DeleteClientRentals(Long id)
-    {
+    public void DeleteClientRentals(Long id) {
         Iterable<Rental> rentals=repository.findAll();
         Set<Rental> filteredRentals= StreamSupport.stream(rentals.spliterator(),false).collect(Collectors.toSet());
         filteredRentals
@@ -107,8 +110,8 @@ public class RentalService extends BaseService<Long, Rental> {
                 );
 
     }
-    public void DeleteMovieRentals(Long id)
-    {
+
+    public void DeleteMovieRentals(Long id) {
         Iterable<Rental> rentals = repository.findAll();
         Set<Rental> filteredRentals = StreamSupport.stream(rentals.spliterator(),false).collect(Collectors.toSet());
         filteredRentals

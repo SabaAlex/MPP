@@ -26,8 +26,8 @@ public abstract class BaseService<ID, T extends BaseEntity<ID>> implements IServ
 
 
     public BaseService(IRepository<ID,T> repository, Validator<T> validator, String className, ExecutorService executor) {
-        this.validator=validator;
-        this.repository=repository;
+        this.validator = validator;
+        this.repository = repository;
         this.className = className;
         this.executorService = executorService;
     }

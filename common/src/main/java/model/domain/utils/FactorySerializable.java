@@ -6,7 +6,7 @@ import model.domain.Rental;
 
 public  class FactorySerializable {
     public static String toStringEntity(Client client){
-        return client.getId() + "," + client.getFirstName() + "," + client.getFirstName() + "," + client.getAge();
+        return client.getId() + "," + client.getFirstName() + "," + client.getLastName() + "," + client.getAge();
     }
 
     public static String toStringEntity(Movie movie){

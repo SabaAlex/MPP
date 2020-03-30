@@ -44,28 +44,32 @@ public abstract class BaseService<ID, T extends BaseEntity<ID>> implements IServ
     }
 
     @Override
-    public T updateEntity(T entity) throws MyException {
+    public Future<T> updateEntity(T entity) throws MyException {
         validator.validate(entity);
-        return repository.update(entity).orElseThrow(()-> new MyException(this.className + " does not exist"));
+        T update_Entity = repository.update(entity).orElseThrow(()-> new MyException(this.className + " does not exist"));
+        return executorService.submit(()->update_Entity);
     }
 
     @Override
-    public T deleteEntity(ID id) throws ValidatorException {
-        return repository.delete(id).orElseThrow(()-> new MyException(this.className +" with that ID does not exist"));
+    public Future<T> deleteEntity(ID id) throws ValidatorException {
+        T delete_entity = repository.delete(id).orElseThrow(()-> new MyException(this.className +" with that ID does not exist"));
+        return executorService.submit(() -> delete_entity);
     }
 
     @Override
-    public Set<T> getAllEntities() {
+    public Future<Set<T>> getAllEntities() {
         Iterable<T> entities = repository.findAll();
-        return StreamSupport.stream(entities.spliterator(),false).collect(Collectors.toSet());
+        Set<T> entity_Set = StreamSupport.stream(entities.spliterator(), false).collect(Collectors.toSet());
+        return executorService.submit(() -> entity_Set);
     }
 
     @Override
-    public List<T> getAllEntitiesSorted(Sort sort) {
+    public Future<List<T>> getAllEntitiesSorted(Sort sort) {
         if(repository instanceof SortingRepository)
         {
             Iterable<T> entities=((SortingRepository<ID, T>) repository).findAll(sort);
-            return StreamSupport.stream(entities.spliterator(),false).collect(Collectors.toList());
+            List<T> entity_set = StreamSupport.stream(entities.spliterator(), false).collect(Collectors.toList());
+            return executorService.submit(() -> entity_set);
         }
         throw new MyException("This is not A SUPPORTED SORTING REPOSITORY");
     }

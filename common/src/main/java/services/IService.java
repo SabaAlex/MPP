@@ -16,24 +16,42 @@ public interface IService<ID, T extends BaseEntity<ID>> {
 
     Future<T > addEntity(T entity) throws MyException;
 
-    T updateEntity(T entity) throws MyException;
+    Future<T> updateEntity(T entity) throws MyException;
 
-    T deleteEntity(ID id) throws ValidatorException;
+    Future<T> deleteEntity(ID id) throws ValidatorException;
 
-    Set<T> getAllEntities();
+    Future<Set<T>> getAllEntities();
 
-    List<T> getAllEntitiesSorted(Sort sort);
+    Future<List<T>> getAllEntitiesSorted(Sort sort);
 
-    Set<T> filterEntitiesField(String field);
+    Future<Set<T>> filterEntitiesField(String field);
 
-    List<T> statEntities(String... fields);
+    Future<List<T>> statEntities(String... fields);
 
     public void saveToFile();
     public enum Commands
     {
-        ADD_ENTITY("addEntity"),
-        UPDATE_ENTITY("updateEntity"),
-        DELETE_ENTITY("deleteEntity");
+        ADD_CLIENT("addClient"),
+        ADD_MOVIE("addMovie"),
+        ADD_RENTAL("addRental"),
+        UPDATE_CLIENT("updateClient"),
+        UPDATE_MOVIE("updateMovie"),
+        UPDATE_RENTAL("updateRental"),
+        DELETE_CLIENT("deleteEClient"),
+        DELETE_MOVIE("deleteMovie"),
+        DELETE_RENTAL("deleteRental"),
+        FILTER_CLIENT("filterClient"),
+        FILTER_MOVIE("filterMovie"),
+        FILTER_RENTAL("filterRental"),
+        SORT_CLIENT("sortClient"),
+        SORT_MOVIE("sortMovie"),
+        SORT_RENTAL("sortRental"),
+        ALL_CLIENT("allClient"),
+        ALL_MOVIE("allMovie"),
+        ALL_RENTAL("allRental"),
+        STAT_CLIENT("statClient"),
+        STAT_MOVIE("statMovie"),
+        STAT_RENTAL("statRental");
 
         private final String cmdMessage;
 

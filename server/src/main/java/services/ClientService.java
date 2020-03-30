@@ -9,6 +9,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -18,22 +19,22 @@ public class ClientService extends BaseService<Long, Client> {
     }
 
     @Override
-    public Set<Client> filterEntitiesField(String field) {
+    public Future<Set<Client>> filterEntitiesField(String field) {
         Iterable<Client> clients=repository.findAll();
         Set<Client> filteredClients=new HashSet<>();
         clients.forEach(filteredClients::add);
         filteredClients.removeIf(client->!(client.getLastName().contains(field) || client.getFirstName().contains(field)) );
-        return filteredClients;
+        return executorService.submit(() -> filteredClients);
     }
 
     @Override
-    public List<Client> statEntities(String... fields) {
+    public Future<List<Client>> statEntities(String... fields) {
         if (fields.length != 0)
             throw new MyException("Something went wrong!");
-        return StreamSupport.stream(repository.findAll().spliterator(),false).collect(Collectors.toList())
+        return executorService.submit(() ->StreamSupport.stream(repository.findAll().spliterator(),false).collect(Collectors.toList())
                 .stream()
                 .sorted((o1, o2) -> o2.getAge() - o1.getAge())
-                .collect(Collectors.toList());
+                .collect(Collectors.toList()));
     }
 
 
