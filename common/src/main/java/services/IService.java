@@ -14,7 +14,7 @@ import java.util.concurrent.Future;
 public interface IService<ID, T extends BaseEntity<ID>> {
     Optional<T> FindOne(ID id);
 
-    Future<Optional<T> > addEntity(T entity) throws MyException;
+    Future<T > addEntity(T entity) throws MyException;
 
     T updateEntity(T entity) throws MyException;
 
@@ -29,4 +29,20 @@ public interface IService<ID, T extends BaseEntity<ID>> {
     List<T> statEntities(String... fields);
 
     public void saveToFile();
+    public enum Commands
+    {
+        ADD_ENTITY("addEntity"),
+        UPDATE_ENTITY("updateEntity"),
+        DELETE_ENTITY("deleteEntity");
+
+        private final String cmdMessage;
+
+        public String getCmdMessage() {
+            return cmdMessage;
+        }
+
+        Commands(String cmdMessage) {
+            this.cmdMessage = cmdMessage;
+        }
+    }
 }

@@ -47,7 +47,7 @@ public class RentalService extends BaseService<Long, Rental> {
     }
 
     @Override
-    public Future<Optional<Rental> > addEntity(Rental entity) throws ValidatorException {
+    public Future<Rental > addEntity(Rental entity) throws ValidatorException {
         this.checkRentalInRepository(entity);
         return super.addEntity(entity);
     }

@@ -4,16 +4,16 @@ import model.domain.Client;
 import model.domain.Movie;
 import model.domain.Rental;
 
-public abstract class FactorySerializable {
-    public static String toString(Client client){
+public  class FactorySerializable {
+    public static String toStringEntity(Client client){
         return client.getId() + "," + client.getFirstName() + "," + client.getFirstName() + "," + client.getAge();
     }
 
-    public static String toString(Movie movie){
+    public static String toStringEntity(Movie movie){
         return movie.getId() + "," + movie.getTitle() + "," + movie.getYearOfRelease() + movie.getMainStar() + "," + movie.getDirector() + "," + movie.getGenre();
     }
 
-    public static String toString(Rental rental){
+    public static String toStringEntity(Rental rental){
         return rental.getId() + "," + rental.getClientID() + "," + rental.getMovieID() + "," + rental.getYear() + "," + rental.getMonth() + "," + rental.getDay();
     }
 

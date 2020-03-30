@@ -37,9 +37,10 @@ public abstract class BaseService<ID, T extends BaseEntity<ID>> implements IServ
     }
 
     @Override
-    public Future<Optional<T> > addEntity(T entity) throws MyException {
+    public Future< T > addEntity(T entity) throws MyException {
         validator.validate(entity);
-        return executorService.submit( ()->repository.save(entity));
+        T add_entity=repository.save(entity).orElseThrow(()-> new MyException("No "+this.className+" to add"));
+        return executorService.submit( ()->add_entity);
     }
 
     @Override

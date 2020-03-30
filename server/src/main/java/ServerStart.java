@@ -1,8 +1,11 @@
 import model.domain.Client;
+import model.domain.utils.FactorySerializable;
+import model.exceptions.MyException;
 import model.validators.ClientValidator;
 import repository.IRepository;
 import repository.postgreSQL.ClientSQLRepository;
 import services.ClientService;
+import services.IService;
 import services.Message;
 
 import java.sql.SQLException;
@@ -20,7 +23,6 @@ public class ServerStart {
     public static void main(String[] args) {
         try {
 
-
             System.out.println("server started");
             ExecutorService executorService = Executors.newFixedThreadPool(
                     Runtime.getRuntime().availableProcessors()
@@ -32,13 +34,14 @@ public class ServerStart {
 
                 TCPServer tcpServer = new TCPServer(executorService);
 
-                tcpServer.addHandler(clientService;, (request) -> {
-                    Client client = request.getBody();
-                    Future<Optional<Client>> future=clientService.addEntity(client);
+                tcpServer.addHandler(ClientService.Commands.ADD_ENTITY.getCmdMessage(), (request) -> {
+                    Client client = FactorySerializable.createClient(request.getBody());
+                    Future<Client> future = clientService.addEntity(client);
                     try {
-                        Optional<> result = future.get();
-                        return new Message("ok", result); //fixme: hardcoded str
-                    } catch (InterruptedException | ExecutionException e) {
+                        Client result = future.get();
+
+                        return new Message("ok", FactorySerializable.toStringEntity(result));
+                    } catch (InterruptedException | ExecutionException | MyException e) {
                         e.printStackTrace();
                         return new Message("error", e.getMessage());//fixme: hardcoded str
                     }
@@ -57,12 +60,15 @@ public class ServerStart {
 //            }
 //        });
 
-            tcpServer.startServer();
+                tcpServer.startServer();
 
-            executorService.shutdown();
-        } catch (RuntimeException | SQLException ex) {
-            ex.printStackTrace();
+                executorService.shutdown();
+            } catch (RuntimeException | SQLException ex) {
+                ex.printStackTrace();
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-
     }
 }
