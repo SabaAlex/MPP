@@ -51,7 +51,9 @@ public interface IService<ID, T extends BaseEntity<ID>> {
         ALL_RENTAL("allRental"),
         STAT_CLIENT("statClient"),
         STAT_MOVIE("statMovie"),
-        STAT_RENTAL("statRental");
+        STAT_RENTAL("statRental"),
+        DELETE_RENTAL_CLIENT("deleteRentalsClients"),
+        DELETE_RENTAL_MOVIE("deleteRentalsMovies");
 
         private final String cmdMessage;
 

@@ -4,6 +4,8 @@ import model.domain.Client;
 import model.exceptions.MyException;
 import model.validators.Validator;
 import repository.IRepository;
+import repository.Sort;
+import repository.SortingRepository;
 
 import java.util.HashSet;
 import java.util.List;
@@ -37,5 +39,16 @@ public class ClientService extends BaseService<Long, Client> {
                 .collect(Collectors.toList()));
     }
 
+    public Future<List<Client>> getAllEntitiesSorted() {
+        if(repository instanceof SortingRepository)
+        {
+            Sort sort = new Sort("FirstName","LastName").and(new Sort(Sort.Direction.DESC, "Age"));
+            sort.setClassName("Client");
+            Iterable<Client> entities=((SortingRepository<Long, Client>) repository).findAll(sort);
+            List<Client> entity_set = StreamSupport.stream(entities.spliterator(), false).collect(Collectors.toList());
+            return executorService.submit(() -> entity_set);
+        }
+        throw new MyException("This is not A SUPPORTED SORTING REPOSITORY");
+    }
 
 }
