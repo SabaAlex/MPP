@@ -26,7 +26,7 @@ public class MovieService extends BaseService<Long, Movie> {
     public CompletableFuture<Set<Movie>> filterEntitiesField(String field) {
 
         return CompletableFuture.supplyAsync(()->{
-                    Message request = new Message(Commands.FILTER_CLIENT.getCmdMessage(),field);
+                    Message request = new Message(Commands.FILTER_MOVIE.getCmdMessage(),field);
                     System.out.println("sending request: " + request);
                     Message response = client.sendAndReceive(request);
                     System.out.println("received response: " + response);
@@ -84,7 +84,7 @@ public class MovieService extends BaseService<Long, Movie> {
     public CompletableFuture<Movie> deleteEntity(Long id_delete)
     {
         return CompletableFuture.supplyAsync(()->{
-                    Message request = new Message(Commands.DELETE_CLIENT.getCmdMessage(),id_delete.toString());
+                    Message request = new Message(Commands.DELETE_MOVIE.getCmdMessage(),id_delete.toString());
                     System.out.println("sending request: " + request);
                     Message response = client.sendAndReceive(request);
                     System.out.println("received response: " + response);

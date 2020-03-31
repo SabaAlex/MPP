@@ -467,7 +467,7 @@ public class Console {
         try {
             execute.submit(
                     ()->{
-                        movieService.updateEntity(movie);
+                        movieService.addEntity(movie);
                     });
         } catch (MyException e) {
             System.out.println(e.getMessage());
