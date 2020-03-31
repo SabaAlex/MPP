@@ -4,21 +4,15 @@ import UI.TCPClient;
 import model.domain.Client;
 import model.domain.utils.FactorySerializable;
 import model.domain.utils.FactorySerializeCollection;
-import model.exceptions.MyException;
 import model.validators.Validator;
 import repository.IRepository;
-import repository.Sort;
-import repository.SortingRepository;
 import services.Message;
 
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 public class ClientService extends BaseService<Long, Client> {
     public ClientService(IRepository<Long, Client> repository, Validator<Client> validator, ExecutorService executorService, TCPClient client) {

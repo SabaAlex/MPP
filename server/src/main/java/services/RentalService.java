@@ -11,6 +11,7 @@ import repository.Sort;
 import repository.SortingRepository;
 
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
@@ -48,13 +49,13 @@ public class RentalService extends BaseService<Long, Rental> {
     }
 
     @Override
-    public Future<Rental > addEntity(Rental entity) throws ValidatorException {
+    public CompletableFuture<Rental> addEntity(Rental entity) throws ValidatorException {
         this.checkRentalInRepository(entity);
         return super.addEntity(entity);
     }
 
     @Override
-    public Future<Set<Rental>> filterEntitiesField(String field) {
+    public CompletableFuture<Set<Rental>> filterEntitiesField(String field) {
         Iterable<Rental> rentals = repository.findAll();
         Set<Rental> filteredRentals=new HashSet<>();
         rentals.forEach(filteredRentals::add);
@@ -63,7 +64,7 @@ public class RentalService extends BaseService<Long, Rental> {
     }
 
     @Override
-    public Future<List<Rental>> statEntities(String... fields) {
+    public CompletableFuture<List<Rental>> statEntities(String... fields) {
         if (fields.length != 2)
             throw new MyException("Something went wrong!");
 
@@ -103,7 +104,7 @@ public class RentalService extends BaseService<Long, Rental> {
     }
 
     @Override
-    public Future<List<Rental>> getAllEntitiesSorted() {
+    public CompletableFuture<List<Rental>> getAllEntitiesSorted() {
         if(repository instanceof SortingRepository)
         {
             Sort sort = new Sort( "Day").and(new Sort(Sort.Direction.DESC, "Month"));

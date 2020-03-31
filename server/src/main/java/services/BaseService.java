@@ -6,14 +6,9 @@ import model.exceptions.ValidatorException;
 import model.validators.Validator;
 import repository.IRepository;
 import repository.SavesToFile;
-import repository.Sort;
-import repository.SortingRepository;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
+import java.util.*;
+import java.util.concurrent.*;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -28,7 +23,7 @@ public abstract class BaseService<ID, T extends BaseEntity<ID>> implements IServ
         this.validator=validator;
         this.repository=repository;
         this.className = className;
-        this.executorService = executorService;
+        this.executorService = executor;
     }
 
     @Override
@@ -37,36 +32,31 @@ public abstract class BaseService<ID, T extends BaseEntity<ID>> implements IServ
     }
 
     @Override
-    public Future< T > addEntity(T entity) throws MyException {
-        validator.validate(entity);
-        T add_entity=repository.save(entity).orElseThrow(()-> new MyException("No "+this.className+" to add"));
-        return executorService.submit( ()->add_entity);
+    public CompletableFuture<T> addEntity(T entity) throws MyException {
+        return CompletableFuture.supplyAsync(() -> {validator.validate(entity);
+            return repository.save(entity).orElseThrow(()-> new MyException("No "+this.className+" to add"));}, executorService);
     }
 
     @Override
-    public Future<T> updateEntity(T entity) throws MyException {
-        validator.validate(entity);
-        T update_Entity = repository.update(entity).orElseThrow(()-> new MyException(this.className + " does not exist"));
-        return executorService.submit(()->update_Entity);
+    public CompletableFuture<T> updateEntity(T entity) throws MyException {
+        return CompletableFuture.supplyAsync(() -> {validator.validate(entity);
+            return repository.update(entity).orElseThrow(()-> new MyException(this.className + " does not exist"));}, executorService);
     }
 
     @Override
-    public Future<T> deleteEntity(ID id) throws ValidatorException {
-        T delete_entity = repository.delete(id).orElseThrow(()-> new MyException(this.className +" with that ID does not exist"));
-        return executorService.submit(() -> delete_entity);
+    public CompletableFuture<T> deleteEntity(ID id) throws ValidatorException {
+        return CompletableFuture.supplyAsync(() -> {return repository.delete(id).orElseThrow(()-> new MyException(this.className +" with that ID does not exist"));}, executorService);
     }
 
     @Override
-    public Future<Set<T>> getAllEntities() {
-        System.out.println("LOOOOOl");
-        Iterable<T> entities = repository.findAll();
-        sout
-        Set<T> entity_Set = StreamSupport.stream(entities.spliterator(), false).collect(Collectors.toSet());
-        return executorService.submit(() -> entity_Set);
+    public CompletableFuture<Set<T>> getAllEntities() {
+        return CompletableFuture.supplyAsync(() -> {Iterable<T> entities = repository.findAll();
+            return StreamSupport.stream(entities.spliterator(), false).collect(Collectors.toSet());}, executorService);
     }
 
     @Override
-    public abstract Future<List<T>> getAllEntitiesSorted();
+    public abstract CompletableFuture<List<T>> getAllEntitiesSorted();
+
     @Override
     public void saveToFile() {
         if (repository instanceof SavesToFile){

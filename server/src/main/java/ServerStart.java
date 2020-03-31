@@ -17,10 +17,7 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
+import java.util.concurrent.*;
 
 /**
  * Created by radu.
@@ -221,10 +218,9 @@ public class ServerStart {
                     Future<Set<Client>> future = clientService.getAllEntities();
                     try {
                         Set<Client> result = future.get();
-                        System.out.println("LLOLLL");
                         System.out.println(FactorySerializeCollection.toStringClients(result));
                         return new Message("ok", FactorySerializeCollection.toStringClients(result));
-                    } catch (InterruptedException | ExecutionException | MyException e) {
+                    } catch (MyException | InterruptedException | ExecutionException e) {
                         e.printStackTrace();
                         return new Message("error", e.getMessage());//fixme: hardcoded str
                     }

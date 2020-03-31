@@ -3,30 +3,28 @@ package services;
 import model.domain.BaseEntity;
 import model.exceptions.MyException;
 import model.exceptions.ValidatorException;
-import repository.Sort;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.concurrent.Future;
+import java.util.concurrent.CompletableFuture;
 
 public interface IService<ID, T extends BaseEntity<ID>> {
     Optional<T> FindOne(ID id);
 
-    Future<T > addEntity(T entity) throws MyException;
+    CompletableFuture<T > addEntity(T entity) throws MyException;
 
-    Future<T> updateEntity(T entity) throws MyException;
+    CompletableFuture<T> updateEntity(T entity) throws MyException;
 
-    Future<T> deleteEntity(ID id) throws ValidatorException;
+    CompletableFuture<T> deleteEntity(ID id) throws ValidatorException;
 
-    Future<Set<T>> getAllEntities();
+    CompletableFuture<Set<T>> getAllEntities();
 
-    Future<List<T>> getAllEntitiesSorted();
+    CompletableFuture<List<T>> getAllEntitiesSorted();
 
-    Future<Set<T>> filterEntitiesField(String field);
+    CompletableFuture<Set<T>> filterEntitiesField(String field);
 
-    Future<List<T>> statEntities(String... fields);
+    CompletableFuture<List<T>> statEntities(String... fields);
 
     public void saveToFile();
     public enum Commands
