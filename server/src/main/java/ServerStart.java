@@ -47,12 +47,12 @@ public class ServerStart {
                 TCPServer tcpServer = new TCPServer(executorService);
 
                 tcpServer.addHandler(IService.Commands.ADD_CLIENT.getCmdMessage(), (request) -> {
-                    Client client = FactorySerializable.createClient(request.getBody());
-                    Future<Client> future = clientService.addEntity(client);
-                    try {
-                        Client result = future.get();
 
-                        return new Message("ok", FactorySerializable.toStringEntity(result));
+                    try {
+                        Client client = FactorySerializable.createClient(request.getBody());
+                        Future<Client> future = clientService.addEntity(client);
+                        Client result = future.get();
+                        return new Message("ok", "null");
                     } catch (InterruptedException | ExecutionException | MyException e) {
                         e.printStackTrace();
                         return new Message("error", e.getMessage());//fixme: hardcoded str
@@ -61,12 +61,12 @@ public class ServerStart {
                 });
 
                 tcpServer.addHandler(IService.Commands.ADD_MOVIE.getCmdMessage(), (request) -> {
-                    Movie movie = FactorySerializable.createMovie(request.getBody());
-                    Future<Movie> future = movieService.addEntity(movie);
                     try {
+                        Movie movie = FactorySerializable.createMovie(request.getBody());
+                        Future<Movie> future = movieService.addEntity(movie);
                         Movie result = future.get();
 
-                        return new Message("ok", FactorySerializable.toStringEntity(result));
+                        return new Message("ok", "null");
                     } catch (InterruptedException | ExecutionException | MyException e) {
                         e.printStackTrace();
                         return new Message("error", e.getMessage());//fixme: hardcoded str
@@ -75,12 +75,11 @@ public class ServerStart {
                 });
 
                 tcpServer.addHandler(IService.Commands.ADD_RENTAL.getCmdMessage(), (request) -> {
-                    Rental rental = FactorySerializable.createRental(request.getBody());
-                    Future<Rental> future = rentalService.addEntity(rental);
                     try {
+                        Rental rental = FactorySerializable.createRental(request.getBody());
+                        Future<Rental> future = rentalService.addEntity(rental);
                         Rental result = future.get();
-
-                        return new Message("ok", FactorySerializable.toStringEntity(result));
+                        return new Message("ok", "null");
                     } catch (InterruptedException | ExecutionException | MyException e) {
                         e.printStackTrace();
                         return new Message("error", e.getMessage());//fixme: hardcoded str
@@ -89,9 +88,9 @@ public class ServerStart {
                 });
 
                 tcpServer.addHandler(IService.Commands.UPDATE_CLIENT.getCmdMessage(), (request) -> {
-                    Client client = FactorySerializable.createClient(request.getBody());
-                    Future<Client> future = clientService.updateEntity(client);
                     try {
+                        Client client = FactorySerializable.createClient(request.getBody());
+                        Future<Client> future = clientService.updateEntity(client);
                         Client result = future.get();
 
                         return new Message("ok", FactorySerializable.toStringEntity(result));
@@ -103,9 +102,9 @@ public class ServerStart {
                 });
 
                 tcpServer.addHandler(IService.Commands.UPDATE_MOVIE.getCmdMessage(), (request) -> {
-                    Movie movie = FactorySerializable.createMovie(request.getBody());
-                    Future<Movie> future = movieService.updateEntity(movie);
                     try {
+                        Movie movie = FactorySerializable.createMovie(request.getBody());
+                        Future<Movie> future = movieService.updateEntity(movie);
                         Movie result = future.get();
 
                         return new Message("ok", FactorySerializable.toStringEntity(result));
@@ -117,9 +116,10 @@ public class ServerStart {
                 });
 
                 tcpServer.addHandler(IService.Commands.UPDATE_RENTAL.getCmdMessage(), (request) -> {
-                    Rental rental = FactorySerializable.createRental(request.getBody());
-                    Future<Rental> future = rentalService.updateEntity(rental);
+
                     try {
+                        Rental rental = FactorySerializable.createRental(request.getBody());
+                        Future<Rental> future = rentalService.updateEntity(rental);
                         Rental result = future.get();
 
                         return new Message("ok", FactorySerializable.toStringEntity(result));
@@ -131,9 +131,10 @@ public class ServerStart {
                 });
 
                 tcpServer.addHandler(IService.Commands.DELETE_CLIENT.getCmdMessage(), (request) -> {
-                    long id = Long.parseLong(request.getBody());
-                    Future<Client> future = clientService.deleteEntity(id);
+
                     try {
+                        long id = Long.parseLong(request.getBody());
+                        Future<Client> future = clientService.deleteEntity(id);
                         Client result = future.get();
 
                         return new Message("ok", FactorySerializable.toStringEntity(result));
@@ -145,9 +146,10 @@ public class ServerStart {
                 });
 
                 tcpServer.addHandler(IService.Commands.DELETE_MOVIE.getCmdMessage(), (request) -> {
-                    long id = Long.parseLong(request.getBody());
-                    Future<Movie> future = movieService.deleteEntity(id);
+
                     try {
+                        long id = Long.parseLong(request.getBody());
+                        Future<Movie> future = movieService.deleteEntity(id);
                         Movie result = future.get();
 
                         return new Message("ok", FactorySerializable.toStringEntity(result));
@@ -173,9 +175,10 @@ public class ServerStart {
                 });
 
                 tcpServer.addHandler(IService.Commands.FILTER_CLIENT.getCmdMessage(), (request) -> {
-                    String field = request.getBody();
-                    Future<Set<Client>> future = clientService.filterEntitiesField(field);
+
                     try {
+                        String field = request.getBody();
+                        Future<Set<Client>> future = clientService.filterEntitiesField(field);
                         Set<Client> result = future.get();
 
                         return new Message("ok", FactorySerializeCollection.toStringClients(result));
@@ -187,9 +190,10 @@ public class ServerStart {
                 });
 
                 tcpServer.addHandler(IService.Commands.FILTER_MOVIE.getCmdMessage(), (request) -> {
-                    String field = request.getBody();
-                    Future<Set<Movie>> future = movieService.filterEntitiesField(field);
+
                     try {
+                        String field = request.getBody();
+                        Future<Set<Movie>> future = movieService.filterEntitiesField(field);
                         Set<Movie> result = future.get();
 
                         return new Message("ok", FactorySerializeCollection.toStringMovies(result));
@@ -201,9 +205,10 @@ public class ServerStart {
                 });
 
                 tcpServer.addHandler(IService.Commands.FILTER_RENTAL.getCmdMessage(), (request) -> {
-                    String field = request.getBody();
-                    Future<Set<Rental>> future = rentalService.filterEntitiesField(field);
+
                     try {
+                        String field = request.getBody();
+                        Future<Set<Rental>> future = rentalService.filterEntitiesField(field);
                         Set<Rental> result = future.get();
 
                         return new Message("ok", FactorySerializeCollection.toStringRentals(result));
@@ -215,8 +220,8 @@ public class ServerStart {
                 });
 
                 tcpServer.addHandler(IService.Commands.ALL_CLIENT.getCmdMessage(), (request) -> {
-                    Future<Set<Client>> future = clientService.getAllEntities();
                     try {
+                        Future<Set<Client>> future = clientService.getAllEntities();
                         Set<Client> result = future.get();
                         System.out.println(FactorySerializeCollection.toStringClients(result));
                         return new Message("ok", FactorySerializeCollection.toStringClients(result));
@@ -228,8 +233,8 @@ public class ServerStart {
                 });
 
                 tcpServer.addHandler(IService.Commands.ALL_MOVIE.getCmdMessage(), (request) -> {
-                    Future<Set<Movie>> future = movieService.getAllEntities();
                     try {
+                        Future<Set<Movie>> future = movieService.getAllEntities();
                         Set<Movie> result = future.get();
 
                         return new Message("ok", FactorySerializeCollection.toStringMovies(result));
@@ -241,8 +246,9 @@ public class ServerStart {
                 });
 
                 tcpServer.addHandler(IService.Commands.ALL_RENTAL.getCmdMessage(), (request) -> {
-                    Future<Set<Rental>> future = rentalService.getAllEntities();
+
                     try {
+                        Future<Set<Rental>> future = rentalService.getAllEntities();
                         Set<Rental> result = future.get();
 
                         return new Message("ok", FactorySerializeCollection.toStringRentals(result));
@@ -254,8 +260,8 @@ public class ServerStart {
                 });
 
                 tcpServer.addHandler(IService.Commands.STAT_CLIENT.getCmdMessage(), (request) -> {
-                    Future<List<Client>> future = clientService.statEntities();
                     try {
+                        Future<List<Client>> future = clientService.statEntities();
                         List<Client> result = future.get();
 
                         return new Message("ok", FactorySerializeCollection.toStringClients(result));
@@ -267,8 +273,8 @@ public class ServerStart {
                 });
 
                 tcpServer.addHandler(IService.Commands.STAT_MOVIE.getCmdMessage(), (request) -> {
-                    Future<List<Movie>> future = movieService.statEntities();
                     try {
+                        Future<List<Movie>> future = movieService.statEntities();
                         List<Movie> result = future.get();
 
                         return new Message("ok", FactorySerializeCollection.toStringMovies(result));
@@ -280,9 +286,9 @@ public class ServerStart {
                 });
 
                 tcpServer.addHandler(IService.Commands.STAT_RENTAL.getCmdMessage(), (request) -> {
-                    String[] tokens = request.getBody().split(",");
-                    Future<List<Rental>> future = rentalService.statEntities(tokens[0].replaceAll(" ", ""), tokens[1].replaceAll(" ", ""));
                     try {
+                        String[] tokens = request.getBody().split(",");
+                        Future<List<Rental>> future = rentalService.statEntities(tokens[0].replaceAll(" ", ""), tokens[1].replaceAll(" ", ""));
                         List<Rental> result = future.get();
 
                         return new Message("ok", FactorySerializeCollection.toStringRentals(result));
@@ -294,8 +300,8 @@ public class ServerStart {
                 });
 
                 tcpServer.addHandler(IService.Commands.SORT_CLIENT.getCmdMessage(), (request) -> {
-                    Future<List<Client>> future = clientService.getAllEntitiesSorted();
                     try {
+                        Future<List<Client>> future = clientService.getAllEntitiesSorted();
                         List<Client> result = future.get();
 
                         return new Message("ok", FactorySerializeCollection.toStringClients(result));
@@ -307,8 +313,9 @@ public class ServerStart {
                 });
 
                 tcpServer.addHandler(IService.Commands.SORT_MOVIE.getCmdMessage(), (request) -> {
-                    Future<List<Movie>> future = movieService.getAllEntitiesSorted();
+
                     try {
+                        Future<List<Movie>> future = movieService.getAllEntitiesSorted();
                         List<Movie> result = future.get();
 
                         return new Message("ok", FactorySerializeCollection.toStringMovies(result));
@@ -320,8 +327,8 @@ public class ServerStart {
                 });
 
                 tcpServer.addHandler(IService.Commands.SORT_RENTAL.getCmdMessage(), (request) -> {
-                    Future<List<Rental>> future = rentalService.getAllEntitiesSorted();
                     try {
+                        Future<List<Rental>> future = rentalService.getAllEntitiesSorted();
                         List<Rental> result = future.get();
 
                         return new Message("ok", FactorySerializeCollection.toStringRentals(result));
@@ -333,9 +340,9 @@ public class ServerStart {
                 });
 
                 tcpServer.addHandler(IService.Commands.DELETE_RENTAL_CLIENT.getCmdMessage(), (request) -> {
-                    long id = Long.parseLong(request.getBody());
-                    rentalService.DeleteClientRentals(id);
                     try {
+                        long id = Long.parseLong(request.getBody());
+                        rentalService.DeleteClientRentals(id);
                         return new Message("ok", "");
                     } catch (MyException e) {
                         e.printStackTrace();
@@ -345,9 +352,9 @@ public class ServerStart {
                 });
 
                 tcpServer.addHandler(IService.Commands.DELETE_RENTAL_MOVIE.getCmdMessage(), (request) -> {
-                    long id = Long.parseLong(request.getBody());
-                    rentalService.DeleteMovieRentals(id);
                     try {
+                        long id = Long.parseLong(request.getBody());
+                        rentalService.DeleteMovieRentals(id);
                         return new Message("ok", "");
                     } catch (MyException e) {
                         e.printStackTrace();
