@@ -33,8 +33,15 @@ public abstract class BaseService<ID, T extends BaseEntity<ID>> implements IServ
 
     @Override
     public CompletableFuture<T> addEntity(T entity) throws MyException {
-        return CompletableFuture.supplyAsync(() -> {validator.validate(entity);
-            return repository.save(entity).orElseThrow(()-> new MyException("No "+this.className+" to add"));}, executorService);
+        return CompletableFuture.supplyAsync(() -> {
+            validator.validate(entity);
+            Optional<T> entityOpt = repository.save(entity);
+            entityOpt.ifPresent(optional -> {
+                throw new MyException(
+                        this.className + " already exists");
+            });
+            return null;
+        });
     }
 
     @Override
