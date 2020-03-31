@@ -4,6 +4,7 @@ bin
 *.log
 dist
 node_modules
+*.zip
 
 # Eclipse
 .classpath
