@@ -79,18 +79,7 @@ public class Console {
         System.out.println("Input Client Name: ");
         String name = scanner.nextLine();
         try {
-            execute.submit(
-                    ()->{
-                        try {
-                            clientService.filterEntitiesField(name).get().forEach(System.out::println);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        } catch (ExecutionException e) {
-                            e.printStackTrace();
-                        }
-
-                    });
-
+            clientService.filterEntitiesField(name).thenAcceptAsync(entity->entity.forEach(System.out::println));;
         } catch (MyException e) {
             System.out.println(e.getMessage());
 
@@ -110,12 +99,8 @@ public class Console {
             throw new DataTypeException();
         }
         try {
-            execute.submit(
-                    ()->{
-                        clientService.deleteEntity(id);
-                        rentalService.DeleteClientRentals(id);
-
-                    });
+            clientService.deleteEntity(id);
+            rentalService.DeleteClientRentals(id);
 
         } catch (MyException e) {
             System.out.println(e.getMessage());
@@ -150,11 +135,7 @@ public class Console {
 
         Client client = new Client(id, fName, lName, age);
         try {
-            execute.submit(
-                    ()->{
-                        clientService.updateEntity(client);
-
-                    });
+            clientService.updateEntity(client);
         } catch (MyException e) {
             System.out.println(e.getMessage());
         }
@@ -173,10 +154,7 @@ public class Console {
             throw new DataTypeException();
         }
         try {
-            execute.submit(
-                    ()->{
-                        rentalService.deleteEntity(id);
-                    });
+            rentalService.deleteEntity(id);
 
         } catch (MyException e) {
             System.out.println(e.getMessage());
@@ -196,16 +174,7 @@ public class Console {
             throw new DataTypeException();
         }
         try {
-            execute.submit(
-                    ()->{
-                        try {
-                            rentalService.filterEntitiesField(Integer.toString(year)).get().forEach(System.out::println);
-                        } catch (InterruptedException | ExecutionException e) {
-                            e.printStackTrace();
-                        }
-
-                    });
-
+            rentalService.filterEntitiesField(Integer.toString(year)).thenAcceptAsync(entity->entity.forEach(System.out::println));;
         } catch (MyException e) {
             System.out.println(e.getMessage());
         }
@@ -242,10 +211,7 @@ public class Console {
 
         Rental rental = new Rental(id, clientId, movieId, year, month, day);
         try {
-            execute.submit(
-                    ()->{
-                        rentalService.updateEntity(rental);
-                    });
+            rentalService.updateEntity(rental);
         } catch (MyException e) {
             System.out.println(e.getMessage());
         }
@@ -289,68 +255,33 @@ public class Console {
 
         Rental rental = new Rental(id, clientId, movieId, year, month, day);
         try {
-            execute.submit(
-                    ()->{
-                        rentalService.addEntity(rental);
-                    });
-
+            rentalService.addEntity(rental);
         } catch (MyException e) {
             System.out.println(e.getMessage());
         }
     }
 
     private void uiPrintAllRentals() {
-        execute.submit(
-                ()->{
-                    try {
-                        rentalService.getAllEntities().get().forEach(System.out::println);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    } catch (ExecutionException e) {
-                        e.printStackTrace();
-                    }
-
-                });
-
+        rentalService.getAllEntities().thenAcceptAsync(entity->entity.forEach(System.out::println));
     }
 
 
 
     private void uiStatOldestClients() {
         System.out.println("Top 5 oldest Clients: ");
-        execute.submit(
-                ()->{
-                    try {
-                        List<Client> list = clientService.statEntities().get();
-                        IntStream.range(0, 5)
-                                .mapToObj(list::get)
-                                .forEach(client -> System.out.println("Age: " + client.getAge() +
-                                        "\nName: " + client.getFirstName() + " " + client.getLastName() + "\n"
-                                ));
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    } catch (ExecutionException e) {
-                        e.printStackTrace();
-                    }
-
-                });
-
+        clientService.statEntities().thenAcceptAsync(list->{
+        IntStream.range(0, 5)
+                .mapToObj(list::get)
+                .forEach(client -> System.out.println("Age: " + client.getAge() +
+                        "\nName: " + client.getFirstName() + " " + client.getLastName() + "\n"
+                ));});
     }
 
     private void uiStatMostMoviesReleasedInYear() {
-        execute.submit(
-                ()->{
-                    try {
-                        List<Movie> results = movieService.statEntities().get();
-                        System.out.println("The most rich year in movies is: " + results.get(0).getYearOfRelease() + "\n");
-                        results.forEach(System.out::println);
-                    } catch (InterruptedException | ExecutionException e) {
-                        e.printStackTrace();
-                    }
-
-                });
-
-
+        movieService.statEntities().thenAcceptAsync(results-> {
+           System.out.println("The most rich year in movies is: " + results.get(0).getYearOfRelease() + "\n");
+           results.forEach(System.out::println);
+       });
     }
 
     private void uiStatMonthsOfMostRentedMovie() {
@@ -367,26 +298,20 @@ public class Console {
         } catch (NumberFormatException e) {
             throw new DataTypeException();
         }
-        execute.submit(
-                ()->{
-                    try {
-                        List<Rental> rentals = rentalService.statEntities(Integer.toString(release_year), Integer.toString(age)).get();
+        rentalService.statEntities(Integer.toString(release_year), Integer.toString(age)).thenAcceptAsync(rentals-> {
 
-                        System.out.println("Most rented Movie of the year " + yearString + " " + movieService.FindOne(rentals.iterator().next().getMovieID()).get().getTitle());
-                        System.out.println("The rental months of the most rented movie by clients older than:" + ageString + " years");
+            System.out.println("Most rented Movie of the year " + yearString + " " + movieService.FindOne(rentals.iterator().next().getMovieID()).get().getTitle());
+            System.out.println("The rental months of the most rented movie by clients older than:" + ageString + " years");
 
-                        rentals.stream()
-                                .map(Rental::getMonth)
-                                .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()))
-                                .entrySet()
-                                .stream()
-                                .sorted(((o1, o2) -> -1 * o1.getValue().compareTo(o2.getValue())))
-                                .forEach(entity -> System.out.println(entity.getKey()));
-                    } catch (InterruptedException | ExecutionException e) {
-                        e.printStackTrace();
-                    }
-
-                });
+            rentals.stream()
+                    .map(Rental::getMonth)
+                    .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()))
+                    .entrySet()
+                    .stream()
+                    .sorted(((o1, o2) -> -1 * o1.getValue().compareTo(o2.getValue())))
+                    .forEach(entity -> System.out.println(entity.getKey()));
+        });
+        ;
 
     }
 
@@ -423,11 +348,7 @@ public class Console {
 
         Movie movie = new Movie(id, title, year, mainStar, director, genre);
         try {
-            execute.submit(
-                    ()->{
-                        movieService.updateEntity(movie);
-                    });
-
+            movieService.updateEntity(movie);
         } catch (MyException e) {
             System.out.println(e.getMessage());
         }
@@ -465,10 +386,7 @@ public class Console {
 
         Movie movie = new Movie(id, title, year, mainStar, director, genre);
         try {
-            execute.submit(
-                    ()->{
-                        movieService.addEntity(movie);
-                    });
+            movieService.addEntity(movie);
         } catch (MyException e) {
             System.out.println(e.getMessage());
         }
@@ -480,15 +398,7 @@ public class Console {
         System.out.println("Input Movie Title: ");
         String name = scanner.nextLine();
         try {
-            execute.submit(
-                    ()->{
-                        try {
-                            movieService.filterEntitiesField(name).get().forEach(System.out::println);
-                        } catch (InterruptedException | ExecutionException e) {
-                            e.printStackTrace();
-                        }
-
-                    });
+            movieService.filterEntitiesField(name).thenAcceptAsync(entity->entity.forEach(System.out::println));;
 
         } catch (MyException e) {
             System.out.println(e.getMessage());
@@ -496,42 +406,18 @@ public class Console {
     }
 
     private void uiPrintAllMovie() {
-        execute.submit(
-                ()->{
-                    try {
-                        movieService.getAllEntities().get().forEach(System.out::println);
-                    } catch (InterruptedException | ExecutionException e) {
-                        e.printStackTrace();
-                    }
-
-                });
+        movieService.getAllEntities().thenAcceptAsync(entity->entity.forEach(System.out::println));;
 
     }
 
     private void uiPrintAllClientsSorted() {
-        execute.submit(
-                ()->{
-                    try {
-                        clientService.getAllEntitiesSorted().get().forEach(System.out::println);
-                    } catch (InterruptedException | ExecutionException e) {
-                        e.printStackTrace();
-                    }
-
-                });
+        clientService.getAllEntitiesSorted().thenAcceptAsync(entity->entity.forEach(System.out::println));
 
     }
 
 
     private void uiPrintAllMoviesSorted() {
-        execute.submit(
-                ()->{
-                    try {
-                        movieService.getAllEntitiesSorted().get().forEach(System.out::println);
-                    } catch (InterruptedException | ExecutionException e) {
-                        e.printStackTrace();
-                    }
-
-                });
+        movieService.getAllEntitiesSorted().thenAcceptAsync(entity->entity.forEach(System.out::println));;
         //      Cata munca degeaba
 //        List<String> criterias = Arrays.asList("Id", "MainStar", "Title", "Genre", "YearOfRelease", "Director");
 //        Scanner scanner = new Scanner(System.in);
@@ -570,15 +456,7 @@ public class Console {
 //        }
     }
         private void uiPrintAllRentalsSorted () {
-            execute.submit(
-                    ()->{
-                        try {
-                            rentalService.getAllEntitiesSorted().get().forEach(System.out::println);
-                        } catch (InterruptedException | ExecutionException e) {
-                            e.printStackTrace();
-                        }
-
-                    });
+            rentalService.getAllEntitiesSorted().thenAcceptAsync(entity->entity.forEach(System.out::println));
         }
 
         private void uiDeleteMovie () {
@@ -594,11 +472,8 @@ public class Console {
                 throw new DataTypeException();
             }
             try {
-                execute.submit(
-                        ()->{
-                            movieService.deleteEntity(id);
-                            rentalService.DeleteMovieRentals(id);
-                        });
+                movieService.deleteEntity(id);
+                rentalService.DeleteMovieRentals(id);
 
             } catch (MyException e) {
                 System.out.println(e.getMessage());
@@ -607,15 +482,12 @@ public class Console {
 
 
         private void uiPrintAllClients () {
-            execute.submit(
-                    ()->{
-                        try {
-                            clientService.getAllEntities().get().forEach(System.out::println);
-                        } catch (InterruptedException | ExecutionException e) {
-                            e.printStackTrace();
-                        }
+        try {
+            clientService.getAllEntities().thenAcceptAsync(entitry->entitry.forEach(System.out::println));
+        } catch (MyException e ) {
+            e.printStackTrace();
+        }
 
-                    });
 
         }
 
@@ -645,12 +517,7 @@ public class Console {
 
             Client client = new Client(id, fName, lName, age);
             try {
-                execute.submit(
-                        ()->{
-                            Future<Client> future=clientService.addEntity(client);
-
-                        }
-                );
+                    clientService.addEntity(client);
             } catch (MyException e) {
                 System.out.println(e.getMessage());
             }

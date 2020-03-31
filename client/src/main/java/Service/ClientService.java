@@ -97,6 +97,11 @@ public class ClientService extends BaseService<Long, Client> {
     public CompletableFuture<Set<Client>> getAllEntities()
     {
         return CompletableFuture.supplyAsync(()->{
+                    try {
+                        Thread.sleep(15000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                     Message request = new Message(Commands.ALL_CLIENT.getCmdMessage(),"");
                     System.out.println("sending request: " + request);
                     Message response = client.sendAndReceive(request);

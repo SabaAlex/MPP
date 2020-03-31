@@ -58,7 +58,7 @@ public class MovieSQLRepository extends PostgreSQLRepository<Long, Movie> {
                         " SET title = " + "'" + entity.getTitle() + "', " +
                         "director = " + "'" + entity.getDirector() + "', " +
                         "yearofrelease = " + "'" + entity.getYearOfRelease() + "', " +
-                        "mainstar = " + "'" + entity.getMainStar() + "' " +
+                        "mainstar = " + "'" + entity.getMainStar() + "', " +
                         "genre = " + "'" + entity.getGenre() + "' " +
                         "WHERE id = " + entity.getId()
         )) {

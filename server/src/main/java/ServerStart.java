@@ -288,7 +288,7 @@ public class ServerStart {
                 tcpServer.addHandler(IService.Commands.STAT_RENTAL.getCmdMessage(), (request) -> {
                     try {
                         String[] tokens = request.getBody().split(",");
-                        Future<List<Rental>> future = rentalService.statEntities(tokens[0].replaceAll(" ", ""), tokens[1].replaceAll(" ", ""));
+                        Future<List<Rental>> future = rentalService.statEntities(tokens[0], tokens[1]);
                         List<Rental> result = future.get();
 
                         return new Message("ok", FactorySerializeCollection.toStringRentals(result));

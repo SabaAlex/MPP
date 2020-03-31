@@ -23,7 +23,7 @@ public class MovieService extends BaseService<Long, Movie> {
     }
 
     @Override
-    public CompletableFuture<Set<Movie>> filterEntitiesField(String field) {
+    public synchronized CompletableFuture<Set<Movie>> filterEntitiesField(String field) {
         return CompletableFuture.supplyAsync(() -> {Iterable<Movie> movies = repository.findAll();
             Set<Movie> filteredMovies=new HashSet<>();
             movies.forEach(filteredMovies::add);
@@ -32,7 +32,7 @@ public class MovieService extends BaseService<Long, Movie> {
     }
 
     @Override
-    public CompletableFuture<List<Movie>> statEntities(String... fields) {
+    public synchronized CompletableFuture<List<Movie>> statEntities(String... fields) {
 
         return CompletableFuture.supplyAsync(() -> {
             if (fields.length != 0)
@@ -51,7 +51,7 @@ public class MovieService extends BaseService<Long, Movie> {
     }
 
     @Override
-    public CompletableFuture<List<Movie>> getAllEntitiesSorted() {
+    public synchronized CompletableFuture<List<Movie>> getAllEntitiesSorted() {
 
         return CompletableFuture.supplyAsync(() -> {
             if(repository instanceof SortingRepository)

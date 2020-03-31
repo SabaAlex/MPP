@@ -54,7 +54,8 @@ public class RentalService extends BaseService<Long, Rental> {
     public CompletableFuture<List<Rental>> statEntities(String... fields) {
 
         return CompletableFuture.supplyAsync(()->{
-                    Message request = new Message(Commands.STAT_RENTAL.getCmdMessage(),"");
+                    String fieldString=Arrays.stream(fields).collect(Collectors.joining(","));
+                    Message request = new Message(Commands.STAT_RENTAL.getCmdMessage(),fieldString);
                     System.out.println("sending request: " + request);
                     Message response = client.sendAndReceive(request);
                     System.out.println("received response: " + response);

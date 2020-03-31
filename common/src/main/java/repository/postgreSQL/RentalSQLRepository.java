@@ -58,7 +58,7 @@ public class RentalSQLRepository extends PostgreSQLRepository<Long, Rental> {
                         " SET clientid = " + "'" + entity.getClientID() + "', " +
                         "movieid = " + "'" + entity.getMovieID() + "', " +
                         "day = " + "'" + entity.getDay() + "', " +
-                        "month = " + "'" + entity.getMonth() + "' " +
+                        "month = " + "'" + entity.getMonth() + "', " +
                         "year = " + "'" + entity.getYear() + "' " +
                         "WHERE id = " + entity.getId()
         )) {

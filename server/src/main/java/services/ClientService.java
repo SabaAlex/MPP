@@ -22,7 +22,7 @@ public class ClientService extends BaseService<Long, Client> {
     }
 
     @Override
-    public CompletableFuture<Set<Client>> filterEntitiesField(String field) {
+    public synchronized CompletableFuture<Set<Client>> filterEntitiesField(String field) {
         return CompletableFuture.supplyAsync(() -> {Iterable<Client> clients=repository.findAll();
             Set<Client> filteredClients=new HashSet<>();
             clients.forEach(filteredClients::add);
@@ -32,7 +32,7 @@ public class ClientService extends BaseService<Long, Client> {
     }
 
     @Override
-    public CompletableFuture<List<Client>> statEntities(String... fields) {
+    public synchronized CompletableFuture<List<Client>> statEntities(String... fields) {
         return CompletableFuture.supplyAsync(() -> {
             if (fields.length != 0)
                 throw new MyException("Something went wrong!");
@@ -42,7 +42,7 @@ public class ClientService extends BaseService<Long, Client> {
                 .collect(Collectors.toList());}, executorService);
     }
 
-    public CompletableFuture<List<Client>> getAllEntitiesSorted() {
+    public synchronized CompletableFuture<List<Client>> getAllEntitiesSorted() {
         return CompletableFuture.supplyAsync(() -> {
             if(repository instanceof SortingRepository)
             {
