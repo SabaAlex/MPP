@@ -11,10 +11,8 @@ import repository.IRepository;
 import services.Message;
 
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.stream.Collectors;
@@ -25,99 +23,106 @@ public class MovieService extends BaseService<Long, Movie> {
         super(repository, validator, "Movie",executor,client);
     }
     @Override
-    public Future<Set<Movie>> filterEntitiesField(String field) {
-        Message request = new Message(Commands.FILTER_MOVIE.getCmdMessage(),field);
-        System.out.println("sending request: " + request);
-        Message response = client.sendAndReceive(request);
-        System.out.println("received response: " + response);
-        if(response.getHeader().equals("error"))
-        {
-            throw new MyException(response.getBody());
-        }
-        Set<Movie> movies= (Set)FactorySerializeCollection.createMovies(request.getBody());
-        return executorService.submit(()->movies);
+    public CompletableFuture<Set<Movie>> filterEntitiesField(String field) {
+
+        return CompletableFuture.supplyAsync(()->{
+                    Message request = new Message(Commands.FILTER_CLIENT.getCmdMessage(),field);
+                    System.out.println("sending request: " + request);
+                    Message response = client.sendAndReceive(request);
+                    System.out.println("received response: " + response);
+                    if(response.getHeader().equals("error")){throw new MyException(response.getBody());
+                    }
+                    Collection<Movie> movies= FactorySerializeCollection.createMovies(response.getBody());
+                    Set<Movie> movie=new HashSet<>(movies);
+                    return  movie;}
+                ,executorService);
     }
 
     @Override
-    public Future<List<Movie>> statEntities(String... fields) {
-        Message request = new Message(Commands.STAT_MOVIE.getCmdMessage(),"");
-        System.out.println("sending request: " + request);
-        Message response = client.sendAndReceive(request);
-        System.out.println("received response: " + response);
-        if(response.getHeader().equals("error"))
-        {
-            throw new MyException(response.getBody());
-        }
-        List<Movie> movies= (List)FactorySerializeCollection.createMovies(request.getBody());
-        return executorService.submit(()->movies);
+    public CompletableFuture<List<Movie>> statEntities(String... fields) {
+
+        return CompletableFuture.supplyAsync(()->{
+                    Message request = new Message(Commands.STAT_CLIENT.getCmdMessage(),"");
+                    System.out.println("sending request: " + request);
+                    Message response = client.sendAndReceive(request);
+                    System.out.println("received response: " + response);
+                    if(response.getHeader().equals("error")){throw new MyException(response.getBody());
+                    }
+                    Collection<Movie> movies= FactorySerializeCollection.createMovies(response.getBody());
+                    List<Movie> movie=new ArrayList<>(movies);
+                    return  movie;}
+                ,executorService);
     }
     @Override
-    public Future<Movie> addEntity(Movie entity) {
-        Message request = new Message(Commands.ADD_MOVIE.getCmdMessage(), FactorySerializable.toStringEntity(entity));
-        System.out.println("sending request: " + request);
-        Message response = client.sendAndReceive(request);
-        System.out.println("received response: " + response);
-        if(response.getHeader().equals("error"))
-        {
-            throw new MyException(response.getBody());
-        }
-        Movie movie=FactorySerializable.createMovie(request.getBody());
-        return executorService.submit(() -> movie);
+    public CompletableFuture<Movie> addEntity(Movie entity) {
+        return CompletableFuture.supplyAsync(()->{
+                    Message request = new Message(Commands.ADD_MOVIE.getCmdMessage(),FactorySerializable.toStringEntity(entity));
+                    System.out.println("sending request: " + request);
+                    Message response = client.sendAndReceive(request);
+                    System.out.println("received response: " + response);
+                    if(response.getHeader().equals("error")){throw new MyException(response.getBody());
+                    }
+                    Movie movie= FactorySerializable.createMovie(response.getBody());
+                    return  movie;}
+                ,executorService);
     }
     @Override
-    public Future<Movie> updateEntity(Movie new_entity)
+    public CompletableFuture<Movie> updateEntity(Movie new_entity)
     {
-        Message request = new Message(Commands.UPDATE_MOVIE.getCmdMessage(), FactorySerializable.toStringEntity(new_entity));
-        System.out.println("sending request: " + request);
-        Message response = client.sendAndReceive(request);
-        System.out.println("received response: " + response);
-        if(response.getHeader().equals("error"))
-        {
-            throw new MyException(response.getBody());
-        }
-        Movie movie=FactorySerializable.createMovie(request.getBody());
-        return executorService.submit(() -> movie);
+        return CompletableFuture.supplyAsync(()->{
+                    Message request = new Message(Commands.UPDATE_MOVIE.getCmdMessage(),FactorySerializable.toStringEntity(new_entity));
+                    System.out.println("sending request: " + request);
+                    Message response = client.sendAndReceive(request);
+                    System.out.println("received response: " + response);
+                    if(response.getHeader().equals("error")){throw new MyException(response.getBody());
+                    }
+                    Movie movie= FactorySerializable.createMovie(response.getBody());
+                    return  movie;}
+                ,executorService);
     }
     @Override
-    public Future<Movie> deleteEntity(Long id_delete)
+    public CompletableFuture<Movie> deleteEntity(Long id_delete)
     {
-        Message request = new Message(Commands.UPDATE_MOVIE.getCmdMessage(),id_delete.toString());
-        System.out.println("sending request: " + request);
-        Message response = client.sendAndReceive(request);
-        System.out.println("received response: " + response);
-        if(response.getHeader().equals("error"))
-        {
-            throw new MyException(response.getBody());
-        }
-        Movie movie=FactorySerializable.createMovie(request.getBody());
-        return executorService.submit(() -> movie);
+        return CompletableFuture.supplyAsync(()->{
+                    Message request = new Message(Commands.DELETE_CLIENT.getCmdMessage(),id_delete.toString());
+                    System.out.println("sending request: " + request);
+                    Message response = client.sendAndReceive(request);
+                    System.out.println("received response: " + response);
+                    if(response.getHeader().equals("error")){throw new MyException(response.getBody());
+                    }
+                    Movie movie= FactorySerializable.createMovie(response.getBody());
+                    return  movie;}
+                ,executorService);
     }
 
     @Override
-    public Future<Set<Movie>> getAllEntities()
+    public CompletableFuture<Set<Movie>> getAllEntities()
     {
-        Message request = new Message(Commands.ALL_MOVIE.getCmdMessage(),"");
-        System.out.println("sending request: " + request);
-        Message response = client.sendAndReceive(request);
-        System.out.println("received response: " + response);
-        if(response.getHeader().equals("error"))
-        {
-            throw new MyException(response.getBody());
-        }
-        Collection<Movie> movies= FactorySerializeCollection.createMovies(response.getBody());
-        Set<Movie> movie = new HashSet<Movie>(movies);
-        System.out.println("Print!");
-        Future<Set<Movie>> future=executorService.submit(() -> movie);
-        return future;
+        return CompletableFuture.supplyAsync(()->{
+                    Message request = new Message(Commands.ALL_MOVIE.getCmdMessage(),"");
+                    System.out.println("sending request: " + request);
+                    Message response = client.sendAndReceive(request);
+                    System.out.println("received response: " + response);
+                    if(response.getHeader().equals("error")){throw new MyException(response.getBody());
+                    }
+                    Collection<Movie> movies= FactorySerializeCollection.createMovies(response.getBody());
+                    Set<Movie> movie=new HashSet<>(movies);
+                    return  movie;}
+                ,executorService);
     }
 
     @Override
-    public Future<List<Movie> >getAllEntitiesSorted() {
-        Message request = new Message(Commands.SORT_MOVIE.getCmdMessage(),"");
-        System.out.println("sending request: " + request);
-        Message response = client.sendAndReceive(request);
-        System.out.println("received response: " + response);
-        List<Movie> movies= (List)FactorySerializeCollection.createMovies(request.getBody());
-        return executorService.submit(() -> movies);
+    public CompletableFuture<List<Movie> > getAllEntitiesSorted() {
+        return CompletableFuture.supplyAsync(()->{
+                    Message request = new Message(Commands.SORT_MOVIE.getCmdMessage(),"");
+                    System.out.println("sending request: " + request);
+                    Message response = client.sendAndReceive(request);
+                    System.out.println("received response: " + response);
+                    if(response.getHeader().equals("error")){throw new MyException(response.getBody());
+                    }
+                    Collection<Movie> movies= FactorySerializeCollection.createMovies(response.getBody());
+                    List<Movie> movie=new ArrayList<>(movies);
+                    return  movie;}
+                ,executorService);
     }
 }

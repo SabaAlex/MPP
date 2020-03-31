@@ -14,6 +14,7 @@ import services.Message;
 
 
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.function.Function;
@@ -31,127 +32,136 @@ public class RentalService extends BaseService<Long, Rental> {
         this.movieService = movieService;
     }
 
+
+
     @Override
-    public Future<Set<Rental>> filterEntitiesField(String field) {
-        Message request = new Message(Commands.FILTER_RENTAL.getCmdMessage(),field);
-        System.out.println("sending request: " + request);
-        Message response = client.sendAndReceive(request);
-        System.out.println("received response: " + response);
-        if(response.getHeader().equals("error"))
-        {
-            throw new MyException(response.getBody());
-        }
-        Set<Rental> rentals= (Set)FactorySerializeCollection.createRentals(request.getBody());
-        return executorService.submit(()->rentals);
+    public CompletableFuture<Set<Rental>> filterEntitiesField(String field) {
+
+        return CompletableFuture.supplyAsync(()->{
+                    Message request = new Message(Commands.FILTER_RENTAL.getCmdMessage(),field);
+                    System.out.println("sending request: " + request);
+                    Message response = client.sendAndReceive(request);
+                    System.out.println("received response: " + response);
+                    if(response.getHeader().equals("error")){throw new MyException(response.getBody());
+                    }
+                    Collection<Rental> rentals= FactorySerializeCollection.createRentals(response.getBody());
+                    Set<Rental> rental=new HashSet<>(rentals);
+                    return  rental;}
+                ,executorService);
     }
 
     @Override
-    public Future<List<Rental>> statEntities(String... fields) {
-        if (fields.length != 0)
-            throw new MyException("Something went wrong!");
-        String fieldS=Arrays.stream(fields).collect(Collectors.joining(","));
-        Message request = new Message(Commands.STAT_RENTAL.getCmdMessage(),fieldS);
-        System.out.println("sending request: " + request);
-        Message response = client.sendAndReceive(request);
-        System.out.println("received response: " + response);
-        if(response.getHeader().equals("error"))
-        {
-            throw new MyException(response.getBody());
-        }
-        List<Rental> rentals= (List)FactorySerializeCollection.createRentals(request.getBody());
-        return executorService.submit(()->rentals);
+    public CompletableFuture<List<Rental>> statEntities(String... fields) {
+
+        return CompletableFuture.supplyAsync(()->{
+                    Message request = new Message(Commands.STAT_RENTAL.getCmdMessage(),"");
+                    System.out.println("sending request: " + request);
+                    Message response = client.sendAndReceive(request);
+                    System.out.println("received response: " + response);
+                    if(response.getHeader().equals("error")){throw new MyException(response.getBody());
+                    }
+                    Collection<Rental> rentals= FactorySerializeCollection.createRentals(response.getBody());
+                    List<Rental> rental=new ArrayList<>(rentals);
+                    return  rental;}
+                ,executorService);
     }
     @Override
-    public Future<Rental> addEntity(Rental entity) {
-        Message request = new Message(Commands.ADD_RENTAL.getCmdMessage(), FactorySerializable.toStringEntity(entity));
-        System.out.println("sending request: " + request);
-        Message response = client.sendAndReceive(request);
-        System.out.println("received response: " + response);
-        if(response.getHeader().equals("error"))
-        {
-            throw new MyException(response.getBody());
-        }
-        Rental rental=FactorySerializable.createRental(request.getBody());
-        return executorService.submit(() -> rental);
+    public CompletableFuture<Rental> addEntity(Rental entity) {
+        return CompletableFuture.supplyAsync(()->{
+                    Message request = new Message(Commands.ADD_RENTAL.getCmdMessage(),FactorySerializable.toStringEntity(entity));
+                    System.out.println("sending request: " + request);
+                    Message response = client.sendAndReceive(request);
+                    System.out.println("received response: " + response);
+                    if(response.getHeader().equals("error")){throw new MyException(response.getBody());
+                    }
+                    Rental rental= FactorySerializable.createRental(response.getBody());
+                    return  rental;}
+                ,executorService);
     }
     @Override
-    public Future<Rental> updateEntity(Rental new_entity)
+    public CompletableFuture<Rental> updateEntity(Rental new_entity)
     {
-        Message request = new Message(Commands.UPDATE_RENTAL.getCmdMessage(), FactorySerializable.toStringEntity(new_entity));
-        System.out.println("sending request: " + request);
-        Message response = client.sendAndReceive(request);
-        System.out.println("received response: " + response);
-        if(response.getHeader().equals("error"))
-        {
-            throw new MyException(response.getBody());
-        }
-        Rental rental=FactorySerializable.createRental(request.getBody());
-        return executorService.submit(() -> rental);
+        return CompletableFuture.supplyAsync(()->{
+                    Message request = new Message(Commands.UPDATE_RENTAL.getCmdMessage(),FactorySerializable.toStringEntity(new_entity));
+                    System.out.println("sending request: " + request);
+                    Message response = client.sendAndReceive(request);
+                    System.out.println("received response: " + response);
+                    if(response.getHeader().equals("error")){throw new MyException(response.getBody());
+                    }
+                    Rental rental= FactorySerializable.createRental(response.getBody());
+                    return  rental;}
+                ,executorService);
     }
     @Override
-    public Future<Rental> deleteEntity(Long id_delete)
+    public CompletableFuture<Rental> deleteEntity(Long id_delete)
     {
-        Message request = new Message(Commands.UPDATE_RENTAL.getCmdMessage(),id_delete.toString());
-        System.out.println("sending request: " + request);
-        Message response = client.sendAndReceive(request);
-        System.out.println("received response: " + response);
-        if(response.getHeader().equals("error"))
-        {
-            throw new MyException(response.getBody());
-        }
-        Rental rental=FactorySerializable.createRental(request.getBody());
-        return executorService.submit(() -> rental);
+        return CompletableFuture.supplyAsync(()->{
+                    Message request = new Message(Commands.DELETE_RENTAL.getCmdMessage(),id_delete.toString());
+                    System.out.println("sending request: " + request);
+                    Message response = client.sendAndReceive(request);
+                    System.out.println("received response: " + response);
+                    if(response.getHeader().equals("error")){throw new MyException(response.getBody());
+                    }
+                    Rental rental= FactorySerializable.createRental(response.getBody());
+                    return  rental;}
+                ,executorService);
     }
 
     @Override
-    public Future<Set<Rental>> getAllEntities()
+    public CompletableFuture<Set<Rental>> getAllEntities()
     {
-        Message request = new Message(Commands.ALL_CLIENT.getCmdMessage(),"");
-        System.out.println("sending request: " + request);
-        Message response = client.sendAndReceive(request);
-        System.out.println("received response: " + response);
-        if(response.getHeader().equals("error"))
-        {
-            throw new MyException(response.getBody());
-        }
-        Set<Rental> rentals= (Set) FactorySerializeCollection.createRentals(request.getBody());
-        return executorService.submit(() -> rentals);
+        return CompletableFuture.supplyAsync(()->{
+                    Message request = new Message(Commands.ALL_RENTAL.getCmdMessage(),"");
+                    System.out.println("sending request: " + request);
+                    Message response = client.sendAndReceive(request);
+                    System.out.println("received response: " + response);
+                    if(response.getHeader().equals("error")){throw new MyException(response.getBody());
+                    }
+                    Collection<Rental> rentals= FactorySerializeCollection.createRentals(response.getBody());
+                    Set<Rental> rental=new HashSet<>(rentals);
+                    return  rental;}
+                ,executorService);
     }
 
     @Override
-    public Future<List<Rental> >getAllEntitiesSorted() {
-        Message request = new Message(Commands.SORT_CLIENT.getCmdMessage(),"");
-        System.out.println("sending request: " + request);
-        Message response = client.sendAndReceive(request);
-        System.out.println("received response: " + response);
-        if(response.getHeader().equals("error"))
-        {
-            throw new MyException(response.getBody());
-        }
-        List<Rental> rentals= (List)FactorySerializeCollection.createRentals(request.getBody());
-        return executorService.submit(() -> rentals);
+    public CompletableFuture<List<Rental>> getAllEntitiesSorted() {
+        return CompletableFuture.supplyAsync(()->{
+                    Message request = new Message(Commands.SORT_RENTAL.getCmdMessage(),"");
+                    System.out.println("sending request: " + request);
+                    Message response = client.sendAndReceive(request);
+                    System.out.println("received response: " + response);
+                    if(response.getHeader().equals("error")){throw new MyException(response.getBody());
+                    }
+                    Collection<Rental> rentals= FactorySerializeCollection.createRentals(response.getBody());
+                    List<Rental> rental=new ArrayList<>(rentals);
+                    return  rental;}
+                ,executorService);
     }
 
     public void DeleteClientRentals(Long id)
     {
+        CompletableFuture.runAsync(()->{
         Message request = new Message(Commands.DELETE_RENTAL_CLIENT.getCmdMessage(),id.toString());
         System.out.println("sending request: " + request);
         Message response = client.sendAndReceive(request);
         if(response.getHeader().equals("error"))
         {
             throw new MyException(response.getBody());
-        }
+        }},executorService
+        );
 
 
     }
     public void DeleteMovieRentals(Long id)
     {
-        Message request = new Message(Commands.DELETE_RENTAL_MOVIE.getCmdMessage(),id.toString());
-        System.out.println("sending request: " + request);
-        Message response = client.sendAndReceive(request);
-        if(response.getHeader().equals("error"))
-        {
-            throw new MyException(response.getBody());
-        }
+        CompletableFuture.runAsync(()->{
+            Message request = new Message(Commands.DELETE_RENTAL_MOVIE.getCmdMessage(),id.toString());
+            System.out.println("sending request: " + request);
+            Message response = client.sendAndReceive(request);
+            if(response.getHeader().equals("error"))
+            {
+                throw new MyException(response.getBody());
+            }},executorService
+        );
     }
 }
