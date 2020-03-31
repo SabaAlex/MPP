@@ -6,6 +6,7 @@ import model.domain.Rental;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 public class FactorySerializeCollection {
@@ -35,8 +36,8 @@ public class FactorySerializeCollection {
 
     public static Collection<Client> createClients(String message){
         String[] tokens = message.split("_");
-        if (tokens.length == 0)
-            return null;
+        if (message.isEmpty())
+            return new ArrayList<>();
         else {
             Collection<Client> result = new ArrayList<>();
             for (String token : tokens) result.add(FactorySerializable.createClient(token));
@@ -46,8 +47,8 @@ public class FactorySerializeCollection {
 
     public static Collection<Movie> createMovies(String message){
         String[] tokens = message.split("_");
-        if (tokens.length == 0)
-            return null;
+        if (message.isEmpty())
+            return new ArrayList<>();
         else {
             Collection<Movie> result = new ArrayList<>();
             for (String token : tokens) result.add(FactorySerializable.createMovie(token));
@@ -57,8 +58,8 @@ public class FactorySerializeCollection {
 
     public static Collection<Rental> createRentals(String message){
         String[] tokens = message.split("_");
-        if (tokens.length == 0)
-            return null;
+        if (message.isEmpty())
+            return new ArrayList<>();
         else {
             Collection<Rental> result = new ArrayList<>();
             for (String token : tokens) result.add(FactorySerializable.createRental(token));
