@@ -24,39 +24,44 @@ public class MovieService extends BaseService<Long, Movie> {
 
     @Override
     public CompletableFuture<Set<Movie>> filterEntitiesField(String field) {
-        Iterable<Movie> movies = repository.findAll();
-        Set<Movie> filteredMovies=new HashSet<>();
-        movies.forEach(filteredMovies::add);
-        filteredMovies.removeIf(movie->!(movie.getTitle().contains(field)) );
-        return CompletableFuture.supplyAsync(() -> filteredMovies, executorService);
+        return CompletableFuture.supplyAsync(() -> {Iterable<Movie> movies = repository.findAll();
+            Set<Movie> filteredMovies=new HashSet<>();
+            movies.forEach(filteredMovies::add);
+            filteredMovies.removeIf(movie->!(movie.getTitle().contains(field)) );
+            return filteredMovies;}, executorService);
     }
 
     @Override
     public CompletableFuture<List<Movie>> statEntities(String... fields) {
-        if (fields.length != 0)
-            throw new MyException("Something went wrong!");
 
-        List<Movie> movieList = StreamSupport.stream(repository.findAll().spliterator(),false).collect(Collectors.toList());
+        return CompletableFuture.supplyAsync(() -> {
+            if (fields.length != 0)
+                throw new MyException("Something went wrong!");
 
-        return CompletableFuture.supplyAsync(() -> movieList.stream()
+            List<Movie> movieList = StreamSupport.stream(repository.findAll().spliterator(),false).collect(Collectors.toList());
+
+            return movieList.stream()
                 .collect(Collectors.groupingBy(Movie::getYearOfRelease))
                 .entrySet()
                 .stream()
                 .max((o1, o2) -> o2.getValue().size() - o1.getValue().size())
                 .get()
-                .getValue(), executorService);
+                .getValue();
+            }, executorService);
     }
 
     @Override
     public CompletableFuture<List<Movie>> getAllEntitiesSorted() {
-        if(repository instanceof SortingRepository)
-        {
-            Sort sort = new Sort( "Genre").and(new Sort(Sort.Direction.DESC, "YearOfRelease"));
-            sort.setClassName("Movie");
-            Iterable<Movie> entities=((SortingRepository<Long, Movie>) repository).findAll(sort);
-            List<Movie> entity_set = StreamSupport.stream(entities.spliterator(), false).collect(Collectors.toList());
-            return CompletableFuture.supplyAsync(() -> entity_set, executorService);
-        }
-        throw new MyException("This is not A SUPPORTED SORTING REPOSITORY");
+
+        return CompletableFuture.supplyAsync(() -> {
+            if(repository instanceof SortingRepository)
+            {
+                Sort sort = new Sort( "Genre").and(new Sort(Sort.Direction.DESC, "YearOfRelease"));
+                sort.setClassName("Movie");
+                Iterable<Movie> entities=((SortingRepository<Long, Movie>) repository).findAll(sort);
+                return StreamSupport.stream(entities.spliterator(), false).collect(Collectors.toList());
+            }
+            throw new MyException("This is not A SUPPORTED SORTING REPOSITORY");
+        }, executorService);
     }
 }
