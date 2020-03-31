@@ -30,6 +30,10 @@ public class MovieService extends BaseService<Long, Movie> {
         System.out.println("sending request: " + request);
         Message response = client.sendAndReceive(request);
         System.out.println("received response: " + response);
+        if(response.getHeader().equals("error"))
+        {
+            throw new MyException(response.getBody());
+        }
         Set<Movie> movies= (Set)FactorySerializeCollection.createMovies(request.getBody());
         return executorService.submit(()->movies);
     }
@@ -40,6 +44,10 @@ public class MovieService extends BaseService<Long, Movie> {
         System.out.println("sending request: " + request);
         Message response = client.sendAndReceive(request);
         System.out.println("received response: " + response);
+        if(response.getHeader().equals("error"))
+        {
+            throw new MyException(response.getBody());
+        }
         List<Movie> movies= (List)FactorySerializeCollection.createMovies(request.getBody());
         return executorService.submit(()->movies);
     }
@@ -49,6 +57,10 @@ public class MovieService extends BaseService<Long, Movie> {
         System.out.println("sending request: " + request);
         Message response = client.sendAndReceive(request);
         System.out.println("received response: " + response);
+        if(response.getHeader().equals("error"))
+        {
+            throw new MyException(response.getBody());
+        }
         Movie movie=FactorySerializable.createMovie(request.getBody());
         return executorService.submit(() -> movie);
     }
@@ -59,6 +71,10 @@ public class MovieService extends BaseService<Long, Movie> {
         System.out.println("sending request: " + request);
         Message response = client.sendAndReceive(request);
         System.out.println("received response: " + response);
+        if(response.getHeader().equals("error"))
+        {
+            throw new MyException(response.getBody());
+        }
         Movie movie=FactorySerializable.createMovie(request.getBody());
         return executorService.submit(() -> movie);
     }
@@ -69,6 +85,10 @@ public class MovieService extends BaseService<Long, Movie> {
         System.out.println("sending request: " + request);
         Message response = client.sendAndReceive(request);
         System.out.println("received response: " + response);
+        if(response.getHeader().equals("error"))
+        {
+            throw new MyException(response.getBody());
+        }
         Movie movie=FactorySerializable.createMovie(request.getBody());
         return executorService.submit(() -> movie);
     }
@@ -80,8 +100,15 @@ public class MovieService extends BaseService<Long, Movie> {
         System.out.println("sending request: " + request);
         Message response = client.sendAndReceive(request);
         System.out.println("received response: " + response);
-        Set<Movie> movies= (Set) FactorySerializeCollection.createMovies(request.getBody());
-        return executorService.submit(() -> movies);
+        if(response.getHeader().equals("error"))
+        {
+            throw new MyException(response.getBody());
+        }
+        Collection<Movie> movies= FactorySerializeCollection.createMovies(response.getBody());
+        Set<Movie> movie = new HashSet<Movie>(movies);
+        System.out.println("Print!");
+        Future<Set<Movie>> future=executorService.submit(() -> movie);
+        return future;
     }
 
     @Override

@@ -33,7 +33,7 @@ public abstract class BaseService<ID, T extends BaseEntity<ID>> implements IServ
         this.validator=validator;
         this.repository=repository;
         this.className = className;
-        this.executorService = executorService;
+        this.executorService = executor;
         this.client=client;
     }
 

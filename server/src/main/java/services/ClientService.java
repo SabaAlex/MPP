@@ -50,5 +50,11 @@ public class ClientService extends BaseService<Long, Client> {
         }
         throw new MyException("This is not A SUPPORTED SORTING REPOSITORY");
     }
+    public Set<Client> getAll()
+    {
+        Iterable<Client> entities = repository.findAll();
+        Set<Client> entity_Set = StreamSupport.stream(entities.spliterator(), false).collect(Collectors.toSet());
+        return entity_Set;
+    }
 
 }

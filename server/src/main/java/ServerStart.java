@@ -50,11 +50,16 @@ public class ServerStart {
                 TCPServer tcpServer = new TCPServer(executorService);
 
                 tcpServer.addHandler(IService.Commands.ADD_CLIENT.getCmdMessage(), (request) -> {
-                    Client client = FactorySerializable.createClient(request.getBody());
-                    Future<Client> future = clientService.addEntity(client);
-                    try {
-                        Client result = future.get();
+                    System.out.println("LOOl");
 
+                    try {
+                        System.out.println("LOOl");
+                        Client client = FactorySerializable.createClient(request.getBody());
+                        System.out.println("LOOl3");
+                        Future<Client> future = clientService.addEntity(client);
+                        System.out.println("LOOl1");
+                        Client result = future.get();
+                        System.out.println("LOOl2");
                         return new Message("ok", FactorySerializable.toStringEntity(result));
                     } catch (InterruptedException | ExecutionException | MyException e) {
                         e.printStackTrace();
@@ -218,13 +223,14 @@ public class ServerStart {
                 });
 
                 tcpServer.addHandler(IService.Commands.ALL_CLIENT.getCmdMessage(), (request) -> {
-                    Future<Set<Client>> future = clientService.getAllEntities();
+
+                    Set<Client> future = clientService.getAll();
                     try {
-                        Set<Client> result = future.get();
+                        Set<Client> result = future;
                         System.out.println("LLOLLL");
                         System.out.println(FactorySerializeCollection.toStringClients(result));
                         return new Message("ok", FactorySerializeCollection.toStringClients(result));
-                    } catch (InterruptedException | ExecutionException | MyException e) {
+                    } catch (MyException e) {
                         e.printStackTrace();
                         return new Message("error", e.getMessage());//fixme: hardcoded str
                     }
@@ -232,9 +238,11 @@ public class ServerStart {
                 });
 
                 tcpServer.addHandler(IService.Commands.ALL_MOVIE.getCmdMessage(), (request) -> {
-                    Future<Set<Movie>> future = movieService.getAllEntities();
+
                     try {
+                        Future<Set<Movie>> future = movieService.getAllEntities();
                         Set<Movie> result = future.get();
+                        System.out.println("Hereee!");
 
                         return new Message("ok", FactorySerializeCollection.toStringMovies(result));
                     } catch (InterruptedException | ExecutionException | MyException e) {

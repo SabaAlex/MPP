@@ -10,7 +10,7 @@ public  class FactorySerializable {
     }
 
     public static String toStringEntity(Movie movie){
-        return movie.getId() + "," + movie.getTitle() + "," + movie.getYearOfRelease() + movie.getMainStar() + "," + movie.getDirector() + "," + movie.getGenre();
+        return movie.getId() + "," + movie.getTitle() + "," + movie.getYearOfRelease() +","+ movie.getMainStar() + "," + movie.getDirector() + "," + movie.getGenre();
     }
 
     public static String toStringEntity(Rental rental){

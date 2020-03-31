@@ -28,7 +28,7 @@ public abstract class BaseService<ID, T extends BaseEntity<ID>> implements IServ
         this.validator=validator;
         this.repository=repository;
         this.className = className;
-        this.executorService = executorService;
+        this.executorService = executor;
     }
 
     @Override
@@ -39,7 +39,12 @@ public abstract class BaseService<ID, T extends BaseEntity<ID>> implements IServ
     @Override
     public Future< T > addEntity(T entity) throws MyException {
         validator.validate(entity);
-        T add_entity=repository.save(entity).orElseThrow(()-> new MyException("No "+this.className+" to add"));
+        Optional<T> optional = repository.save(entity);
+
+        if (optional.isPresent()) {
+            throw new MyException("Not added !");
+        }
+        T add_entity=optional.get();
         return executorService.submit( ()->add_entity);
     }
 
@@ -58,9 +63,7 @@ public abstract class BaseService<ID, T extends BaseEntity<ID>> implements IServ
 
     @Override
     public Future<Set<T>> getAllEntities() {
-        System.out.println("LOOOOOl");
         Iterable<T> entities = repository.findAll();
-        sout
         Set<T> entity_Set = StreamSupport.stream(entities.spliterator(), false).collect(Collectors.toSet());
         return executorService.submit(() -> entity_Set);
     }

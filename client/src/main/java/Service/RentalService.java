@@ -37,6 +37,10 @@ public class RentalService extends BaseService<Long, Rental> {
         System.out.println("sending request: " + request);
         Message response = client.sendAndReceive(request);
         System.out.println("received response: " + response);
+        if(response.getHeader().equals("error"))
+        {
+            throw new MyException(response.getBody());
+        }
         Set<Rental> rentals= (Set)FactorySerializeCollection.createRentals(request.getBody());
         return executorService.submit(()->rentals);
     }
@@ -50,6 +54,10 @@ public class RentalService extends BaseService<Long, Rental> {
         System.out.println("sending request: " + request);
         Message response = client.sendAndReceive(request);
         System.out.println("received response: " + response);
+        if(response.getHeader().equals("error"))
+        {
+            throw new MyException(response.getBody());
+        }
         List<Rental> rentals= (List)FactorySerializeCollection.createRentals(request.getBody());
         return executorService.submit(()->rentals);
     }
@@ -59,6 +67,10 @@ public class RentalService extends BaseService<Long, Rental> {
         System.out.println("sending request: " + request);
         Message response = client.sendAndReceive(request);
         System.out.println("received response: " + response);
+        if(response.getHeader().equals("error"))
+        {
+            throw new MyException(response.getBody());
+        }
         Rental rental=FactorySerializable.createRental(request.getBody());
         return executorService.submit(() -> rental);
     }
@@ -69,6 +81,10 @@ public class RentalService extends BaseService<Long, Rental> {
         System.out.println("sending request: " + request);
         Message response = client.sendAndReceive(request);
         System.out.println("received response: " + response);
+        if(response.getHeader().equals("error"))
+        {
+            throw new MyException(response.getBody());
+        }
         Rental rental=FactorySerializable.createRental(request.getBody());
         return executorService.submit(() -> rental);
     }
@@ -79,6 +95,10 @@ public class RentalService extends BaseService<Long, Rental> {
         System.out.println("sending request: " + request);
         Message response = client.sendAndReceive(request);
         System.out.println("received response: " + response);
+        if(response.getHeader().equals("error"))
+        {
+            throw new MyException(response.getBody());
+        }
         Rental rental=FactorySerializable.createRental(request.getBody());
         return executorService.submit(() -> rental);
     }
@@ -90,6 +110,10 @@ public class RentalService extends BaseService<Long, Rental> {
         System.out.println("sending request: " + request);
         Message response = client.sendAndReceive(request);
         System.out.println("received response: " + response);
+        if(response.getHeader().equals("error"))
+        {
+            throw new MyException(response.getBody());
+        }
         Set<Rental> rentals= (Set) FactorySerializeCollection.createRentals(request.getBody());
         return executorService.submit(() -> rentals);
     }
@@ -100,6 +124,10 @@ public class RentalService extends BaseService<Long, Rental> {
         System.out.println("sending request: " + request);
         Message response = client.sendAndReceive(request);
         System.out.println("received response: " + response);
+        if(response.getHeader().equals("error"))
+        {
+            throw new MyException(response.getBody());
+        }
         List<Rental> rentals= (List)FactorySerializeCollection.createRentals(request.getBody());
         return executorService.submit(() -> rentals);
     }
@@ -109,6 +137,10 @@ public class RentalService extends BaseService<Long, Rental> {
         Message request = new Message(Commands.DELETE_RENTAL_CLIENT.getCmdMessage(),id.toString());
         System.out.println("sending request: " + request);
         Message response = client.sendAndReceive(request);
+        if(response.getHeader().equals("error"))
+        {
+            throw new MyException(response.getBody());
+        }
 
 
     }
@@ -117,5 +149,9 @@ public class RentalService extends BaseService<Long, Rental> {
         Message request = new Message(Commands.DELETE_RENTAL_MOVIE.getCmdMessage(),id.toString());
         System.out.println("sending request: " + request);
         Message response = client.sendAndReceive(request);
+        if(response.getHeader().equals("error"))
+        {
+            throw new MyException(response.getBody());
+        }
     }
 }

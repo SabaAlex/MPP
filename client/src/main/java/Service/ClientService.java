@@ -12,9 +12,8 @@ import repository.SortingRepository;
 import services.Message;
 
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.stream.Collectors;
@@ -31,6 +30,10 @@ public class ClientService extends BaseService<Long, Client> {
         System.out.println("sending request: " + request);
         Message response = client.sendAndReceive(request);
         System.out.println("received response: " + response);
+        if(response.getHeader().equals("error"))
+        {
+            throw new MyException(response.getBody());
+        }
         Set<Client> clients= (Set)FactorySerializeCollection.createClients(request.getBody());
         return executorService.submit(()->clients);
     }
@@ -41,6 +44,10 @@ public class ClientService extends BaseService<Long, Client> {
         System.out.println("sending request: " + request);
         Message response = client.sendAndReceive(request);
         System.out.println("received response: " + response);
+        if(response.getHeader().equals("error"))
+        {
+            throw new MyException(response.getBody());
+        }
         List<Client> clients= (List)FactorySerializeCollection.createClients(request.getBody());
         return executorService.submit(()->clients);
     }
@@ -50,7 +57,11 @@ public class ClientService extends BaseService<Long, Client> {
         System.out.println("sending request: " + request);
         Message response = client.sendAndReceive(request);
         System.out.println("received response: " + response);
-        Client client=FactorySerializable.createClient(request.getBody());
+        if(response.getHeader().equals("error"))
+        {
+            throw new MyException(response.getBody());
+        }
+        Client client=FactorySerializable.createClient(response.getBody());
         return executorService.submit(() -> client);
     }
     @Override
@@ -60,7 +71,11 @@ public class ClientService extends BaseService<Long, Client> {
         System.out.println("sending request: " + request);
         Message response = client.sendAndReceive(request);
         System.out.println("received response: " + response);
-        Client client=FactorySerializable.createClient(request.getBody());
+        if(response.getHeader().equals("error"))
+        {
+            throw new MyException(response.getBody());
+        }
+        Client client=FactorySerializable.createClient(response.getBody());
         return executorService.submit(() -> client);
     }
     @Override
@@ -70,7 +85,11 @@ public class ClientService extends BaseService<Long, Client> {
         System.out.println("sending request: " + request);
         Message response = client.sendAndReceive(request);
         System.out.println("received response: " + response);
-        Client client=FactorySerializable.createClient(request.getBody());
+        if(response.getHeader().equals("error"))
+        {
+            throw new MyException(response.getBody());
+        }
+        Client client=FactorySerializable.createClient(response.getBody());
         return executorService.submit(() -> client);
     }
 
@@ -81,17 +100,32 @@ public class ClientService extends BaseService<Long, Client> {
         System.out.println("sending request: " + request);
         Message response = client.sendAndReceive(request);
         System.out.println("received response: " + response);
-        Set<Client> clients= (Set)FactorySerializeCollection.createClients(request.getBody());
-        return executorService.submit(() -> clients);
+        if(response.getHeader().equals("error"))
+        {
+            throw new MyException(response.getBody());
+        }
+        Collection<Client> clients= FactorySerializeCollection.createClients(response.getBody());
+        Set<Client> client = new HashSet<Client>(clients);
+        System.out.println("Print!");
+        Future<Set<Client>> future=executorService.submit(() -> client);
+        return future;
     }
 
     @Override
     public Future<List<Client> >getAllEntitiesSorted() {
-        Message request = new Message(Commands.SORT_CLIENT.getCmdMessage(),"");
-        System.out.println("sending request: " + request);
-        Message response = client.sendAndReceive(request);
-        System.out.println("received response: " + response);
-        List<Client> clients= (List)FactorySerializeCollection.createClients(request.getBody());
-        return executorService.submit(() -> clients);
+
+        return  CompletableFuture.supplyAsync(() -> {
+            Message request = new Message(Commands.SORT_CLIENT.getCmdMessage(),"");
+            System.out.println("sending request: " + request);
+            Message response = client.sendAndReceive(request);
+            System.out.println("received response: " + response);
+            if(response.getHeader().equals("error"))
+            {
+                throw new MyException(response.getBody());
+            }
+            Collection<Client> clients= FactorySerializeCollection.createClients(response.getBody());
+            List<Client> client = new ArrayList<>(clients);
+            return client;
+        },executorService);
     }
 }
