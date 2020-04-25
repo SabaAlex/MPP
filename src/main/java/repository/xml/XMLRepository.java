@@ -19,13 +19,14 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.File;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-public abstract class XMLRepository<ID, T extends BaseEntity<ID>> extends InMemoryRepository<ID, T> implements SavesToFile {
+public abstract class XMLRepository<ID extends Serializable, T extends BaseEntity<ID>> extends InMemoryRepository<ID, T> implements SavesToFile {
 
     private String fileName;
     private Validator<T> validator;

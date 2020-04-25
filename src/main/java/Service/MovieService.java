@@ -1,133 +1,98 @@
 package Service;
 
-import model.domain.Client;
 import model.domain.Movie;
-import model.domain.Rental;
 import model.exceptions.MyException;
 import model.exceptions.ValidatorException;
 import model.validators.Validator;
-import repository.IRepository;
-import repository.SavesToFile;
-import repository.Sort;
-import repository.SortingRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Service;
+import repository.postgreSQL.jpa.MovieJPARepository;
 
-
-import java.time.Year;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-public class MovieService {
-    private IRepository<Long, Movie> repository;
-    private Validator<Movie> validator;
-    public MovieService(IRepository<Long,Movie> repository,Validator<Movie> validator)
-    {
-        this.validator=validator;
+@Service
+public class MovieService implements IMovieService {
+    public static final Logger log = LoggerFactory.getLogger(MovieService.class);
+    @Autowired
+    protected MovieJPARepository repository;
+
+    public MovieService(MovieJPARepository repository) {
+
         this.repository=repository;
     }
 
-    public Optional<Movie> FindOne(Long ID)
-    {
-        return this.repository.findOne(ID);
-    }
-
-    /**
-     * Calls the repository save method with a certain Movie Object
-     *
-     * @param movie created movie object to be passed over to the repository
-     * @throws ValidatorException
-     *             if the entity is not valid.
-     * @throws MyException
-     *              if there exist already an entity with that MovieNumber
-     */
-    public void addMovie(Movie movie) throws ValidatorException
-    {
-        validator.validate(movie);
-        repository.save(movie).ifPresent(optional->{throw new MyException("Movie already exists");});
-    }
-
-    /**
-     * Calls the repository update method with a certain Movie Object
-     *
-     * @param movie created movie object to be passed over to the repository
-     * @return the updated object
-     * @throws ValidatorException
-     *             if the entity is not valid.
-     * @throws MyException
-     *             if there is no entity to be updated.
-     */
-    public Movie updateMovie(Movie movie) throws ValidatorException, MyException
-    {
-        validator.validate(movie);
-        return repository.update(movie).orElseThrow(()-> new MyException("No movie to update"));
-    }
-
-    /**
-     * Given the id of a movie it calls the delete method of the repository with that id
-     *
-     * @param id the id of the movie to be deleted
-     * @return the deleted Movie Instance
-     * @throws ValidatorException
-     *             if the entity is not valid.
-     * @throws MyException
-     *             if there is no entity to be deleted.
-     */
-    public Movie deleteMovie(Long id) throws ValidatorException
-    {
-        return repository.delete(id).orElseThrow(()-> new MyException("No movie to delete"));
-    }
-
-    /**
-     * Gets all the Movie Instances from the repository
-     *
-     * @return {@code Set} containing all the Movie Instances from the repository
-     */
-    public Set<Movie> getAllMovies()
-    {
-        Iterable<Movie> movies=repository.findAll();
-        return StreamSupport.stream(movies.spliterator(),false).collect(Collectors.toSet());
-
-    }
-
-    public List<Movie> getAllMoviesSorted(Sort sort)
-    {
-        if(repository instanceof SortingRepository)
-        {
-            Iterable<Movie> movies=((SortingRepository) repository).findAll(sort);
-            return StreamSupport.stream(movies.spliterator(),false).collect(Collectors.toList());
-        }
-        throw new MyException("This is not A SUPPORTED SORTING REPOSITORY");
-
-    }
-
-    /**
-     * Filters all the movies out by title
-     *
-     * @param title a movie title of type {@code String}
-     * @return {@code HashSet} containing all the Movie Instances from the repository that contain the title parameter in the title
-     */
-    public Set<Movie> filterMoviesByTitle(String title)
-    {
-        Iterable<Movie> movies=repository.findAll();
+    @Override
+    public synchronized Set<Movie> filterEntitiesField(String field) {
+        Iterable<Movie> movies = repository.findAll();
         Set<Movie> filteredMovies=new HashSet<>();
         movies.forEach(filteredMovies::add);
-        filteredMovies.removeIf(movie->!(movie.getTitle().contains(title)) );
+        filteredMovies.removeIf(movie->!(movie.getTitle().contains(field)) );
         return filteredMovies;
     }
 
+    @Override
+    public synchronized List<Movie> statEntities(String... fields) {
+            if (fields.length != 0)
+                throw new MyException("Something went wrong!");
 
-    public Map<Integer, List<Movie>> statMostRichYearsInMovies(){
-        List<Movie> movieList = StreamSupport.stream(repository.findAll().spliterator(),false).collect(Collectors.toList());
+            List<Movie> movieList = new ArrayList<>(repository.findAll());
 
-        return movieList.stream()
+            return movieList.stream()
                 .collect(Collectors.groupingBy(Movie::getYearOfRelease))
-                ;
+                .entrySet()
+                .stream()
+                .max((o1, o2) -> o2.getValue().size() - o1.getValue().size())
+                .get()
+                .getValue();
     }
 
+    @Override
+    public synchronized List<Movie> getAllEntitiesSorted() {
+            Sort sort = new Sort(Sort.Direction.ASC, "Genre").and(new Sort(Sort.Direction.DESC, "YearOfRelease"));
+            Iterable<Movie> entities=repository.findAll(sort);
+            return StreamSupport.stream(entities.spliterator(), false).collect(Collectors.toList());
+    }
 
-    public void saveToFile() {
-        if (repository instanceof SavesToFile){
-            ((SavesToFile)repository).saveToFile();
-        }
+    @Override
+    public synchronized Optional<Movie> FindOne(Long id) {
+        return this.repository.findById(id);
+    }
+
+    @Override
+    public synchronized void addEntity(Movie entity) throws MyException {
+
+        Optional<Movie> entityOpt = Optional.of(repository.save(entity));
+        entityOpt.ifPresent(optional -> {
+            throw new MyException(
+                    "Movie already exists");
+        });
+    }
+
+    @Override
+    public synchronized Movie updateEntity(Movie entity) throws MyException {
+
+        if (!repository.existsById(entity.getId()))
+            throw new MyException("Movie does not exist");
+        repository.deleteById(entity.getId());
+        return repository.save(entity);
+    }
+
+    @Override
+    public synchronized Movie deleteEntity(Long id) throws ValidatorException {
+        Optional<Movie> entity = repository.findById(id);
+        entity.orElseThrow(()-> new MyException("Client with that ID does not exist"));
+        repository.deleteById(id);
+        return entity.get();
+    }
+
+    @Override
+    public synchronized Set<Movie> getAllEntities() {
+        Iterable<Movie> entities = repository.findAll();
+        return StreamSupport.stream(entities.spliterator(), false).collect(Collectors.toSet());
     }
 }

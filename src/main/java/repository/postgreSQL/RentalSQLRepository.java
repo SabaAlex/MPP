@@ -3,6 +3,7 @@ package repository.postgreSQL;
 import model.domain.Rental;
 import model.exceptions.MyException;
 import repository.postgreSQL.statements.MovieSQLStatements;
+import repository.postgreSQL.statements.RentalSQLStatements;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -27,7 +28,7 @@ public class RentalSQLRepository extends PostgreSQLRepository<Long, Rental> {
 
     @Override
     protected void executeInsert(Rental entity) {
-        try(PreparedStatement prep = conn.prepareStatement(MovieSQLStatements.INSERT.composeMessage(super.getTableName()))) {
+        try(PreparedStatement prep = conn.prepareStatement(RentalSQLStatements.INSERT.composeMessage(super.getTableName()))) {
             prep.setLong(1, entity.getId());
             prep.setLong(2, entity.getClientID());
             prep.setLong(3, entity.getMovieID());
@@ -37,13 +38,13 @@ public class RentalSQLRepository extends PostgreSQLRepository<Long, Rental> {
             prep.executeUpdate();
         }
         catch (SQLException e){
-            throw new MyException("SQL Server error occured!");
+            throw new MyException(e.getMessage());
         }
     }
 
     @Override
     protected void executeDelete(Long aLong) {
-        try(PreparedStatement prep = conn.prepareStatement(MovieSQLStatements.DELETE.composeMessage(super.getTableName()) + aLong)) {
+        try(PreparedStatement prep = conn.prepareStatement(RentalSQLStatements.DELETE.composeMessage(super.getTableName()) + aLong)) {
             prep.executeUpdate();
         }
         catch (SQLException e){

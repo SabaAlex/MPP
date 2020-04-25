@@ -1,8 +1,11 @@
 package model.domain;
 
+import javax.persistence.Entity;
+import java.io.Serializable;
 import java.util.Objects;
 
-public class Movie extends BaseEntity<Long> {
+@Entity
+public class Movie extends BaseEntity<Long> implements Serializable {
     private String title;
     private  String genre;
     private int yearOfRelease;

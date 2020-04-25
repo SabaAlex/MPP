@@ -1,8 +1,10 @@
 package model.domain;
 
+import javax.persistence.Entity;
+import java.io.Serializable;
 import java.util.Objects;
-
-public class Client extends BaseEntity<Long> {
+@Entity
+public class Client extends BaseEntity<Long> implements Serializable {
 
     private String firstName;
     private String lastName;

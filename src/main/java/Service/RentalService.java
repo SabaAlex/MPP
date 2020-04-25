@@ -6,184 +6,154 @@ import model.domain.Rental;
 import model.exceptions.MyException;
 import model.exceptions.ValidatorException;
 import model.validators.Validator;
-import repository.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Service;
+import repository.postgreSQL.jpa.RentalJPARepository;
 
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-public class RentalService {
+@Service
+public class RentalService implements IRentalService {
+    public static final Logger log = LoggerFactory.getLogger(RentalService.class);
+    @Autowired
+    protected RentalJPARepository repository;
 
-    private ClientService clientServ;
-    private MovieService movieServ;
-    private IRepository<Long, Rental> RentalRepository;
-    private Validator<Rental> validator;
-    public RentalService(ClientService clientServ,MovieService movieServ,IRepository<Long,Rental> RentalRepository,Validator<Rental> validator )
+    @Autowired
+    private ClientService clientService;
+    @Autowired
+    private MovieService movieService;
 
-    {
-        this.validator=validator;
-        this.clientServ=clientServ;
-        this.movieServ=movieServ;
-        this.RentalRepository=RentalRepository;
+    public RentalService(ClientService clientService, MovieService movieService, RentalJPARepository repository) {
+        this.repository = repository;
+        this.clientService = clientService;
+        this.movieService = movieService;
     }
-    public void checkIDs(Long ClientID,Long MovieID)
+
+    private synchronized void checkIDs(Long ClientID, Long MovieID)
     {
-        clientServ.FindOne(ClientID).orElseThrow(()->new MyException("Client ID not found! "));
-        movieServ.FindOne(MovieID).orElseThrow(()->new MyException("Movie ID not found! "));
+        clientService.FindOne(ClientID).orElseThrow(()->new MyException("Client ID not found! "));
+        movieService.FindOne(MovieID).orElseThrow(()->new MyException("Movie ID not found! "));
     }
-    /**
-     * Calls the repository save method with a given Rental Object
-     *
-     * @param rental created rental object to be passed over to the repository
-     * @throws ValidatorException
-     *             if the entity is not valid.
-     * @throws MyException
-     *             if there exist already an entity with that ClientNumber
-     */
-    public void addRental(Rental rental) throws ValidatorException,MyException
-    {
+
+    private synchronized void checkRentalInRepository(Rental rental){
         checkIDs(rental.getClientID(),rental.getMovieID());
-        Iterable<Rental> rentals=RentalRepository.findAll();
+        Iterable<Rental> rentals = repository.findAll();
         Set<Rental> filteredRentals=StreamSupport.stream(rentals.spliterator(),false).collect(Collectors.toSet());
         filteredRentals
                 .stream()
-                .filter(exists-> (exists.getClientID()==rental.getClientID()) && exists.getMovieID()==rental.getMovieID())
-                .findFirst().ifPresent(optional->{throw new MyException("Rental for that movie and client exists");});
-
-        validator.validate(rental);
-        RentalRepository.save(rental).ifPresent(optional->{throw new MyException("Rental already exists");});
+                .filter(exists-> (Objects.equals(exists.getClientID(), rental.getClientID()))
+                        && Objects.equals(exists.getMovieID(), rental.getMovieID()))
+                .findFirst()
+                .ifPresent(optional->{throw new MyException("Rental for that movie and client exists");});
     }
 
-    /**
-     * Calls the repository update method with a certain Client Object
-     *
-     * @param rental created rental object to be passed over to the repository
-     * @return the updated object
-     * @throws ValidatorException
-     *             if the entity is not valid.
-     * @throws MyException
-     *             if there is no entity to be updated.
-     */
-    public Rental updateRental(Rental rental) throws ValidatorException,MyException
-    {
-
-        Optional<Rental> found_rental=RentalRepository.findOne(rental.getId());
-        found_rental.orElseThrow(()-> new MyException("No Rental to update"));
-        Long ClientID=found_rental.get().getClientID();
-        Long MovieID=found_rental.get().getMovieID();
-        rental.setClientID(ClientID);
-        rental.setMovieID(MovieID);
-        validator.validate(rental);
-        return RentalRepository.update(rental).orElseThrow(()-> new MyException("No Rental to update"));
+    @Override
+    public synchronized void addEntity(Rental entity) throws ValidatorException {
+        this.checkRentalInRepository(entity);
+        this.addEntityToRepo(entity);
     }
 
-    /**
-     * Given the id of a rental it calls the delete method of the repository with that id
-     *
-     * @param id the id of the rental to be deleted
-     * @return the deleted Client Instance
-     * @throws ValidatorException
-     *             if the entity is not valid.
-     * @throws MyException
-     *             if there is no entity to be deleted.
-     */
-    public Rental deleteRental(Long id) throws ValidatorException
-    {
-        return RentalRepository.delete(id).orElseThrow(()-> new MyException("No rental to delete"));
-    }
+    @Override
+    public synchronized Set<Rental> filterEntitiesField(String field) {
 
-    /**
-     * Gets all the Rentals Instances from the repository
-     *
-     * @return {@code Set} containing all the Clients Instances from the repository
-     */
-
-
-
-    public Set<Rental> getAllRentals()
-    {
-        Iterable<Rental> rentals=RentalRepository.findAll();
-        return StreamSupport.stream(rentals.spliterator(),false).collect(Collectors.toSet());
-
-    }
-
-    public List<Rental> getAllRentalsSorted(Sort sort)
-    {
-        if(RentalRepository instanceof SortingRepository)
-        {
-            Iterable<Rental> rentals=((SortingRepository) RentalRepository).findAll(sort);
-            return StreamSupport.stream(rentals.spliterator(),false).collect(Collectors.toList());
-        }
-        throw new MyException("This is not A SUPPORTED SORTING REPOSITORY");
-
-    }
-
-
-
-    public void DeleteClientRentals(Long id)
-    {
-        Iterable<Rental> rentals=RentalRepository.findAll();
-        Set<Rental> filteredRentals=StreamSupport.stream(rentals.spliterator(),false).collect(Collectors.toSet());
-        filteredRentals
-                .stream()
-                .filter(toDeleteRentals-> (toDeleteRentals.getClientID() ==id))
-                .forEach(toDelete->{RentalRepository.delete(toDelete.getId());}
-                );
-
-    }
-    public void DeleteMovieRentals(Long id)
-    {
-        Iterable<Rental> rentals=RentalRepository.findAll();
-        Set<Rental> filteredRentals=StreamSupport.stream(rentals.spliterator(),false).collect(Collectors.toSet());
-        filteredRentals
-                .stream()
-                .filter(toDeleteRentals-> toDeleteRentals.getMovieID() == id)
-                .forEach(toDelete->{RentalRepository.delete(toDelete.getId());}
-                );
-    }
-    /**
-     * Filters all the rentals by their Years
-     *
-     * @param year a substring of the year of type {@code String}
-     * @return {@code HashSet} containing all the Rental Instances from the repository that have been rented in that year
-     *
-     */
-    public Set<Rental> filterRentalsByYear(int year)
-    {
-        Iterable<Rental> rentals= RentalRepository.findAll();
+        Iterable<Rental> rentals = repository.findAll();
         Set<Rental> filteredRentals=new HashSet<>();
         rentals.forEach(filteredRentals::add);
-        filteredRentals.removeIf(rental->!(rental.getYear()==year) );
+        filteredRentals.removeIf(rental->!(rental.getYear()==Integer.parseInt(field)) );
         return filteredRentals;
     }
 
-    public Set<Rental> statMostRentedMovieReleasedThatYearRentalsByClientsAgedMoreThan(int movie_year,int age){
-        List<Client> ClientList=clientServ.getAllClients().stream().filter(client->client.getAge()>=age).collect(Collectors.toList());
-        List<Movie> MovieList=movieServ.getAllMovies().stream().filter(movie->movie.getYearOfRelease()==movie_year).collect(Collectors.toList());
-        List<Rental> rentalsList = StreamSupport.stream(RentalRepository.findAll().spliterator(),false)
-                .filter(rental->ClientList.stream().filter(client->client.getId().equals(rental.getClientID())).collect(Collectors.toList()).size()>0)
-                .filter(rental->MovieList.stream().filter(movie->movie.getId().equals(rental.getMovieID())).collect(Collectors.toList()).size()>0)
+    @Override
+    public synchronized List<Rental> statEntities(String... fields) {
+            if (fields.length != 2)
+                throw new MyException("Something went wrong!");
+
+            int movie_year = Integer.parseInt(fields[0]);
+            int age = Integer.parseInt(fields[1]);
+
+        List<Client> ClientList = clientService.getAllEntities()
+                .stream()
+                .filter(client->client.getAge()>=age)
+                .collect(Collectors.toList());
+        List<Movie> MovieList = movieService.getAllEntities()
+                .stream()
+                .filter(movie->movie.getYearOfRelease()==movie_year)
                 .collect(Collectors.toList());
 
-        Long mostRentedMovie = Collections.max(rentalsList.stream()
-                .map(Rental::getMovieID)
-                .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()))
-                .entrySet()
-                ,
-                Comparator.comparingLong(Map.Entry::getValue))
-                .getKey();
+        List<Rental> rentalsList = StreamSupport.stream(repository.findAll().spliterator(),false)
+            .filter(rental->ClientList.stream().filter(client->client.getId().equals(rental.getClientID())).collect(Collectors.toList()).size()>0)
+            .filter(rental->MovieList.stream().filter(movie->movie.getId().equals(rental.getMovieID())).collect(Collectors.toList()).size()>0)
+            .collect(Collectors.toList());
+        if (rentalsList.size()==0)
+            return new ArrayList<Rental>();
+        else {
+            Long mostRentedMovie = Collections.max(rentalsList.stream()
+                            .map(Rental::getMovieID)
+                            .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()))
+                            .entrySet()
+                    ,
+                    Comparator.comparingLong(Map.Entry::getValue))
+                    .getKey();
 
-        Set<Rental> filteredRentals = rentalsList.stream()
-                .filter(rental -> rental.getMovieID().equals(mostRentedMovie))
-                .collect(Collectors.toSet());
+            return rentalsList.stream()
+                    .filter(rental -> rental.getMovieID().equals(mostRentedMovie))
+                    .collect(Collectors.toList());
+        }
 
-        return filteredRentals;
     }
 
-    public void saveToFile() {
-        if (RentalRepository instanceof SavesToFile){
-            ((SavesToFile)RentalRepository).saveToFile();
+    @Override
+    public synchronized Rental updateEntity(Rental entity) throws MyException {
+            Optional<Rental> found_rental = repository.findById(entity.getId());
+            found_rental.orElseThrow(() -> new MyException("No Rental to update"));
+            Long ClientID = found_rental.get().getClientID();
+            Long MovieID = found_rental.get().getMovieID();
+            entity.setClientID(ClientID);
+            entity.setMovieID(MovieID);
+            repository.findById(entity.getId()).orElseThrow(() -> new MyException("No Rental to update"));
+            repository.deleteById(entity.getId());
+            return repository.save(entity);
         }
+
+    @Override
+    public synchronized List<Rental> getAllEntitiesSorted() {
+            Sort sort = new Sort(Sort.Direction.ASC, "Day").and(new Sort(Sort.Direction.DESC, "Month"));
+            Iterable<Rental> entities=repository.findAll(sort);
+            return StreamSupport.stream(entities.spliterator(), false).collect(Collectors.toList());
+    }
+
+    @Override
+    public synchronized Optional<Rental> FindOne(Long id) {
+        return this.repository.findById(id);
+    }
+
+    public synchronized void addEntityToRepo(Rental entity) throws MyException {
+
+        Optional<Rental> entityOpt = Optional.of(repository.save(entity));
+        entityOpt.ifPresent(optional -> {
+            throw new MyException(
+                    "Rental already exists");
+        });
+    }
+
+
+    @Override
+    public synchronized Rental deleteEntity(Long id) throws ValidatorException {
+        Optional<Rental> entity = repository.findById(id);
+        entity.orElseThrow(()-> new MyException("Rental with that ID does not exist"));
+        repository.deleteById(id);
+        return entity.get();
+    }
+
+    @Override
+    public synchronized Set<Rental> getAllEntities() {
+        Iterable<Rental> entities = repository.findAll();
+        return StreamSupport.stream(entities.spliterator(), false).collect(Collectors.toSet());
     }
 }

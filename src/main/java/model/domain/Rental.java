@@ -1,8 +1,11 @@
 package model.domain;
 
+import javax.persistence.Entity;
+import java.io.Serializable;
 import java.util.Objects;
 
-public class Rental extends BaseEntity<Long> {
+@Entity
+public class Rental extends BaseEntity<Long> implements Serializable {
 
     private Long ClientID;
     private Long MovieID;

@@ -6,13 +6,14 @@ import model.domain.BaseEntity;
 import model.exceptions.ValidatorException;
 import model.validators.Validator;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class InMemoryRepository<ID, T extends BaseEntity<ID>> implements IRepository<ID, T>  {
+public class InMemoryRepository<ID extends Serializable, T extends BaseEntity<ID>> implements IRepository<ID, T>  {
 
     private Map<ID,T> entities;
 

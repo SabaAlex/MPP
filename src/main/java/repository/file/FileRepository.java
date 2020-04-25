@@ -10,6 +10,7 @@ import repository.SavesToFile;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.Serializable;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -18,7 +19,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-public abstract class FileRepository<ID, T extends BaseEntity<ID>> extends InMemoryRepository<ID, T> implements SavesToFile {
+public abstract class FileRepository<ID extends Serializable, T extends BaseEntity<ID>> extends InMemoryRepository<ID, T> implements SavesToFile {
 
     private String fileName;
     private Validator<T> validator;

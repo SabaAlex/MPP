@@ -6,11 +6,12 @@ import repository.IRepository;
 import repository.Sort;
 import repository.SortingRepository;
 
+import java.io.Serializable;
 import java.sql.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public abstract class PostgreSQLRepository<ID, T extends BaseEntity<ID>> implements SortingRepository<ID, T> {
+public abstract class PostgreSQLRepository<ID extends Serializable, T extends BaseEntity<ID>> implements SortingRepository<ID, T> {
 
     private static final String URL = "jdbc:postgresql://localhost:5432/MPP";
     private static final String UserName = System.getProperty("username");
@@ -60,7 +61,7 @@ public abstract class PostgreSQLRepository<ID, T extends BaseEntity<ID>> impleme
     @Override
     public Iterable<T> findAll(Sort sort)
     {
-        return sort.sort( entities.entrySet().stream().map(entry->entry.getValue()).collect(Collectors.toList()));
+        return sort.sort(entities.entrySet().stream().map(entry->entry.getValue()).collect(Collectors.toList()));
     }
 
 
