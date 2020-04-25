@@ -1,6 +1,5 @@
 package Service;
 
-import model.domain.Client;
 import model.domain.Movie;
 import model.exceptions.MyException;
 import model.validators.MovieValidator;

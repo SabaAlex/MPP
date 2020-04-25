@@ -6,7 +6,6 @@ import model.domain.Rental;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 public class FactorySerializeCollection {

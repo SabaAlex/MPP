@@ -1,6 +1,8 @@
 package model.domain;
 
-public class BaseEntity<ID> {
+import java.io.Serializable;
+
+public class BaseEntity<ID extends Serializable>  implements Serializable {
     private ID id;
 
     public ID getId() {

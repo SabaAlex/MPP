@@ -1,8 +1,5 @@
 package UI;
 
-import Service.ClientService;
-import Service.MovieService;
-import Service.RentalService;
 import UI.options.ClientOptions;
 import UI.options.MovieOptions;
 import UI.options.RentalOptions;
@@ -12,27 +9,29 @@ import model.domain.Movie;
 import model.domain.Rental;
 import model.exceptions.DataTypeException;
 import model.exceptions.MyException;
-import repository.Sort;
-import services.IService;
+import services.IClientService;
+import services.IMovieService;
+import services.IRentalService;
 
-import java.util.*;
-import java.util.concurrent.ExecutionException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Scanner;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class Console {
 
-    private IService<Long, Client> clientService;
-    private IService<Long, Movie> movieService;
-    private RentalService rentalService;
+    private IClientService clientService;
+    private IMovieService movieService;
+    private IRentalService rentalService;
     private Map<String, Runnable> fctLinks;
     private Commands commands;
     private ExecutorService execute;
 
-    public Console(IService<Long, Client> clientService, IService<Long, Movie> movieService, RentalService rentalService, ExecutorService executor) {
+    public Console(IClientService clientService, IMovieService movieService, IRentalService rentalService, ExecutorService executor) {
         this.clientService = clientService;
         this.movieService = movieService;
         this.rentalService = rentalService;
@@ -78,12 +77,14 @@ public class Console {
 
         System.out.println("Input Client Name: ");
         String name = scanner.nextLine();
+        CompletableFuture.supplyAsync(
+                () -> {
         try {
-            clientService.filterEntitiesField(name).thenAcceptAsync(entity->entity.forEach(System.out::println));;
+            return clientService.filterEntitiesField(name);
         } catch (MyException e) {
             System.out.println(e.getMessage());
-
-        }
+            return null;
+        } }).thenAcceptAsync(entity->entity.forEach(System.out::println));
     }
 
     private void uiDeleteClient() {
@@ -98,13 +99,16 @@ public class Console {
         } catch (NumberFormatException E) {
             throw new DataTypeException();
         }
+        CompletableFuture.runAsync(
+                () -> {
         try {
-            clientService.deleteEntity(id);
+
             rentalService.DeleteClientRentals(id);
+            clientService.deleteEntity(id);
 
         } catch (MyException e) {
             System.out.println(e.getMessage());
-        }
+        }});
     }
 
     private void uiUpdateClient() {
@@ -134,11 +138,13 @@ public class Console {
         }
 
         Client client = new Client(id, fName, lName, age);
+        CompletableFuture.runAsync(
+                () -> {
         try {
             clientService.updateEntity(client);
         } catch (MyException e) {
             System.out.println(e.getMessage());
-        }
+        }});
     }
 
     private void uiDeleteRental() {
@@ -153,12 +159,14 @@ public class Console {
         } catch (NumberFormatException E) {
             throw new DataTypeException();
         }
+        CompletableFuture.runAsync(
+                () -> {
         try {
             rentalService.deleteEntity(id);
 
         } catch (MyException e) {
             System.out.println(e.getMessage());
-        }
+        }});
     }
 
     private void uiFilterRentalsByYear() {
@@ -173,11 +181,14 @@ public class Console {
         } catch (NumberFormatException E) {
             throw new DataTypeException();
         }
+        CompletableFuture.supplyAsync(
+                () -> {
         try {
-            rentalService.filterEntitiesField(Integer.toString(year)).thenAcceptAsync(entity->entity.forEach(System.out::println));;
+            return rentalService.filterEntitiesField(Integer.toString(year));
         } catch (MyException e) {
             System.out.println(e.getMessage());
-        }
+            return null;
+        }}).thenAcceptAsync(entity->entity.forEach(System.out::println));
     }
 
     private void uiUpdateRental() {
@@ -210,11 +221,13 @@ public class Console {
         }
 
         Rental rental = new Rental(id, clientId, movieId, year, month, day);
+        CompletableFuture.runAsync(
+                () -> {
         try {
             rentalService.updateEntity(rental);
         } catch (MyException e) {
             System.out.println(e.getMessage());
-        }
+        }});
     }
 
     private void uiAddRental() {
@@ -254,22 +267,26 @@ public class Console {
         }
 
         Rental rental = new Rental(id, clientId, movieId, year, month, day);
+        CompletableFuture.runAsync(
+                () -> {
         try {
             rentalService.addEntity(rental);
         } catch (MyException e) {
             System.out.println(e.getMessage());
-        }
+        }});
     }
 
     private void uiPrintAllRentals() {
-        rentalService.getAllEntities().thenAcceptAsync(entity->entity.forEach(System.out::println));
+        CompletableFuture.supplyAsync(
+                () -> rentalService.getAllEntities()).thenAcceptAsync(entity->entity.forEach(System.out::println));
     }
 
 
 
     private void uiStatOldestClients() {
         System.out.println("Top 5 oldest Clients: ");
-        clientService.statEntities().thenAcceptAsync(list->{
+        CompletableFuture.supplyAsync(
+                () -> clientService.statEntities()).thenAcceptAsync(list->{
         IntStream.range(0, 5)
                 .mapToObj(list::get)
                 .forEach(client -> System.out.println("Age: " + client.getAge() +
@@ -278,7 +295,8 @@ public class Console {
     }
 
     private void uiStatMostMoviesReleasedInYear() {
-        movieService.statEntities().thenAcceptAsync(results-> {
+        CompletableFuture.supplyAsync(
+                () -> movieService.statEntities()).thenAcceptAsync(results-> {
            System.out.println("The most rich year in movies is: " + results.get(0).getYearOfRelease() + "\n");
            results.forEach(System.out::println);
        });
@@ -298,7 +316,8 @@ public class Console {
         } catch (NumberFormatException e) {
             throw new DataTypeException();
         }
-        rentalService.statEntities(Integer.toString(release_year), Integer.toString(age)).thenAcceptAsync(rentals-> {
+        CompletableFuture.supplyAsync(
+                () -> rentalService.statEntities(Integer.toString(release_year), Integer.toString(age))).thenAcceptAsync(rentals-> {
 
             System.out.println("Most rented Movie of the year " + yearString + " " + movieService.FindOne(rentals.iterator().next().getMovieID()).get().getTitle());
             System.out.println("The rental months of the most rented movie by clients older than:" + ageString + " years");
@@ -347,11 +366,13 @@ public class Console {
         }
 
         Movie movie = new Movie(id, title, year, mainStar, director, genre);
+        CompletableFuture.runAsync(
+                () -> {
         try {
             movieService.updateEntity(movie);
         } catch (MyException e) {
             System.out.println(e.getMessage());
-        }
+        }});
     }
 
     private void uiAddMovie() {
@@ -385,11 +406,13 @@ public class Console {
         }
 
         Movie movie = new Movie(id, title, year, mainStar, director, genre);
+        CompletableFuture.runAsync(
+                () -> {
         try {
             movieService.addEntity(movie);
         } catch (MyException e) {
             System.out.println(e.getMessage());
-        }
+        }});
     }
 
     private void uiFilterMovieByTitle() {
@@ -397,27 +420,35 @@ public class Console {
 
         System.out.println("Input Movie Title: ");
         String name = scanner.nextLine();
+        CompletableFuture.supplyAsync(
+                () -> {
         try {
-            movieService.filterEntitiesField(name).thenAcceptAsync(entity->entity.forEach(System.out::println));;
+            return movieService.filterEntitiesField(name);
 
         } catch (MyException e) {
             System.out.println(e.getMessage());
-        }
+            return null;
+        }}).thenAcceptAsync(entity->entity.forEach(System.out::println));
     }
 
     private void uiPrintAllMovie() {
-        movieService.getAllEntities().thenAcceptAsync(entity->entity.forEach(System.out::println));;
+        CompletableFuture.supplyAsync(
+                () -> {
+        return movieService.getAllEntities();}).thenAcceptAsync(entity->entity.forEach(System.out::println));;
 
     }
 
     private void uiPrintAllClientsSorted() {
-        clientService.getAllEntitiesSorted().thenAcceptAsync(entity->entity.forEach(System.out::println));
+        CompletableFuture.supplyAsync(
+                () -> {
+        return clientService.getAllEntitiesSorted();}).thenAcceptAsync(entity->entity.forEach(System.out::println));
 
     }
 
 
     private void uiPrintAllMoviesSorted() {
-        movieService.getAllEntitiesSorted().thenAcceptAsync(entity->entity.forEach(System.out::println));;
+        CompletableFuture.supplyAsync(
+                () -> movieService.getAllEntitiesSorted()).thenAcceptAsync(entity->entity.forEach(System.out::println));;
         //      Cata munca degeaba
 //        List<String> criterias = Arrays.asList("Id", "MainStar", "Title", "Genre", "YearOfRelease", "Director");
 //        Scanner scanner = new Scanner(System.in);
@@ -456,7 +487,9 @@ public class Console {
 //        }
     }
         private void uiPrintAllRentalsSorted () {
-            rentalService.getAllEntitiesSorted().thenAcceptAsync(entity->entity.forEach(System.out::println));
+            CompletableFuture.supplyAsync(
+                    () ->
+            rentalService.getAllEntitiesSorted()).thenAcceptAsync(entity->entity.forEach(System.out::println));
         }
 
         private void uiDeleteMovie () {
@@ -471,22 +504,28 @@ public class Console {
             } catch (NumberFormatException E) {
                 throw new DataTypeException();
             }
+            CompletableFuture.runAsync(
+                    () -> {
             try {
                 movieService.deleteEntity(id);
                 rentalService.DeleteMovieRentals(id);
 
             } catch (MyException e) {
                 System.out.println(e.getMessage());
-            }
+            }});
         }
 
 
         private void uiPrintAllClients () {
-        try {
-            clientService.getAllEntities().thenAcceptAsync(entitry->entitry.forEach(System.out::println));
+        CompletableFuture.supplyAsync(
+                () ->{
+            try {
+
+            return clientService.getAllEntities();
         } catch (MyException e ) {
             e.printStackTrace();
-        }
+            return null;
+        }}).thenAcceptAsync(entitry->entitry.forEach(System.out::println));
 
 
         }
@@ -516,11 +555,14 @@ public class Console {
             }
 
             Client client = new Client(id, fName, lName, age);
-            try {
-                    clientService.addEntity(client);
-            } catch (MyException e) {
-                System.out.println(e.getMessage());
-            }
+            CompletableFuture.runAsync(
+                    () -> {
+                        try {
+                            clientService.addEntity(client);
+                        } catch (MyException e) {
+                            System.out.println(e.getMessage());
+                        }
+                    });
 
         }
 
@@ -550,7 +592,6 @@ public class Console {
                 String cmd = commands.getCommandValue(key);
 
                 if (cmd.equals("Exit")) {
-                    uiSaveToFile();
                     return;
                 }
 
@@ -567,11 +608,6 @@ public class Console {
             }
         }
 
-        private void uiSaveToFile () {
-            clientService.saveToFile();
-            movieService.saveToFile();
-            rentalService.saveToFile();
-        }
     }
 
 

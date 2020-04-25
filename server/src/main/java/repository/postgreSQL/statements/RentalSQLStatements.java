@@ -1,8 +1,8 @@
 package repository.postgreSQL.statements;
 
-public enum MovieSQLStatements {
-    INSERT("insert into ", " (id,title,director,yearofrelease,mainstar,genre) values(?,?,?,?,?,?)"),
-    DELETE("delete from ", " where id = ");
+public enum RentalSQLStatements {
+    INSERT("insert into ", " (id,clientid,movieid,day,month,year) values(?,?,?,?,?,?)"),
+    DELETE("delete from ", " where id = ?");
 
     private final String cmdStart;
     private final String cmdEnd;
@@ -11,7 +11,7 @@ public enum MovieSQLStatements {
         return cmdStart + entity + cmdEnd;
     }
 
-    MovieSQLStatements(String cmdStart, String cmdEnd) {
+    RentalSQLStatements(String cmdStart, String cmdEnd) {
         this.cmdStart = cmdStart;
         this.cmdEnd = cmdEnd;
     }

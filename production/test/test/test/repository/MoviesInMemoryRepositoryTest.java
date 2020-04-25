@@ -1,10 +1,7 @@
 package repository;
 
-import model.domain.Client;
 import model.domain.Movie;
 import model.exceptions.MyException;
-import model.exceptions.ValidatorException;
-import model.validators.ClientValidator;
 import model.validators.MovieValidator;
 import model.validators.Validator;
 import org.junit.Before;
@@ -14,7 +11,6 @@ import java.util.Optional;
 import java.util.stream.StreamSupport;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
 
 
 public class MoviesInMemoryRepositoryTest {

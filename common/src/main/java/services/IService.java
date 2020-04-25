@@ -4,29 +4,29 @@ import model.domain.BaseEntity;
 import model.exceptions.MyException;
 import model.exceptions.ValidatorException;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.concurrent.CompletableFuture;
 
-public interface IService<ID, T extends BaseEntity<ID>> {
+public interface IService<ID extends Serializable, T extends BaseEntity<ID>> {
+
     Optional<T> FindOne(ID id);
 
-    CompletableFuture<T > addEntity(T entity) throws MyException;
+    void addEntity(T entity) throws MyException;
 
-    CompletableFuture<T> updateEntity(T entity) throws MyException;
+    T updateEntity(T entity) throws MyException;
 
-    CompletableFuture<T> deleteEntity(ID id) throws ValidatorException;
+    T deleteEntity(ID id) throws ValidatorException;
 
-    CompletableFuture<Set<T>> getAllEntities();
+    Set<T> getAllEntities();
 
-    CompletableFuture<List<T>> getAllEntitiesSorted();
+    List<T> getAllEntitiesSorted();
 
-    CompletableFuture<Set<T>> filterEntitiesField(String field);
+    Set<T> filterEntitiesField(String field);
 
-    CompletableFuture<List<T>> statEntities(String... fields);
+    List<T> statEntities(String... fields);
 
-    public void saveToFile();
     public enum Commands
     {
         ADD_CLIENT("addClient"),

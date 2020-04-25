@@ -1,9 +1,11 @@
 package model.exceptions;
 
+import java.io.Serializable;
+
 /**
  * Generic exception created as a template for other, more specific exception
  */
-public class MyException extends RuntimeException {
+public class MyException extends RuntimeException implements Serializable {
     public MyException(String message) {
         super(message);
     }

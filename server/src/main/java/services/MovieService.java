@@ -1,9 +1,9 @@
 package services;
 
 import model.domain.Movie;
-import model.domain.Rental;
 import model.exceptions.MyException;
 import model.validators.Validator;
+import org.springframework.beans.factory.annotation.Autowired;
 import repository.IRepository;
 import repository.Sort;
 import repository.SortingRepository;
@@ -11,30 +11,28 @@ import repository.SortingRepository;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-public class MovieService extends BaseService<Long, Movie> {
-    public MovieService(IRepository<Long, Movie> repository, Validator<Movie> validator, ExecutorService executor) {
-        super(repository, validator, "Movie",executor);
+public class MovieService extends BaseService<Long, Movie> implements IMovieService {
+    @Autowired
+    private IMovieService IMovieService;
+
+    public MovieService(IRepository<Long, Movie> repository, Validator<Movie> validator) {
+        super(repository, validator, "Movie");
     }
 
     @Override
-    public synchronized CompletableFuture<Set<Movie>> filterEntitiesField(String field) {
-        return CompletableFuture.supplyAsync(() -> {Iterable<Movie> movies = repository.findAll();
-            Set<Movie> filteredMovies=new HashSet<>();
-            movies.forEach(filteredMovies::add);
-            filteredMovies.removeIf(movie->!(movie.getTitle().contains(field)) );
-            return filteredMovies;}, executorService);
+    public synchronized Set<Movie> filterEntitiesField(String field) {
+        Iterable<Movie> movies = repository.findAll();
+        Set<Movie> filteredMovies=new HashSet<>();
+        movies.forEach(filteredMovies::add);
+        filteredMovies.removeIf(movie->!(movie.getTitle().contains(field)) );
+        return filteredMovies;
     }
 
     @Override
-    public synchronized CompletableFuture<List<Movie>> statEntities(String... fields) {
-
-        return CompletableFuture.supplyAsync(() -> {
+    public synchronized List<Movie> statEntities(String... fields) {
             if (fields.length != 0)
                 throw new MyException("Something went wrong!");
 
@@ -47,13 +45,10 @@ public class MovieService extends BaseService<Long, Movie> {
                 .max((o1, o2) -> o2.getValue().size() - o1.getValue().size())
                 .get()
                 .getValue();
-            }, executorService);
     }
 
     @Override
-    public synchronized CompletableFuture<List<Movie>> getAllEntitiesSorted() {
-
-        return CompletableFuture.supplyAsync(() -> {
+    public synchronized List<Movie> getAllEntitiesSorted() {
             if(repository instanceof SortingRepository)
             {
                 Sort sort = new Sort( "Genre").and(new Sort(Sort.Direction.DESC, "YearOfRelease"));
@@ -62,6 +57,5 @@ public class MovieService extends BaseService<Long, Movie> {
                 return StreamSupport.stream(entities.spliterator(), false).collect(Collectors.toList());
             }
             throw new MyException("This is not A SUPPORTED SORTING REPOSITORY");
-        }, executorService);
     }
 }

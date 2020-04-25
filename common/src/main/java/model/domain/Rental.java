@@ -1,8 +1,9 @@
 package model.domain;
 
+import java.io.Serializable;
 import java.util.Objects;
 
-public class Rental extends BaseEntity<Long> {
+public class Rental extends BaseEntity<Long> implements Serializable {
 
     private Long ClientID;
     private Long MovieID;
