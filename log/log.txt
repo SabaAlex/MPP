@@ -1,0 +1,4 @@
+2020-04-27T19:55:12,192 TRACE [ForkJoinPool.commonPool-worker-3]: IClientService                       - getAllEntities - method entered 
+2020-04-27T19:55:12,439 TRACE [ForkJoinPool.commonPool-worker-3]: IClientService                       - getAllEntities - method finished 
+2020-04-27T19:55:44,205 TRACE [ForkJoinPool.commonPool-worker-3]: IClientService                       - addEntity - method entered: client=First Name: 'Mama', Last Name: 'Mia', Age: 67, ID: '147' 
+2020-04-27T19:55:44,230 TRACE [ForkJoinPool.commonPool-worker-3]: IClientService                       - addEntity - method finished 

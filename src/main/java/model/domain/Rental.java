@@ -13,6 +13,10 @@ public class Rental extends BaseEntity<Long> implements Serializable {
     private int day;
     private int month;
 
+    public Rental(){
+
+    }
+
     public Rental(Long ID, Long ClientID, Long MovieID, int year, int month, int day) {
         super.setId(ID);
         this.ClientID = ClientID;

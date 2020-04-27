@@ -20,9 +20,18 @@ import java.util.stream.StreamSupport;
 
 @Service
 public class ClientService implements IClientService {
-    public static final Logger log = LoggerFactory.getLogger(ClientService.class);
+    public static final Logger log = LoggerFactory.getLogger(IClientService.class);
     @Autowired
     protected ClientJPARepository repository;
+
+    @Override
+    @Transactional
+    public synchronized Set<Client> getAllEntities() {
+        log.trace("getAllEntities - method entered");
+        Iterable<Client> entities = repository.findAll();
+        log.trace("getAllEntities - method finished");
+        return StreamSupport.stream(entities.spliterator(), false).collect(Collectors.toSet());
+    }
 
     public ClientService(ClientJPARepository repository) {
         this.repository=repository;
@@ -88,15 +97,5 @@ public class ClientService implements IClientService {
         entity.orElseThrow(()-> new MyException("Client with that ID does not exist"));
         repository.deleteById(id);
         return entity.get();
-    }
-
-    @Override
-    @Transactional
-    public synchronized Set<Client> getAllEntities() {
-        log.info("Working!");
-        log.trace("getAllEntities - method entered");
-        Iterable<Client> entities = repository.findAll();
-        log.trace("getAllEntities - method finished");
-        return StreamSupport.stream(entities.spliterator(), false).collect(Collectors.toSet());
     }
 }
