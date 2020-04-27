@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Configuration>
     <Properties>
-        <Property name="filename">./log/log.txt</Property>
-        <Property name="filenamePattern">log/log-%i.txt</Property>
+        <Property name="filename">./log/log.log</Property>
+        <Property name="filenamePattern">log/log-%i.log</Property>
         <Property name="pattern">%d{ISO8601} %-5p [%t]: %-36.36c{1} - %m %n
         </Property>
     </Properties>
