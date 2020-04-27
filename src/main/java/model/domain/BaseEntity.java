@@ -8,7 +8,6 @@ import java.io.Serializable;
 @MappedSuperclass
 public class BaseEntity<ID extends Serializable> implements Serializable {
     @Id
-    @GeneratedValue
     private ID id;
 
     public ID getId() {

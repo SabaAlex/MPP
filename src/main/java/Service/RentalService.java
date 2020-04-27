@@ -20,16 +20,16 @@ import java.util.stream.StreamSupport;
 
 @Service
 public class RentalService implements IRentalService {
-    public static final Logger log = LoggerFactory.getLogger(RentalService.class);
+
     @Autowired
     protected RentalJPARepository repository;
 
     @Autowired
-    private ClientService clientService;
+    private IClientService clientService;
     @Autowired
-    private MovieService movieService;
+    private IMovieService movieService;
 
-    public RentalService(ClientService clientService, MovieService movieService, RentalJPARepository repository) {
+    public RentalService(IClientService clientService, IMovieService movieService, RentalJPARepository repository) {
         this.repository = repository;
         this.clientService = clientService;
         this.movieService = movieService;
@@ -117,7 +117,6 @@ public class RentalService implements IRentalService {
             entity.setClientID(ClientID);
             entity.setMovieID(MovieID);
             repository.findById(entity.getId()).orElseThrow(() -> new MyException("No Rental to update"));
-            repository.deleteById(entity.getId());
             return repository.save(entity);
         }
 
@@ -135,11 +134,11 @@ public class RentalService implements IRentalService {
 
     public synchronized void addEntityToRepo(Rental entity) throws MyException {
 
-        Optional<Rental> entityOpt = Optional.of(repository.save(entity));
-        entityOpt.ifPresent(optional -> {
+        repository.findById(entity.getId()).ifPresent(optional -> {
             throw new MyException(
                     "Rental already exists");
         });
+        repository.save(entity);
     }
 
 

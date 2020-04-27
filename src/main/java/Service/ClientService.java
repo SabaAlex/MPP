@@ -3,15 +3,14 @@ package Service;
 import model.domain.Client;
 import model.exceptions.MyException;
 import model.exceptions.ValidatorException;
-import model.validators.Validator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import repository.postgreSQL.jpa.ClientJPARepository;
 
-import javax.transaction.Transactional;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -60,13 +59,16 @@ public class ClientService implements IClientService {
     }
 
     @Override
+    @Transactional
     public synchronized void addEntity(Client entity) throws MyException {
-
-        Optional<Client> entityOpt = Optional.of(repository.save(entity));
-        entityOpt.ifPresent(optional -> {
+        log.trace("addEntity - method entered: client={}", entity);
+        repository.findById(entity.getId()).ifPresent(optional -> {
+            log.debug("addEntity - updated: s={}", entity);
             throw new MyException(
-                      "Client already exists");
+                    "Client already exists");
         });
+        repository.save(entity);
+        log.trace("addEntity - method finished");
     }
 
     @Override
@@ -75,7 +77,6 @@ public class ClientService implements IClientService {
         if (!repository.existsById(entity.getId()))
             throw new MyException("Client does not exist");
         log.debug("updateEntity - updated: s={}", entity);
-        repository.deleteById(entity.getId());
         repository.save(entity);
         log.trace("updateStudent - method finished");
         return entity;
@@ -90,8 +91,12 @@ public class ClientService implements IClientService {
     }
 
     @Override
+    @Transactional
     public synchronized Set<Client> getAllEntities() {
+        log.info("Working!");
+        log.trace("getAllEntities - method entered");
         Iterable<Client> entities = repository.findAll();
+        log.trace("getAllEntities - method finished");
         return StreamSupport.stream(entities.spliterator(), false).collect(Collectors.toSet());
     }
 }

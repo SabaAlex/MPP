@@ -17,7 +17,6 @@ import java.util.stream.StreamSupport;
 
 @Service
 public class MovieService implements IMovieService {
-    public static final Logger log = LoggerFactory.getLogger(MovieService.class);
     @Autowired
     protected MovieJPARepository repository;
 
@@ -66,11 +65,11 @@ public class MovieService implements IMovieService {
     @Override
     public synchronized void addEntity(Movie entity) throws MyException {
 
-        Optional<Movie> entityOpt = Optional.of(repository.save(entity));
-        entityOpt.ifPresent(optional -> {
+        repository.findById(entity.getId()).ifPresent(optional -> {
             throw new MyException(
                     "Movie already exists");
         });
+        repository.save(entity);
     }
 
     @Override
@@ -78,7 +77,6 @@ public class MovieService implements IMovieService {
 
         if (!repository.existsById(entity.getId()))
             throw new MyException("Movie does not exist");
-        repository.deleteById(entity.getId());
         return repository.save(entity);
     }
 
