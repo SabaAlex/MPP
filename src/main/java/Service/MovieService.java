@@ -25,6 +25,7 @@ public class MovieService extends BaseService<Long, Movie> implements IMovieServ
         super.repository = repository;
         super.serviceClassName = "Movie";
         this.repository=repository;
+        super.logger = log;
     }
 
     @Override

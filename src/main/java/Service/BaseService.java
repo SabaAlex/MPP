@@ -25,39 +25,51 @@ public abstract class BaseService<ID extends Serializable, T extends BaseEntity<
 
     @Override
     public synchronized Optional<T> FindOne(ID id) {
+        logger.trace("FindOne - method entered:" + this.serviceClassName + "id = {}", id);
         return this.repository.findById(id);
     }
 
     @Override
     @Transactional
     public synchronized void addEntity(T entity) throws MyException {
+        logger.trace("addEntity - method entered:" + this.serviceClassName + " = {}", entity);
         repository.findById(entity.getId()).ifPresent(optional -> {
+            logger.debug("addEntity - exists: " + this.serviceClassName + " = {}", entity);
             throw new MyException(
                     this.serviceClassName + " already exists");
         });
         repository.save(entity);
+        logger.trace("addEntity - method finished");
     }
 
     @Override
     public synchronized T updateEntity(T entity) throws MyException {
-        if (!repository.existsById(entity.getId()))
+        logger.trace("updateEntity - method entered:" + this.serviceClassName + " = {}", entity);
+        if (!repository.existsById(entity.getId())) {
+            logger.debug("updateEntity - does not exists: " + this.serviceClassName + " = {}", entity);
             throw new MyException(this.serviceClassName + " does not exist");
+        }
         repository.save(entity);
+        logger.trace("updateEntity - method finished");
         return entity;
     }
 
     @Override
     public synchronized T deleteEntity(ID id) throws ValidatorException {
+        logger.trace("deleteEntity - method entered:" + this.serviceClassName + "id = {}", id);
         Optional<T> entity = repository.findById(id);
         entity.orElseThrow(()-> new MyException(this.serviceClassName + " with that ID does not exist"));
         repository.deleteById(id);
+        logger.trace("deleteEntity - method finished");
         return entity.get();
     }
 
     @Override
     @Transactional
     public synchronized Set<T> getAllEntities() {
+        logger.trace("getAllEntities - method entered");
         Iterable<T> entities = repository.findAll();
+        logger.trace("getAllEntities - method finished, list: " + entities.toString());
         return StreamSupport.stream(entities.spliterator(), false).collect(Collectors.toSet());
     }
 }

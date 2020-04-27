@@ -21,6 +21,7 @@ import java.util.stream.StreamSupport;
 
 @Service
 public class RentalService extends BaseService<Long, Rental> implements IRentalService {
+    public static final Logger log = LoggerFactory.getLogger(RentalService.class);
     @Autowired
     protected RentalJPARepository repository;
 
@@ -35,6 +36,7 @@ public class RentalService extends BaseService<Long, Rental> implements IRentalS
         this.movieService = movieService;
         super.repository = repository;
         super.serviceClassName = "Movie";
+        super.logger = log;
     }
 
     private synchronized void checkIDs(Long ClientID, Long MovieID)
@@ -58,15 +60,7 @@ public class RentalService extends BaseService<Long, Rental> implements IRentalS
     @Override
     public synchronized void addEntity(Rental entity) throws ValidatorException {
         this.checkRentalInRepository(entity);
-        this.addEntityToRepo(entity);
-    }
-
-    public synchronized void addEntityToRepo(Rental entity) throws MyException {
-        repository.findById(entity.getId()).ifPresent(optional -> {
-            throw new MyException(
-                    "Rental already exists");
-        });
-        repository.save(entity);
+        super.addEntity(entity);
     }
 
     @Override
@@ -101,7 +95,7 @@ public class RentalService extends BaseService<Long, Rental> implements IRentalS
             .filter(rental->MovieList.stream().filter(movie->movie.getId().equals(rental.getMovieID())).collect(Collectors.toList()).size()>0)
             .collect(Collectors.toList());
         if (rentalsList.size()==0)
-            return new ArrayList<Rental>();
+            return new ArrayList<>();
         else {
             Long mostRentedMovie = Collections.max(rentalsList.stream()
                             .map(Rental::getMovieID)
@@ -120,15 +114,21 @@ public class RentalService extends BaseService<Long, Rental> implements IRentalS
 
     @Override
     public synchronized Rental updateEntity(Rental entity) throws MyException {
-            Optional<Rental> found_rental = repository.findById(entity.getId());
-            found_rental.orElseThrow(() -> new MyException("No Rental to update"));
-            Long ClientID = found_rental.get().getClientID();
-            Long MovieID = found_rental.get().getMovieID();
-            entity.setClientID(ClientID);
-            entity.setMovieID(MovieID);
-            repository.findById(entity.getId()).orElseThrow(() -> new MyException("No Rental to update"));
-            return repository.save(entity);
+        logger.trace("updateEntity - method entered: rental = {}", entity);
+        Optional<Rental> found_rental = repository.findById(entity.getId());
+        found_rental.orElseThrow(() -> new MyException("No Rental to update"));
+        Long ClientID = found_rental.get().getClientID();
+        Long MovieID = found_rental.get().getMovieID();
+        entity.setClientID(ClientID);
+        entity.setMovieID(MovieID);
+        if (!repository.existsById(entity.getId())) {
+            logger.debug("updateEntity - does not exists: Rental = {}", entity);
+            throw new MyException("No Rental to update");
         }
+        repository.save(entity);
+        logger.trace("updateEntity - method finished");
+        return entity;
+    }
 
     @Override
     public synchronized List<Rental> getAllEntitiesSorted() {
