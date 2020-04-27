@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import repository.postgreSQL.jpa.RentalJPARepository;
 
 import java.util.*;
@@ -19,8 +20,8 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 @Service
-public class RentalService implements IRentalService {
-
+public class RentalService extends BaseService<Long, Rental> implements IRentalService {
+    public static final Logger log = LoggerFactory.getLogger(RentalService.class);
     @Autowired
     protected RentalJPARepository repository;
 
@@ -33,6 +34,9 @@ public class RentalService implements IRentalService {
         this.repository = repository;
         this.clientService = clientService;
         this.movieService = movieService;
+        super.repository = repository;
+        super.serviceClassName = "Movie";
+        super.logger = log;
     }
 
     private synchronized void checkIDs(Long ClientID, Long MovieID)
@@ -56,7 +60,7 @@ public class RentalService implements IRentalService {
     @Override
     public synchronized void addEntity(Rental entity) throws ValidatorException {
         this.checkRentalInRepository(entity);
-        this.addEntityToRepo(entity);
+        super.addEntity(entity);
     }
 
     @Override
@@ -91,7 +95,7 @@ public class RentalService implements IRentalService {
             .filter(rental->MovieList.stream().filter(movie->movie.getId().equals(rental.getMovieID())).collect(Collectors.toList()).size()>0)
             .collect(Collectors.toList());
         if (rentalsList.size()==0)
-            return new ArrayList<Rental>();
+            return new ArrayList<>();
         else {
             Long mostRentedMovie = Collections.max(rentalsList.stream()
                             .map(Rental::getMovieID)
@@ -110,49 +114,26 @@ public class RentalService implements IRentalService {
 
     @Override
     public synchronized Rental updateEntity(Rental entity) throws MyException {
-            Optional<Rental> found_rental = repository.findById(entity.getId());
-            found_rental.orElseThrow(() -> new MyException("No Rental to update"));
-            Long ClientID = found_rental.get().getClientID();
-            Long MovieID = found_rental.get().getMovieID();
-            entity.setClientID(ClientID);
-            entity.setMovieID(MovieID);
-            repository.findById(entity.getId()).orElseThrow(() -> new MyException("No Rental to update"));
-            return repository.save(entity);
+        logger.trace("updateEntity - method entered: rental = {}", entity);
+        Optional<Rental> found_rental = repository.findById(entity.getId());
+        found_rental.orElseThrow(() -> new MyException("No Rental to update"));
+        Long ClientID = found_rental.get().getClientID();
+        Long MovieID = found_rental.get().getMovieID();
+        entity.setClientID(ClientID);
+        entity.setMovieID(MovieID);
+        if (!repository.existsById(entity.getId())) {
+            logger.debug("updateEntity - does not exists: Rental = {}", entity);
+            throw new MyException("No Rental to update");
         }
+        repository.save(entity);
+        logger.trace("updateEntity - method finished");
+        return entity;
+    }
 
     @Override
     public synchronized List<Rental> getAllEntitiesSorted() {
             Sort sort = new Sort(Sort.Direction.ASC, "Day").and(new Sort(Sort.Direction.DESC, "Month"));
             Iterable<Rental> entities=repository.findAll(sort);
             return StreamSupport.stream(entities.spliterator(), false).collect(Collectors.toList());
-    }
-
-    @Override
-    public synchronized Optional<Rental> FindOne(Long id) {
-        return this.repository.findById(id);
-    }
-
-    public synchronized void addEntityToRepo(Rental entity) throws MyException {
-
-        repository.findById(entity.getId()).ifPresent(optional -> {
-            throw new MyException(
-                    "Rental already exists");
-        });
-        repository.save(entity);
-    }
-
-
-    @Override
-    public synchronized Rental deleteEntity(Long id) throws ValidatorException {
-        Optional<Rental> entity = repository.findById(id);
-        entity.orElseThrow(()-> new MyException("Rental with that ID does not exist"));
-        repository.deleteById(id);
-        return entity.get();
-    }
-
-    @Override
-    public synchronized Set<Rental> getAllEntities() {
-        Iterable<Rental> entities = repository.findAll();
-        return StreamSupport.stream(entities.spliterator(), false).collect(Collectors.toSet());
     }
 }
