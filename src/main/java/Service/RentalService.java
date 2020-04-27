@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import repository.postgreSQL.jpa.RentalJPARepository;
 
 import java.util.*;
@@ -20,7 +21,6 @@ import java.util.stream.StreamSupport;
 
 @Service
 public class RentalService implements IRentalService {
-
     @Autowired
     protected RentalJPARepository repository;
 
@@ -55,8 +55,16 @@ public class RentalService implements IRentalService {
 
     @Override
     public synchronized void addEntity(Rental entity) throws ValidatorException {
-        this.checkRentalInRepository(entity);
+        ///this.checkRentalInRepository(entity);
         this.addEntityToRepo(entity);
+    }
+
+    public synchronized void addEntityToRepo(Rental entity) throws MyException {
+        repository.findById(entity.getId()).ifPresent(optional -> {
+            throw new MyException(
+                    "Rental already exists");
+        });
+        repository.save(entity);
     }
 
     @Override
@@ -132,16 +140,6 @@ public class RentalService implements IRentalService {
         return this.repository.findById(id);
     }
 
-    public synchronized void addEntityToRepo(Rental entity) throws MyException {
-
-        repository.findById(entity.getId()).ifPresent(optional -> {
-            throw new MyException(
-                    "Rental already exists");
-        });
-        repository.save(entity);
-    }
-
-
     @Override
     public synchronized Rental deleteEntity(Long id) throws ValidatorException {
         Optional<Rental> entity = repository.findById(id);
@@ -152,7 +150,9 @@ public class RentalService implements IRentalService {
 
     @Override
     public synchronized Set<Rental> getAllEntities() {
+        System.out.println(repository.count());
         Iterable<Rental> entities = repository.findAll();
+        System.out.println("----------------------------------------");
         return StreamSupport.stream(entities.spliterator(), false).collect(Collectors.toSet());
     }
 }

@@ -19,13 +19,15 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 @Service
-public class ClientService implements IClientService {
+public class ClientService extends BaseService<Long, Client> implements IClientService {
     public static final Logger log = LoggerFactory.getLogger(ClientService.class);
     @Autowired
     protected ClientJPARepository repository;
 
     public ClientService(ClientJPARepository repository) {
         this.repository=repository;
+        super.serviceClassName = "Client";
+        super.repository = repository;
     }
 
     @Override
@@ -53,50 +55,4 @@ public class ClientService implements IClientService {
             return StreamSupport.stream(entities.spliterator(), false).collect(Collectors.toList());
     }
 
-    @Override
-    public synchronized Optional<Client> FindOne(Long id) {
-        return this.repository.findById(id);
-    }
-
-    @Override
-    @Transactional
-    public synchronized void addEntity(Client entity) throws MyException {
-        log.trace("addEntity - method entered: client={}", entity);
-        repository.findById(entity.getId()).ifPresent(optional -> {
-            log.debug("addEntity - updated: s={}", entity);
-            throw new MyException(
-                    "Client already exists");
-        });
-        repository.save(entity);
-        log.trace("addEntity - method finished");
-    }
-
-    @Override
-    public synchronized Client updateEntity(Client entity) throws MyException {
-        log.trace("updateEntity - method entered: client={}", entity);
-        if (!repository.existsById(entity.getId()))
-            throw new MyException("Client does not exist");
-        log.debug("updateEntity - updated: s={}", entity);
-        repository.save(entity);
-        log.trace("updateStudent - method finished");
-        return entity;
-    }
-
-    @Override
-    public synchronized Client deleteEntity(Long id) throws ValidatorException {
-        Optional<Client> entity = repository.findById(id);
-        entity.orElseThrow(()-> new MyException("Client with that ID does not exist"));
-        repository.deleteById(id);
-        return entity.get();
-    }
-
-    @Override
-    @Transactional
-    public synchronized Set<Client> getAllEntities() {
-        log.info("Working!");
-        log.trace("getAllEntities - method entered");
-        Iterable<Client> entities = repository.findAll();
-        log.trace("getAllEntities - method finished");
-        return StreamSupport.stream(entities.spliterator(), false).collect(Collectors.toSet());
-    }
 }

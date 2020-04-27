@@ -16,12 +16,14 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 @Service
-public class MovieService implements IMovieService {
+public class MovieService extends BaseService<Long, Movie> implements IMovieService {
+    public static final Logger log = LoggerFactory.getLogger(MovieService.class);
     @Autowired
     protected MovieJPARepository repository;
 
     public MovieService(MovieJPARepository repository) {
-
+        super.repository = repository;
+        super.serviceClassName = "Movie";
         this.repository=repository;
     }
 
@@ -57,40 +59,4 @@ public class MovieService implements IMovieService {
             return StreamSupport.stream(entities.spliterator(), false).collect(Collectors.toList());
     }
 
-    @Override
-    public synchronized Optional<Movie> FindOne(Long id) {
-        return this.repository.findById(id);
-    }
-
-    @Override
-    public synchronized void addEntity(Movie entity) throws MyException {
-
-        repository.findById(entity.getId()).ifPresent(optional -> {
-            throw new MyException(
-                    "Movie already exists");
-        });
-        repository.save(entity);
-    }
-
-    @Override
-    public synchronized Movie updateEntity(Movie entity) throws MyException {
-
-        if (!repository.existsById(entity.getId()))
-            throw new MyException("Movie does not exist");
-        return repository.save(entity);
-    }
-
-    @Override
-    public synchronized Movie deleteEntity(Long id) throws ValidatorException {
-        Optional<Movie> entity = repository.findById(id);
-        entity.orElseThrow(()-> new MyException("Client with that ID does not exist"));
-        repository.deleteById(id);
-        return entity.get();
-    }
-
-    @Override
-    public synchronized Set<Movie> getAllEntities() {
-        Iterable<Movie> entities = repository.findAll();
-        return StreamSupport.stream(entities.spliterator(), false).collect(Collectors.toSet());
-    }
 }
