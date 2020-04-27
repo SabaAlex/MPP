@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 @Service
-public class RentalService implements IRentalService {
+public class RentalService extends BaseService<Long, Rental> implements IRentalService {
     @Autowired
     protected RentalJPARepository repository;
 
@@ -33,6 +33,8 @@ public class RentalService implements IRentalService {
         this.repository = repository;
         this.clientService = clientService;
         this.movieService = movieService;
+        super.repository = repository;
+        super.serviceClassName = "Movie";
     }
 
     private synchronized void checkIDs(Long ClientID, Long MovieID)
@@ -55,7 +57,7 @@ public class RentalService implements IRentalService {
 
     @Override
     public synchronized void addEntity(Rental entity) throws ValidatorException {
-        ///this.checkRentalInRepository(entity);
+        this.checkRentalInRepository(entity);
         this.addEntityToRepo(entity);
     }
 
@@ -133,26 +135,5 @@ public class RentalService implements IRentalService {
             Sort sort = new Sort(Sort.Direction.ASC, "Day").and(new Sort(Sort.Direction.DESC, "Month"));
             Iterable<Rental> entities=repository.findAll(sort);
             return StreamSupport.stream(entities.spliterator(), false).collect(Collectors.toList());
-    }
-
-    @Override
-    public synchronized Optional<Rental> FindOne(Long id) {
-        return this.repository.findById(id);
-    }
-
-    @Override
-    public synchronized Rental deleteEntity(Long id) throws ValidatorException {
-        Optional<Rental> entity = repository.findById(id);
-        entity.orElseThrow(()-> new MyException("Rental with that ID does not exist"));
-        repository.deleteById(id);
-        return entity.get();
-    }
-
-    @Override
-    public synchronized Set<Rental> getAllEntities() {
-        System.out.println(repository.count());
-        Iterable<Rental> entities = repository.findAll();
-        System.out.println("----------------------------------------");
-        return StreamSupport.stream(entities.spliterator(), false).collect(Collectors.toSet());
     }
 }

@@ -19,6 +19,7 @@ import java.util.stream.StreamSupport;
 @Service
 public abstract class BaseService<ID extends Serializable, T extends BaseEntity<ID>> implements IService<ID, T> {
 
+    protected Logger logger;
     protected BaseJPARepository<T, ID> repository ;
     protected String serviceClassName;
 

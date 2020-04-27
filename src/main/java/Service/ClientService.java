@@ -28,6 +28,7 @@ public class ClientService extends BaseService<Long, Client> implements IClientS
         this.repository=repository;
         super.serviceClassName = "Client";
         super.repository = repository;
+        super.logger = log;
     }
 
     @Override
