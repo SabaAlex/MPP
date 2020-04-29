@@ -24,6 +24,7 @@ public abstract class BaseService<ID extends Serializable, T extends BaseEntity<
     protected String serviceClassName;
 
     @Override
+    @Transactional
     public synchronized Optional<T> FindOne(ID id) {
         logger.trace("FindOne - method entered:" + this.serviceClassName + "id = {}", id);
         return this.repository.findById(id);
@@ -43,6 +44,7 @@ public abstract class BaseService<ID extends Serializable, T extends BaseEntity<
     }
 
     @Override
+    @Transactional
     public synchronized T updateEntity(T entity) throws MyException {
         logger.trace("updateEntity - method entered:" + this.serviceClassName + " = {}", entity);
         if (!repository.existsById(entity.getId())) {
@@ -55,6 +57,7 @@ public abstract class BaseService<ID extends Serializable, T extends BaseEntity<
     }
 
     @Override
+    @Transactional
     public synchronized T deleteEntity(ID id) throws ValidatorException {
         logger.trace("deleteEntity - method entered:" + this.serviceClassName + "id = {}", id);
         Optional<T> entity = repository.findById(id);
