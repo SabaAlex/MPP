@@ -3,15 +3,17 @@ package converter;
 import core.model.domain.BaseEntity;
 import dto.BaseEntityDto;
 
+import java.awt.*;
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.List;
 
-public abstract class BaseConverter<Model extends BaseEntity<Long>, Dto extends BaseEntityDto>
-        implements Converter<Model, Dto> {
+public abstract class BaseConverter<ID extends Serializable, Model extends BaseEntity<ID>, Dto extends BaseEntityDto>
+        implements Converter<ID, Model, Dto> {
 
-
-    public Set<Long> convertModelsToIDs(Set<Model> models) {
+    public Set<ID> convertModelsToIDs(Set<Model> models) {
         return models.stream()
                 .map(BaseEntity::getId)
                 .collect(Collectors.toSet());
@@ -27,5 +29,11 @@ public abstract class BaseConverter<Model extends BaseEntity<Long>, Dto extends 
         return models.stream()
                 .map(this::convertModelToDto)
                 .collect(Collectors.toSet());
+    }
+
+    public List<Dto> convertModelsToDtoList(Collection<Model> models) {
+        return models.stream()
+                .map(this::convertModelToDto)
+                .collect(Collectors.toList());
     }
 }

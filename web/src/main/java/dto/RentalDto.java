@@ -12,6 +12,6 @@ public class RentalDto extends BaseEntityDto {
     private Long ClientID;
     private Long MovieID;
     private int year;
-    private int day;
     private int month;
+    private int day;
 }

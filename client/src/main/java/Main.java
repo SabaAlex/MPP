@@ -1,3 +1,4 @@
+import UI.Console;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 public class Main {
@@ -7,6 +8,6 @@ public class Main {
                 new AnnotationConfigApplicationContext(
                         "./"
                 );
-
+        context.getBean(Console.class).run();
     }
 }

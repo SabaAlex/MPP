@@ -10,8 +10,8 @@ import lombok.*;
 @Builder
 public class MovieDto extends BaseEntityDto {
     private String title;
-    private  String genre;
     private int yearOfRelease;
-    private String director;
     private String mainStar;
+    private String director;
+    private  String genre;
 }

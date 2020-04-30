@@ -34,7 +34,7 @@
         <Logger name="org.springframework.web" level="WARN"/>
         <Logger name="org.springframework.http.converter.json" level="WARN"/>
         <Logger name="com.fasterxml.jackson.databind" level="WARN"/>
-        <Logger name="Service" level="trace" additivity="false">
+        <Logger name="Controller" level="trace" additivity="false">
             <AppenderRef ref="File"/>
         </Logger>
 
