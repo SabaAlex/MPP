@@ -1,6 +1,6 @@
-package dto.collections.lists;
+package app.dto.collections.lists;
 
-import dto.MovieDto;
+import app.dto.ClientDto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -10,6 +10,6 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class MovieListDto {
-    private List<MovieDto> movieDtoList;
+public class ClientListDto {
+    private List<ClientDto> clientDtoList;
 }

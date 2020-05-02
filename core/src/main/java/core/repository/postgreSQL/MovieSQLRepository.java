@@ -22,7 +22,10 @@ public class MovieSQLRepository extends PostgreSQLRepository<Long, Movie> {
         String mainStar = resultSet.getString(5);
         String genre = resultSet.getString(6);
 
-        return new Movie(ID, title, yearOfRelease ,mainStar, director, genre);
+        Movie movie = new Movie(title, yearOfRelease, mainStar, director, genre);
+        movie.setId(ID);
+
+        return movie;
     }
 
     @Override

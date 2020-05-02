@@ -6,15 +6,15 @@ import UI.options.RentalOptions;
 import UI.utils.Commands;
 import core.model.exceptions.DataTypeException;
 import core.model.exceptions.MyException;
-import dto.ClientDto;
-import dto.MovieDto;
-import dto.RentalDto;
-import dto.collections.lists.ClientListDto;
-import dto.collections.lists.MovieListDto;
-import dto.collections.lists.RentalListDto;
-import dto.collections.sets.ClientSetDto;
-import dto.collections.sets.MovieSetDto;
-import dto.collections.sets.RentalSetDto;
+import app.dto.ClientDto;
+import app.dto.MovieDto;
+import app.dto.RentalDto;
+import app.dto.collections.lists.ClientListDto;
+import app.dto.collections.lists.MovieListDto;
+import app.dto.collections.lists.RentalListDto;
+import app.dto.collections.sets.ClientSetDto;
+import app.dto.collections.sets.MovieSetDto;
+import app.dto.collections.sets.RentalSetDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
@@ -26,9 +26,9 @@ import java.util.stream.Collectors;
 @Component
 public class Console {
 
-    private final String clientURL = "http://localhost:8080/api/clients";
-    private final String movieURL = "http://localhost:8080/api/moviess";
-    private final String rentalURL = "http://localhost:8080/api/rentals";
+    private final String clientURL = "http://localhost:8080/clients";
+    private final String movieURL = "http://localhost:8080/movies";
+    private final String rentalURL = "http://localhost:8080/rentals";
 
     @Autowired
     private RestTemplate restTemplate;
@@ -81,7 +81,7 @@ public class Console {
 //                        System.out.println(e.getMessage());
 //                        return null;
 //                    } }).thenAcceptAsync(entity->entity.forEach(System.out::println));
-        Objects.requireNonNull(this.restTemplate.getForObject(clientURL, ClientSetDto.class, name)).getClientDtoSet().forEach(System.out::println);
+        Objects.requireNonNull(this.restTemplate.getForObject(clientURL + "/filter", ClientSetDto.class, name)).getClientDtoSet().forEach(System.out::println);
     }
 
     private void uiDeleteClient() {
@@ -142,7 +142,8 @@ public class Console {
 //                    } catch (MyException e) {
 //                        System.out.println(e.getMessage());
 //                    }});
-        this.restTemplate.put(clientURL, client);
+        client.setId(id);
+        this.restTemplate.put(clientURL + "/{id}", client, client.getId());
     }
 
     private void uiDeleteRental() {
@@ -188,7 +189,7 @@ public class Console {
 //                        System.out.println(e.getMessage());
 //                        return null;
 //                    }}).thenAcceptAsync(entity->entity.forEach(System.out::println));
-        Objects.requireNonNull(this.restTemplate.getForObject(rentalURL, RentalSetDto.class, year)).getRentalDtoSet().forEach(System.out::println);
+        Objects.requireNonNull(this.restTemplate.getForObject(rentalURL + "/filter", RentalSetDto.class, year)).getRentalDtoSet().forEach(System.out::println);
     }
 
     private void uiUpdateRental() {
@@ -228,7 +229,8 @@ public class Console {
 //                    } catch (MyException e) {
 //                        System.out.println(e.getMessage());
 //                    }});
-        this.restTemplate.put(rentalURL, rental);
+        rental.setId(id);
+        this.restTemplate.put(rentalURL + "/{id}", rental, rental.getId());
     }
 
     private void uiAddRental() {
@@ -275,6 +277,7 @@ public class Console {
 //                    } catch (MyException e) {
 //                        System.out.println(e.getMessage());
 //                    }});
+        rental.setId(id);
         this.restTemplate.postForEntity(rentalURL, rental, RentalDto.class);
     }
 
@@ -295,7 +298,7 @@ public class Console {
 //                    .forEach(client -> System.out.println("Age: " + client.getAge() +
 //                            "\nName: " + client.getFirstName() + " " + client.getLastName() + "\n"
 //                    ));});
-        Objects.requireNonNull(this.restTemplate.getForObject(clientURL, ClientListDto.class, ""))
+        Objects.requireNonNull(this.restTemplate.getForObject(clientURL + "/stat", ClientListDto.class, ""))
                 .getClientDtoList().stream().limit(5).forEach(clientDto -> System.out.println("Age: " + clientDto.getAge() +
                            "\nName: " + clientDto.getFirstName() + " " + clientDto.getLastName() + "\n"
                    ));
@@ -307,7 +310,7 @@ public class Console {
 //            System.out.println("The most rich year in movies is: " + results.get(0).getYearOfRelease() + "\n");
 //            results.forEach(System.out::println);
 //        });
-        List<MovieDto> results = Objects.requireNonNull(this.restTemplate.getForObject(movieURL, MovieListDto.class, ""))
+        List<MovieDto> results = Objects.requireNonNull(this.restTemplate.getForObject(movieURL + "/stat", MovieListDto.class, ""))
                 .getMovieDtoList();
         results.stream().findFirst().orElseThrow(() -> new MyException("No movies to do statistics on!"));
         System.out.println("The most rich year in movies is: " + results.stream().findFirst().get().getYearOfRelease() + "\n");
@@ -342,7 +345,7 @@ public class Console {
 //                    .sorted(((o1, o2) -> -1 * o1.getValue().compareTo(o2.getValue())))
 //                    .forEach(entity -> System.out.println(entity.getKey()));
 //        });
-        List<RentalDto> rentals = this.restTemplate.getForObject(rentalURL, RentalListDto.class, Integer.toString(release_year), Integer.toString(age)).getRentalDtoList();
+        List<RentalDto> rentals = this.restTemplate.getForObject(rentalURL + "/stat", RentalListDto.class, Integer.toString(release_year), Integer.toString(age)).getRentalDtoList();
         rentals.stream().findFirst().orElseThrow(() -> new MyException("No rentals to do statistics!"));
         System.out.println("Most rented Movie of the year " + yearString + " " +
                 this.restTemplate.getForObject(movieURL + "/{id}", MovieDto.class ,rentals.stream().findFirst().get().getMovieID()).getTitle());
@@ -369,7 +372,7 @@ public class Console {
         System.out.println("Input Movie Year: ");
         String yearStr = scanner.nextLine();
 
-        System.out.println("Input Movie client.config.Main Star: ");
+        System.out.println("Input Movie client.app.config.Main Star: ");
         String mainStar = scanner.nextLine();
 
         System.out.println("Input Movie Director: ");
@@ -396,7 +399,8 @@ public class Console {
 //                    } catch (MyException e) {
 //                        System.out.println(e.getMessage());
 //                    }});
-        this.restTemplate.put(movieURL, movie);
+        movie.setId(id);
+        this.restTemplate.put(movieURL + "/{id}", movie, movie.getId());
     }
 
     private void uiAddMovie() {
@@ -411,7 +415,7 @@ public class Console {
         System.out.println("Input Movie Year: ");
         String yearStr = scanner.nextLine();
 
-        System.out.println("Input Movie client.config.Main Star: ");
+        System.out.println("Input Movie client.app.config.Main Star: ");
         String mainStar = scanner.nextLine();
 
         System.out.println("Input Movie Director: ");
@@ -437,6 +441,7 @@ public class Console {
 //                    } catch (MyException e) {
 //                        System.out.println(e.getMessage());
 //                    }});
+        movie.setId(id);
         this.restTemplate.postForEntity(movieURL, movie, MovieDto.class);
     }
 
@@ -454,7 +459,7 @@ public class Console {
 //                        System.out.println(e.getMessage());
 //                        return null;
 //                    }}).thenAcceptAsync(entity->entity.forEach(System.out::println));
-        Objects.requireNonNull(this.restTemplate.getForObject(movieURL, MovieSetDto.class, title)).getMovieDtoSet().forEach(System.out::println);
+        Objects.requireNonNull(this.restTemplate.getForObject(movieURL + "/filter", MovieSetDto.class, title)).getMovieDtoSet().forEach(System.out::println);
     }
 
     private void uiPrintAllMovie() {
@@ -468,12 +473,12 @@ public class Console {
 //        CompletableFuture.supplyAsync(
 //                () -> {
 //                    return clientService.getAllEntitiesSorted();}).thenAcceptAsync(entity->entity.forEach(System.out::println));
-        Objects.requireNonNull(this.restTemplate.getForObject(clientURL, ClientListDto.class)).getClientDtoList().forEach(System.out::println);
+        Objects.requireNonNull(this.restTemplate.getForObject(clientURL + "/sorted", ClientListDto.class)).getClientDtoList().forEach(System.out::println);
     }
 
 
     private void uiPrintAllMoviesSorted() {
-        Objects.requireNonNull(this.restTemplate.getForObject(movieURL, MovieListDto.class)).getMovieDtoList().forEach(System.out::println);
+        Objects.requireNonNull(this.restTemplate.getForObject(movieURL + "/sorted", MovieListDto.class)).getMovieDtoList().forEach(System.out::println);
 //        CompletableFuture.supplyAsync(
 //                () -> movieService.getAllEntitiesSorted()).thenAcceptAsync(entity->entity.forEach(System.out::println));;
         //      Cata munca degeaba
@@ -517,7 +522,7 @@ public class Console {
 //        CompletableFuture.supplyAsync(
 //                () ->
 //                        rentalService.getAllEntitiesSorted()).thenAcceptAsync(entity->entity.forEach(System.out::println));
-        Objects.requireNonNull(this.restTemplate.getForObject(rentalURL, RentalListDto.class)).getRentalDtoList().forEach(System.out::println);
+        Objects.requireNonNull(this.restTemplate.getForObject(rentalURL + "/sorted", RentalListDto.class)).getRentalDtoList().forEach(System.out::println);
     }
 
     private void uiDeleteMovie () {
@@ -591,6 +596,7 @@ public class Console {
 //                        System.out.println(e.getMessage());
 //                    }
 //                });
+        client.setId(id);
         this.restTemplate.postForEntity(clientURL, client, ClientDto.class);
     }
 

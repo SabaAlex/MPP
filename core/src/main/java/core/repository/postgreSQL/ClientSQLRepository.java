@@ -20,7 +20,10 @@ public class ClientSQLRepository extends PostgreSQLRepository<Long, Client> {
         String lastName = resultSet.getString(3);
         int age = resultSet.getInt(4);
 
-        return new Client(ID, firstName, lastName, age);
+        Client client = new Client(firstName, lastName, age);
+        client.setId(ID);
+
+        return client;
     }
 
     @Override

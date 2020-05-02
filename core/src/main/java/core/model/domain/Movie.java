@@ -15,9 +15,8 @@ import java.util.Objects;
 @Builder
 public class Movie extends BaseEntity<Long> implements Serializable {
     private String title;
-    private  String genre;
     private int yearOfRelease;
-    private String director;
     private String mainStar;
-
+    private String director;
+    private  String genre;
 }

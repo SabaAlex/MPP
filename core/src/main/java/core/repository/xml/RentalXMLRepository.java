@@ -37,7 +37,10 @@ public class RentalXMLRepository extends XMLRepository<Long, Rental> {
         Node MonthNode = entityNode.getElementsByTagName("month").item(0);
         int Month = Integer.parseInt(MonthNode.getTextContent());
 
-        return new Rental(rentalID, ClientID, MovieID, Year, Month, Day);
+        Rental rental = new Rental(ClientID, MovieID, Year, Month, Day);
+        rental.setId(rentalID);
+
+        return rental;
     }
 
     @Override

@@ -24,6 +24,6 @@ public class ClientFileRepository extends FileRepository<Long, Client> {
         String lastName=items.get(2);
         int age = Integer.parseInt(items.get(3));
 
-        return new Client(id,firstName,lastName,age);
+        return new Client(firstName,lastName,age);
     }
 }

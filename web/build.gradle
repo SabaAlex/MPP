@@ -7,6 +7,11 @@ dependencies {
 
     compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: "$jacksonDatabindVersion"
     compile group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: "$jacksonDatabindVersion"
-
     compile group: 'javax.servlet', name: 'javax.servlet-api', version:"$javaxServeletApiVersion"
+
+    compile group: 'org.springframework.boot', name: 'spring-boot', version: "$springDataVersion"
+    compile group: 'org.springframework.boot', name: 'spring-boot-starter-web', version: "$springDataVersion"
+    compile group: 'org.springframework.boot', name: 'spring-boot-starter', version: "$springDataVersion"
+    compile group: 'org.springframework.boot', name: 'spring-boot-starter-data-jpa', version: "$springDataVersion"
+    compile('org.hibernate:hibernate-core:5.4.2.Final')
 }

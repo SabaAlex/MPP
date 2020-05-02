@@ -13,7 +13,6 @@ import java.io.Serializable;
 @ToString(callSuper = true)
 @Builder
 public class Client extends BaseEntity<Long> implements Serializable {
-
     private String firstName;
     private String lastName;
     private int age;

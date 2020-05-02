@@ -22,7 +22,10 @@ public class RentalSQLRepository extends PostgreSQLRepository<Long, Rental> {
         int month = resultSet.getInt(5);
         int year = resultSet.getInt(6);
 
-        return new Rental(ID, clientid, movieid , year, month, day);
+        Rental rental = new Rental(clientid, movieid, year, month, day);
+        rental.setId(ID);
+
+        return rental;
     }
 
     @Override

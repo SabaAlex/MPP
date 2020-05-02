@@ -37,10 +37,6 @@
         <Logger name="Controller" level="trace" additivity="false">
             <AppenderRef ref="File"/>
         </Logger>
-        <logger name="org.springframework.boot">
-            <level value="trace"/>
-            <appender-ref ref="file"/>
-        </logger>
 
         <!-- ROOT -->
         <Root level="WARN">

@@ -1,5 +1,6 @@
 package core.repository.xml;
 
+import core.model.domain.Client;
 import core.model.domain.Movie;
 import core.model.validators.Validator;
 import org.w3c.dom.Document;
@@ -67,6 +68,9 @@ public class MovieXMLRepository extends XMLRepository<Long, Movie>{
         Node genreNode = entityNode.getElementsByTagName("genre").item(0);
         String genre = genreNode.getTextContent();
 
-        return new Movie(ID, title, yearOfRelease, mainStar, director, genre);
+        Movie movie = new Movie(title, yearOfRelease, mainStar, director, genre);
+        movie.setId(ID);
+
+        return movie;
     }
 }

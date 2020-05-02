@@ -1,6 +1,6 @@
-package dto.collections.lists;
+package app.dto.collections.lists;
 
-import dto.RentalDto;
+import app.dto.RentalDto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

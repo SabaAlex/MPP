@@ -1,20 +1,16 @@
-package controller;
+package app.controller;
 
-import converter.ClientConverter;
+import app.converter.ClientConverter;
 import core.Service.IClientService;
-import dto.ClientDto;
-import dto.MovieDto;
-import dto.collections.lists.ClientListDto;
-import dto.collections.sets.ClientSetDto;
+import app.dto.ClientDto;
+import app.dto.collections.lists.ClientListDto;
+import app.dto.collections.sets.ClientSetDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-import java.util.Set;
 
 @RestController
 public class ClientController {
@@ -47,8 +43,8 @@ public class ClientController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/clients", method = RequestMethod.PUT)
-    ClientDto updateDTO(@RequestBody ClientDto entityDto) {
+    @RequestMapping(value = "/clients/{id}", method = RequestMethod.PUT)
+    ClientDto updateDTO(@RequestBody ClientDto entityDto, @PathVariable Long id) {
         //todo: log
         return converter.convertModelToDto(service.updateEntity(converter.convertDtoToModel(entityDto)));
     }
@@ -59,21 +55,21 @@ public class ClientController {
         return converter.convertModelToDto(service.deleteEntity(id));
     }
 
-    @RequestMapping(value = "/clients", method = RequestMethod.GET)
+    @RequestMapping(value = "/clients/sorted", method = RequestMethod.GET)
     ClientListDto getSortedDTOs() {
         //todo: log
         return new ClientListDto(converter
                 .convertModelsToDtoList(service.getAllEntitiesSorted()));
     }
 
-    @RequestMapping(value = "/clients", method = RequestMethod.GET)
+    @RequestMapping(value = "/clients/filter", method = RequestMethod.GET)
     ClientSetDto getDTOsFiltered(String field) {
         //todo: log
         return new ClientSetDto(converter
                 .convertModelsToDtos(service.filterEntitiesField(field)));
     }
 
-    @RequestMapping(value = "/clients", method = RequestMethod.GET)
+    @RequestMapping(value = "/clients/stat", method = RequestMethod.GET)
     ClientListDto getDTOsStatistics(String... field) {
         //todo: log
         return new ClientListDto(converter

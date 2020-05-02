@@ -14,11 +14,9 @@ import java.util.Objects;
 @ToString(callSuper = true)
 @Builder
 public class Rental extends BaseEntity<Long> implements Serializable {
-
     private Long ClientID;
     private Long MovieID;
     private int year;
-    private int day;
     private int month;
-
+    private int day;
 }

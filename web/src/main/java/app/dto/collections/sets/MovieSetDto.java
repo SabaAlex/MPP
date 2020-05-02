@@ -1,6 +1,6 @@
-package dto.collections.sets;
+package app.dto.collections.sets;
 
-import dto.ClientDto;
+import app.dto.MovieDto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -10,6 +10,6 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class ClientSetDto {
-    private Set<ClientDto> clientDtoSet;
+public class MovieSetDto {
+    private Set<MovieDto> movieDtoSet;
 }

@@ -53,6 +53,8 @@ public class ClientXMLRepository extends XMLRepository<Long, Client> {
         Node ageNode = entityNode.getElementsByTagName("age").item(0);
         int age = Integer.parseInt(ageNode.getTextContent());
 
-        return new Client(ID, fName, lName, age);
+        Client client = new Client(fName, lName, age);
+        client.setId(ID);
+        return client;
     }
 }

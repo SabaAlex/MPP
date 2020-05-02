@@ -27,7 +27,7 @@ public class MovieFileRepository extends FileRepository<Long, Movie> {
         String director=items.get(4);
         String mainStar=items.get(5);
 
-        return new Movie(id,title,yearOfRelease,mainStar,director,genre);
+        return new Movie(title,yearOfRelease,mainStar,director,genre);
     }
 
 }

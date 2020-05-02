@@ -1,7 +1,7 @@
-package converter;
+package app.converter;
 
 import core.model.domain.Movie;
-import dto.MovieDto;
+import app.dto.MovieDto;
 import org.springframework.stereotype.Component;
 
 @Component

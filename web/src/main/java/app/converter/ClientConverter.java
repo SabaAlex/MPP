@@ -1,7 +1,7 @@
-package converter;
+package app.converter;
 
 import core.model.domain.Client;
-import dto.ClientDto;
+import app.dto.ClientDto;
 import org.springframework.stereotype.Component;
 
 @Component

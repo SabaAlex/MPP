@@ -26,6 +26,6 @@ public class RentalFileRepository extends FileRepository<Long, Rental> {
         int month = Integer.parseInt(items.get(4));
         int day= Integer.parseInt(items.get(5));
 
-        return new Rental(id,ClientId,MovieID,year,month,day);
+        return new Rental(ClientId,MovieID,year,month,day);
     }
 }

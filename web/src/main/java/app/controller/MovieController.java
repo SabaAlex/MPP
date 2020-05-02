@@ -1,10 +1,10 @@
-package controller;
+package app.controller;
 
-import converter.MovieConverter;
+import app.converter.MovieConverter;
 import core.Service.IMovieService;
-import dto.MovieDto;
-import dto.collections.lists.MovieListDto;
-import dto.collections.sets.MovieSetDto;
+import app.dto.MovieDto;
+import app.dto.collections.lists.MovieListDto;
+import app.dto.collections.sets.MovieSetDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,8 +43,8 @@ public class MovieController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/movies", method = RequestMethod.PUT)
-    MovieDto updateDTO(@RequestBody MovieDto entityDto) {
+    @RequestMapping(value = "/movies/{id}", method = RequestMethod.PUT)
+    MovieDto updateDTO(@RequestBody MovieDto entityDto, @PathVariable Long id) {
         //todo: log
         return converter.convertModelToDto(service.updateEntity(converter.convertDtoToModel(entityDto)));
     }
@@ -55,21 +55,21 @@ public class MovieController {
         return converter.convertModelToDto(service.deleteEntity(id));
     }
 
-    @RequestMapping(value = "/movies", method = RequestMethod.GET)
+    @RequestMapping(value = "/movies/sorted", method = RequestMethod.GET)
     MovieListDto getSortedDTOs() {
         //todo: log
         return new MovieListDto(converter
                 .convertModelsToDtoList(service.getAllEntitiesSorted()));
     }
 
-    @RequestMapping(value = "/movies", method = RequestMethod.GET)
+    @RequestMapping(value = "/movies/filter", method = RequestMethod.GET)
     MovieSetDto getDTOsFiltered(String field) {
         //todo: log
         return new MovieSetDto(converter
                 .convertModelsToDtos(service.filterEntitiesField(field)));
     }
 
-    @RequestMapping(value = "/movies", method = RequestMethod.GET)
+    @RequestMapping(value = "/movies/stat", method = RequestMethod.GET)
     MovieListDto getDTOsStatistics(String... field) {
         //todo: log
         return new MovieListDto(converter

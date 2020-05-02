@@ -1,7 +1,6 @@
-package dto.collections.sets;
+package app.dto.collections.sets;
 
-import dto.MovieDto;
-import dto.RentalDto;
+import app.dto.ClientDto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -11,6 +10,6 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class RentalSetDto {
-    private Set<RentalDto> rentalDtoSet;
+public class ClientSetDto {
+    private Set<ClientDto> clientDtoSet;
 }

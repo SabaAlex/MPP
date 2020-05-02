@@ -1,7 +1,7 @@
-package converter;
+package app.converter;
 
 import core.model.domain.BaseEntity;
-import dto.BaseEntityDto;
+import app.dto.BaseEntityDto;
 
 import java.io.Serializable;
 

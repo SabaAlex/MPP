@@ -37,11 +37,6 @@ public class JPAConfig {
     @Value("${db.generateDDL}")
     private Boolean generateDDL;
 
-    /**
-     * http://www.baeldung.com/hikaricp
-     *
-     * @return
-     */
     @Bean
     public DataSource dataSource() {
         HikariConfig config = new HikariConfig();
@@ -65,7 +60,7 @@ public class JPAConfig {
 
         LocalContainerEntityManagerFactoryBean factory = new LocalContainerEntityManagerFactoryBean();
         factory.setJpaVendorAdapter(vendorAdapter);
-        factory.setPackagesToScan("core.model");
+        factory.setPackagesToScan("core.model.domain");
         factory.setDataSource(dataSource());
         factory.afterPropertiesSet();
         return factory.getObject();
