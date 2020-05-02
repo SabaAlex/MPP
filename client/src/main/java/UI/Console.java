@@ -4,6 +4,7 @@ import UI.options.ClientOptions;
 import UI.options.MovieOptions;
 import UI.options.RentalOptions;
 import UI.utils.Commands;
+import app.dto.collections.sets.SetDto;
 import core.model.exceptions.DataTypeException;
 import core.model.exceptions.MyException;
 import app.dto.ClientDto;
@@ -81,7 +82,7 @@ public class Console {
 //                        System.out.println(e.getMessage());
 //                        return null;
 //                    } }).thenAcceptAsync(entity->entity.forEach(System.out::println));
-        Objects.requireNonNull(this.restTemplate.getForObject(clientURL + "/filter", ClientSetDto.class, name)).getClientDtoSet().forEach(System.out::println);
+        Objects.requireNonNull(this.restTemplate.getForObject(clientURL + "/filter/{field}", ClientSetDto.class, name)).getDtoList().forEach(System.out::println);
     }
 
     private void uiDeleteClient() {
@@ -189,7 +190,7 @@ public class Console {
 //                        System.out.println(e.getMessage());
 //                        return null;
 //                    }}).thenAcceptAsync(entity->entity.forEach(System.out::println));
-        Objects.requireNonNull(this.restTemplate.getForObject(rentalURL + "/filter", RentalSetDto.class, year)).getRentalDtoSet().forEach(System.out::println);
+        Objects.requireNonNull(this.restTemplate.getForObject(rentalURL + "/filter/{field}", RentalSetDto.class, year)).getDtoList().forEach(System.out::println);
     }
 
     private void uiUpdateRental() {
@@ -284,7 +285,7 @@ public class Console {
     private void uiPrintAllRentals() {
 //        CompletableFuture.supplyAsync(
 //                () -> rentalService.getAllEntities()).thenAcceptAsync(entity->entity.forEach(System.out::println));
-        Objects.requireNonNull(this.restTemplate.getForObject(rentalURL, RentalSetDto.class)).getRentalDtoSet().forEach(System.out::println);
+        Objects.requireNonNull(this.restTemplate.getForObject(rentalURL, RentalSetDto.class)).getDtoList().forEach(System.out::println);
     }
 
 
@@ -298,8 +299,8 @@ public class Console {
 //                    .forEach(client -> System.out.println("Age: " + client.getAge() +
 //                            "\nName: " + client.getFirstName() + " " + client.getLastName() + "\n"
 //                    ));});
-        Objects.requireNonNull(this.restTemplate.getForObject(clientURL + "/stat", ClientListDto.class, ""))
-                .getClientDtoList().stream().limit(5).forEach(clientDto -> System.out.println("Age: " + clientDto.getAge() +
+        Objects.requireNonNull(this.restTemplate.getForObject(clientURL + "/stat", ClientListDto.class))
+                .getDtoList().stream().limit(5).forEach(clientDto -> System.out.println("Age: " + clientDto.getAge() +
                            "\nName: " + clientDto.getFirstName() + " " + clientDto.getLastName() + "\n"
                    ));
     }
@@ -310,8 +311,8 @@ public class Console {
 //            System.out.println("The most rich year in movies is: " + results.get(0).getYearOfRelease() + "\n");
 //            results.forEach(System.out::println);
 //        });
-        List<MovieDto> results = Objects.requireNonNull(this.restTemplate.getForObject(movieURL + "/stat", MovieListDto.class, ""))
-                .getMovieDtoList();
+        List<MovieDto> results = Objects.requireNonNull(this.restTemplate.getForObject(movieURL + "/stat", MovieListDto.class))
+                .getDtoList();
         results.stream().findFirst().orElseThrow(() -> new MyException("No movies to do statistics on!"));
         System.out.println("The most rich year in movies is: " + results.stream().findFirst().get().getYearOfRelease() + "\n");
         results.forEach(System.out::println);
@@ -345,7 +346,7 @@ public class Console {
 //                    .sorted(((o1, o2) -> -1 * o1.getValue().compareTo(o2.getValue())))
 //                    .forEach(entity -> System.out.println(entity.getKey()));
 //        });
-        List<RentalDto> rentals = this.restTemplate.getForObject(rentalURL + "/stat", RentalListDto.class, Integer.toString(release_year), Integer.toString(age)).getRentalDtoList();
+        List<RentalDto> rentals = this.restTemplate.getForObject(rentalURL + "/stat/{year}/{age}", RentalListDto.class, Integer.toString(release_year), Integer.toString(age)).getDtoList();
         rentals.stream().findFirst().orElseThrow(() -> new MyException("No rentals to do statistics!"));
         System.out.println("Most rented Movie of the year " + yearString + " " +
                 this.restTemplate.getForObject(movieURL + "/{id}", MovieDto.class ,rentals.stream().findFirst().get().getMovieID()).getTitle());
@@ -459,26 +460,26 @@ public class Console {
 //                        System.out.println(e.getMessage());
 //                        return null;
 //                    }}).thenAcceptAsync(entity->entity.forEach(System.out::println));
-        Objects.requireNonNull(this.restTemplate.getForObject(movieURL + "/filter", MovieSetDto.class, title)).getMovieDtoSet().forEach(System.out::println);
+        Objects.requireNonNull(this.restTemplate.getForObject(movieURL + "/filter/{field}", MovieSetDto.class, title)).getDtoList().forEach(System.out::println);
     }
 
     private void uiPrintAllMovie() {
 //        CompletableFuture.supplyAsync(
 //                () -> {
 //                    return movieService.getAllEntities();}).thenAcceptAsync(entity->entity.forEach(System.out::println));;
-        Objects.requireNonNull(this.restTemplate.getForObject(movieURL, MovieSetDto.class)).getMovieDtoSet().forEach(System.out::println);
+        Objects.requireNonNull(this.restTemplate.getForObject(movieURL, MovieSetDto.class)).getDtoList().forEach(System.out::println);
     }
 
     private void uiPrintAllClientsSorted() {
 //        CompletableFuture.supplyAsync(
 //                () -> {
 //                    return clientService.getAllEntitiesSorted();}).thenAcceptAsync(entity->entity.forEach(System.out::println));
-        Objects.requireNonNull(this.restTemplate.getForObject(clientURL + "/sorted", ClientListDto.class)).getClientDtoList().forEach(System.out::println);
+        Objects.requireNonNull(this.restTemplate.getForObject(clientURL + "/sorted", ClientListDto.class)).getDtoList().forEach(System.out::println);
     }
 
 
     private void uiPrintAllMoviesSorted() {
-        Objects.requireNonNull(this.restTemplate.getForObject(movieURL + "/sorted", MovieListDto.class)).getMovieDtoList().forEach(System.out::println);
+        Objects.requireNonNull(this.restTemplate.getForObject(movieURL + "/sorted", MovieListDto.class)).getDtoList().forEach(System.out::println);
 //        CompletableFuture.supplyAsync(
 //                () -> movieService.getAllEntitiesSorted()).thenAcceptAsync(entity->entity.forEach(System.out::println));;
         //      Cata munca degeaba
@@ -522,7 +523,7 @@ public class Console {
 //        CompletableFuture.supplyAsync(
 //                () ->
 //                        rentalService.getAllEntitiesSorted()).thenAcceptAsync(entity->entity.forEach(System.out::println));
-        Objects.requireNonNull(this.restTemplate.getForObject(rentalURL + "/sorted", RentalListDto.class)).getRentalDtoList().forEach(System.out::println);
+        Objects.requireNonNull(this.restTemplate.getForObject(rentalURL + "/sorted", RentalListDto.class)).getDtoList().forEach(System.out::println);
     }
 
     private void uiDeleteMovie () {
@@ -559,7 +560,7 @@ public class Console {
 //                        e.printStackTrace();
 //                        return null;
 //                    }}).thenAcceptAsync(entitry->entitry.forEach(System.out::println));
-        Objects.requireNonNull(this.restTemplate.getForObject(clientURL, ClientSetDto.class)).getClientDtoSet().forEach(System.out::println);
+        Objects.requireNonNull(this.restTemplate.getForObject(clientURL, ClientListDto.class)).getDtoList().forEach(System.out::println);
 
     }
 
