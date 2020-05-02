@@ -3,13 +3,12 @@ package app.dto.collections.lists;
 import app.dto.ClientDto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
 
-@NoArgsConstructor
-@AllArgsConstructor
+@EqualsAndHashCode(callSuper = true)
 @Data
-public class ClientListDto {
-    private List<ClientDto> clientDtoList;
+public class ClientListDto extends ListDto<ClientDto>{
 }

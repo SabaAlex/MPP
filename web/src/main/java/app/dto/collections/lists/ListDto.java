@@ -1,14 +1,15 @@
 package app.dto.collections.lists;
 
-import app.dto.MovieDto;
+import app.dto.BaseEntityDto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
 
-@EqualsAndHashCode(callSuper = true)
+@NoArgsConstructor
+@AllArgsConstructor
 @Data
-public class MovieListDto extends ListDto<MovieDto> {
+public class ListDto<Dto extends BaseEntityDto> {
+    protected List<Dto> dtoList;
 }
