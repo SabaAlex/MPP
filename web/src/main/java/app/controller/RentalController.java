@@ -1,9 +1,7 @@
 package app.controller;
 
-import app.converter.Converter;
 import app.converter.RentalConverter;
-import app.dto.MovieDto;
-import app.dto.collections.lists.ListDto;
+import app.dto.collections.lists.base.ListDto;
 import core.Service.IRentalService;
 import app.dto.RentalDto;
 import core.model.domain.Rental;

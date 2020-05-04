@@ -33,7 +33,6 @@ allprojects {
 
         compile group: 'org.springframework', name: 'spring-context', version: "$springVersion"
 
-        //logging
         compile group: 'org.slf4j', name: 'slf4j-api', version: "$slf4jVersion"
         testCompile group: 'org.slf4j', name: 'slf4j-simple', version: "$slf4jVersion"
 

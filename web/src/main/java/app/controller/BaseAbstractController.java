@@ -1,10 +1,9 @@
 package app.controller;
 
 import app.converter.BaseConverter;
-import app.converter.Converter;
 import app.dto.BaseEntityDto;
-import app.dto.collections.lists.ListDto;
-import app.dto.collections.sets.SetDto;
+import app.dto.collections.lists.base.ListDto;
+import app.dto.collections.sets.base.SetDto;
 import core.Service.IService;
 import core.model.domain.BaseEntity;
 import org.apache.commons.logging.Log;

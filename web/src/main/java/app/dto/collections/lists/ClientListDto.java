@@ -1,14 +1,11 @@
 package app.dto.collections.lists;
 
 import app.dto.ClientDto;
-import lombok.AllArgsConstructor;
+import app.dto.collections.lists.base.ListDto;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
-
-import java.util.List;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
-public class ClientListDto extends ListDto<ClientDto>{
+public class ClientListDto extends ListDto<ClientDto> {
 }

@@ -1,12 +1,9 @@
 package app.dto.collections.lists;
 
 import app.dto.MovieDto;
-import lombok.AllArgsConstructor;
+import app.dto.collections.lists.base.ListDto;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
-
-import java.util.List;
 
 @EqualsAndHashCode(callSuper = true)
 @Data

@@ -1,4 +1,4 @@
-package app.dto.collections.lists;
+package app.dto.collections.lists.base;
 
 import app.dto.BaseEntityDto;
 import lombok.AllArgsConstructor;

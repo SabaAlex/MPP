@@ -3,7 +3,7 @@ package app.controller;
 
 import app.converter.ClientConverter;
 import app.dto.ClientDto;
-import app.dto.collections.lists.ListDto;
+import app.dto.collections.lists.base.ListDto;
 import core.Service.IClientService;
 import core.model.domain.Client;
 import org.springframework.beans.factory.annotation.Autowired;

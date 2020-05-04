@@ -1,9 +1,7 @@
 package app.controller;
 
-import app.converter.Converter;
 import app.converter.MovieConverter;
-import app.dto.ClientDto;
-import app.dto.collections.lists.ListDto;
+import app.dto.collections.lists.base.ListDto;
 import core.Service.IMovieService;
 import app.dto.MovieDto;
 import core.model.domain.Movie;

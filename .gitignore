@@ -5,6 +5,7 @@ bin
 dist
 node_modules
 log
+
 # Eclipse
 .classpath
 .project

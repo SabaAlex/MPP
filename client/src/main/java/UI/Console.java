@@ -4,7 +4,6 @@ import UI.options.ClientOptions;
 import UI.options.MovieOptions;
 import UI.options.RentalOptions;
 import UI.utils.Commands;
-import app.dto.collections.sets.SetDto;
 import core.model.exceptions.DataTypeException;
 import core.model.exceptions.MyException;
 import app.dto.ClientDto;
