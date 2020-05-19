@@ -11,7 +11,7 @@ import {map, flatMap, mergeMap} from 'rxjs/operators';
 
 @Injectable()
 export class ClientService {
-  private clientsUrl = 'http://localhost:8080/clients';
+  private clientsUrl = 'http://localhost:8080/api/clients';
 
   constructor(private httpClient: HttpClient) {
   }

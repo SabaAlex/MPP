@@ -11,7 +11,7 @@ import {map, flatMap, mergeMap} from 'rxjs/operators';
 
 @Injectable()
 export class MovieService {
-  private moviesUrl = 'http://localhost:8080/movies';
+  private moviesUrl = 'http://localhost:8080/api/movies';
 
   constructor(private httpClient: HttpClient) {
   }
