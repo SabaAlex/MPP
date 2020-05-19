@@ -1,0 +1,26 @@
+<h3 class="mb-4">The list of movies: </h3>
+
+<div class="container-fluid mt-4">
+  <div class="row justify-content-left">
+
+    <div class="col-auto pl-0 mb-3" *ngFor="let movie of movies; let i = index">
+      <div class="card" style="width: 17rem;">
+        <div class="card-body">
+          <h5 class="card-title">MovieId : {{movie.id}}</h5>
+          <p class="card-text">
+            Title: {{movie.title}}<br>
+            Year Of Release: {{movie.yearOfRelease}}<br>
+            Main Star : {{movie.mainStar}}<br>
+            Director : {{movie.director}}<br>
+            Genre : {{movie.genre}}
+          </p>
+          <a routerLink="movie-edit/{{movie.id}}" class="btn btn-dark mr-2 float-left">Edit</a>
+          <br>
+          <a href="#" class="btn btn-dark float-left">Delete</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+

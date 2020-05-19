@@ -1,0 +1,22 @@
+<div class="container-fluid mt-4">
+  <div class="row justify-content-left">
+
+    <div class="col-auto pl-0 mb-3" *ngFor="let rental of rentals; let i = index">
+      <div class="card" style="width: 17rem;">
+        <div class="card-body">
+          <h5 class="card-title">RentalId : {{rental.id}}</h5>
+          <p class="card-text">
+            ClientID: {{rental.ClientID}}<br>
+            MovieID: {{rental.MovieID}}<br>
+            Day : {{rental.day}}<br>
+            Month : {{rental.month}}<br>
+            Year : {{rental.year}}
+          </p>
+          <a routerLink="rental-edit/{{rental.id}}" class="btn btn-dark mr-2 float-left">Edit</a>
+          <br>
+          <a href="#" class="btn btn-dark float-left">Delete</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

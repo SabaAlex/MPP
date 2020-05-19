@@ -5,6 +5,7 @@ import app.dto.collections.lists.base.ListDto;
 import core.Service.IMovieService;
 import app.dto.MovieDto;
 import core.model.domain.Movie;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,6 +16,7 @@ public class MovieController extends BaseAbstractController<Long, Movie, MovieDt
     @Autowired
     public MovieController(MovieConverter converter, IMovieService service) {
         super(converter, service);
+        super.log = LoggerFactory.getLogger(MovieController.class);
     }
 
     @RequestMapping(value = "/stat", method = RequestMethod.GET)

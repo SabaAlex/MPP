@@ -1,0 +1,22 @@
+<h3 class="mb-4">The list of clients: </h3>
+
+<div class="container-fluid mt-4">
+  <div class="row justify-content-left">
+
+    <div class="col-auto pl-0 mb-3" *ngFor="let client of clients; let i = index">
+      <div class="card" style="width: 17rem;">
+        <div class="card-body">
+          <h5 class="card-title">ClientID : {{client.id}}</h5>
+          <p class="card-text">
+            First Name: {{client.firstName}}<br>
+            Last Name: {{client.lastName}}<br>
+            Age : {{client.age}}
+          </p>
+          <a routerLink="client-edit/{{client.id}}" class="btn btn-dark mr-2 float-left">Edit</a>
+          <br>
+          <a href="#" class="btn btn-dark float-left">Delete</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
