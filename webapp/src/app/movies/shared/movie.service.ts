@@ -11,7 +11,7 @@ import {map, flatMap, mergeMap} from 'rxjs/operators';
 
 @Injectable()
 export class MovieService {
-  private moviesUrl = 'http://localhost:8080/api/movies';
+  private moviesUrl = 'http://localhost:8080/movies';
 
   constructor(private httpClient: HttpClient) {
   }
@@ -30,7 +30,7 @@ export class MovieService {
     return this.httpClient.get<Array<Movie>>(this.moviesUrl).pipe(
       map(result => {
         console.log('getAllMovies --- method finished: result = ', result);
-        return result.dtoList;
+        return result;
       }));
   }
 

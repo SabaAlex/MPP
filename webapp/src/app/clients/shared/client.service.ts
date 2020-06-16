@@ -11,7 +11,7 @@ import {map, flatMap, mergeMap} from 'rxjs/operators';
 
 @Injectable()
 export class ClientService {
-  private clientsUrl = 'http://localhost:8080/api/clients';
+  private clientsUrl = 'http://localhost:8080/clients';
 
   constructor(private httpClient: HttpClient) {
   }
@@ -30,7 +30,7 @@ export class ClientService {
     return this.httpClient.get<Array<Client>>(this.clientsUrl).pipe(
       map(result => {
         console.log('getAllClients --- method finished: result = ', result);
-        return result.dtoList;
+        return result;
       }));
   }
 

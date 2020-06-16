@@ -17,7 +17,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.HandlerMapping;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public abstract class BaseAbstractController<ID extends Serializable, Model extends BaseEntity<ID>, Dto extends BaseEntityDto> {
 
@@ -31,17 +36,20 @@ public abstract class BaseAbstractController<ID extends Serializable, Model exte
     }
 
     @RequestMapping(value = "", method = RequestMethod.GET)
-    SetDto<Dto> getDTOs() {
-        String methodMapping = new Object(){}.getClass().getEnclosingMethod().getAnnotation(RequestMapping.class).value()[0];
+    Set<Dto> getDTOs(HttpServletRequest request) {
+        log.trace("This is a TRACE message.");
+        String methodMapping = (String) request.getAttribute(
+                HandlerMapping.BEST_MATCHING_PATTERN_ATTRIBUTE);
         log.trace(methodMapping + " - api method entered");
         //todo: log
-        return new SetDto<>(converter
+        return new HashSet<>(converter
                 .convertModelsToDtos(service.getAllEntities()));
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    Dto getDto(@PathVariable ID id) {
-        String methodMapping = new Object(){}.getClass().getEnclosingMethod().getAnnotation(RequestMapping.class).value()[0];
+    Dto getDto(@PathVariable ID id, HttpServletRequest request) {
+        String methodMapping = (String) request.getAttribute(
+                HandlerMapping.BEST_MATCHING_PATTERN_ATTRIBUTE);
         log.trace(methodMapping + " - api method entered");
         //todo: log
         return converter
@@ -49,8 +57,9 @@ public abstract class BaseAbstractController<ID extends Serializable, Model exte
     }
 
     @RequestMapping(value = "", method = RequestMethod.POST)
-    ResponseEntity<?> saveDTO(@RequestBody Dto entityDto) {
-        String methodMapping = new Object(){}.getClass().getEnclosingMethod().getAnnotation(RequestMapping.class).value()[0];
+    ResponseEntity<?> saveDTO(@RequestBody Dto entityDto, HttpServletRequest request) {
+        String methodMapping = (String) request.getAttribute(
+                HandlerMapping.BEST_MATCHING_PATTERN_ATTRIBUTE);
         log.trace(methodMapping + " - api method entered");
         //todo log
         service.addEntity(converter.convertDtoToModel(entityDto));
@@ -58,36 +67,40 @@ public abstract class BaseAbstractController<ID extends Serializable, Model exte
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
-    Dto updateDTO(@RequestBody Dto entityDto, @PathVariable Long id) {
-        String methodMapping = new Object(){}.getClass().getEnclosingMethod().getAnnotation(RequestMapping.class).value()[0];
+    Dto updateDTO(@RequestBody Dto entityDto, @PathVariable Long id, HttpServletRequest request) {
+        String methodMapping = (String) request.getAttribute(
+                HandlerMapping.BEST_MATCHING_PATTERN_ATTRIBUTE);
         log.trace(methodMapping + " - api method entered");
         //todo: log
         return converter.convertModelToDto(service.updateEntity(converter.convertDtoToModel(entityDto)));
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
-    Dto deleteDTO(@PathVariable ID id){
-        String methodMapping = new Object(){}.getClass().getEnclosingMethod().getAnnotation(RequestMapping.class).value()[0];
+    Dto deleteDTO(@PathVariable ID id, HttpServletRequest request){
+        String methodMapping = (String) request.getAttribute(
+                HandlerMapping.BEST_MATCHING_PATTERN_ATTRIBUTE);
         log.trace(methodMapping + " - api method entered");
         //todo:log
         return converter.convertModelToDto(service.deleteEntity(id));
     }
 
     @RequestMapping(value = "/sorted", method = RequestMethod.GET)
-    ListDto<Dto> getSortedDTOs() {
-        String methodMapping = new Object(){}.getClass().getEnclosingMethod().getAnnotation(RequestMapping.class).value()[0];
+    List<Dto> getSortedDTOs(HttpServletRequest request) {
+        String methodMapping = (String) request.getAttribute(
+                HandlerMapping.BEST_MATCHING_PATTERN_ATTRIBUTE);
         log.trace(methodMapping + " - api method entered");
         //todo: log
-        return new ListDto<>(converter
+        return new ArrayList<>(converter
                 .convertModelsToDtoList(service.getAllEntitiesSorted()));
     }
 
     @RequestMapping(value = "/filter/{field}", method = RequestMethod.GET)
-    SetDto<Dto> getDTOsFiltered(@PathVariable String field) {
-        String methodMapping = new Object(){}.getClass().getEnclosingMethod().getAnnotation(RequestMapping.class).value()[0];
+    Set<Dto> getDTOsFiltered(@PathVariable String field, HttpServletRequest request) {
+        String methodMapping = (String) request.getAttribute(
+                HandlerMapping.BEST_MATCHING_PATTERN_ATTRIBUTE);
         log.trace(methodMapping + " - api method entered");
         //todo: log
-        return new SetDto<>(converter
+        return new HashSet<>(converter
                 .convertModelsToDtos(service.filterEntitiesField(field)));
     }
 }
